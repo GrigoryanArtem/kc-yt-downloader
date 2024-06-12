@@ -1,0 +1,174 @@
+﻿<UserControl x:Class="kc_yt_downloader.GUI.View.Controls.CutView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:kc_yt_downloader.GUI.View.Controls" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:viewmodel="clr-namespace:kc_yt_downloader.GUI.ViewModel" 
+             d:DataContext="{d:DesignInstance Type=viewmodel:CutViewModel}"
+             mc:Ignorable="d" 
+             d:DesignHeight="1080" d:DesignWidth="1920">
+    <Grid>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+
+        <ScrollViewer>
+            <StackPanel
+            
+                MaxWidth="1200"
+                Margin=" 24"
+                Grid.Row="0"            
+                Orientation="Vertical">
+
+                <TextBlock 
+                    Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                    Text="{Binding Title}" 
+                    d:Text="Long long text"/>
+
+                <GroupBox                
+                    Margin="0 12"                
+                    materialDesign:ColorZoneAssist.Background="{StaticResource MaterialDesign.Brush.Primary.Light}"
+                    materialDesign:ColorZoneAssist.Foreground="{StaticResource MaterialDesign.Brush.Primary.Light.Foreground}"
+                    materialDesign:ColorZoneAssist.Mode="Custom"
+                    Style="{StaticResource MaterialDesignCardGroupBox}"                
+                    materialDesign:ElevationAssist.Elevation="Dp1"
+                    Padding="0">
+
+                    <GroupBox.Header>
+                        <TextBlock 
+                            Margin="6"
+                            Text="Video fromats" />
+                    </GroupBox.Header>
+
+                    <ScrollViewer
+                        VerticalScrollBarVisibility="Hidden"
+                        HorizontalScrollBarVisibility="Visible">
+
+                        <ItemsControl                            
+                            Margin="12 8"
+                            ItemsSource="{Binding VideoFormats}"
+                            d:ItemsSource="{d:SampleData}">
+                            
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel
+                                        Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <local:VideoFormatControl
+                                        Margin="0 0 12 0"
+                                        Width="250"
+                                        DataContext="{Binding}"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </GroupBox>
+
+                <GroupBox
+                    Margin="0 12"                
+                    materialDesign:ColorZoneAssist.Background="{StaticResource MaterialDesign.Brush.Primary.Light}"
+                    materialDesign:ColorZoneAssist.Foreground="{StaticResource MaterialDesign.Brush.Primary.Light.Foreground}"
+                    materialDesign:ColorZoneAssist.Mode="Custom"
+                    Style="{StaticResource MaterialDesignCardGroupBox}"                
+                    materialDesign:ElevationAssist.Elevation="Dp1"
+                    Padding="0">
+
+                    <GroupBox.Header>
+                        <TextBlock 
+                            Margin="6"
+                            Text="Audio fromats" />
+                    </GroupBox.Header>
+
+                    <ScrollViewer                
+                        VerticalScrollBarVisibility="Hidden"
+                        HorizontalScrollBarVisibility="Visible">
+
+                        <ItemsControl
+                            Margin="8"
+                            ItemsSource="{Binding AudioFormats}"
+                            d:ItemsSource="{d:SampleData}">
+
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel
+                                        Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <local:VideoFormatControl
+                                        Margin="0 0 12 0"
+                                        Width="250"
+                                        DataContext="{Binding}"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </GroupBox>
+
+                <GroupBox
+                    HorizontalAlignment="Left"
+                    Margin="0 12"                
+                    materialDesign:ColorZoneAssist.Background="{StaticResource MaterialDesign.Brush.Primary.Light}"
+                    materialDesign:ColorZoneAssist.Foreground="{StaticResource MaterialDesign.Brush.Primary.Light.Foreground}"
+                    materialDesign:ColorZoneAssist.Mode="Custom"
+                    Style="{StaticResource MaterialDesignCardGroupBox}"                
+                    materialDesign:ElevationAssist.Elevation="Dp1"
+                    Padding="0">
+
+                    <GroupBox.Header>
+                        <TextBlock 
+                            Margin="6"
+                            Text="Range" />
+                    </GroupBox.Header>
+
+                    <local:TimeRangeControl 
+                        Width="300"/>
+                </GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid
+            Margin="24"
+            MaxWidth="1200"
+            Grid.Row="1">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel 
+                HorizontalAlignment="Left"
+                Grid.Column="0" >
+                
+                <Button 
+                    Padding="24 4"
+                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                    Command="{Binding BackCommand}"
+                    Content="BACK" />
+            </StackPanel>
+
+            <StackPanel 
+                HorizontalAlignment="Right"
+                Grid.Column="1" >   
+
+                <Button 
+                    Padding="24 4"
+                    Style="{StaticResource MaterialDesignOutlinedButton}"
+                    Command="{Binding BackCommand}"
+                    Content="ADD TASK TO QUEUE" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>
