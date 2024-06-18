@@ -10,11 +10,13 @@
              d:DataContext="{d:DesignInstance Type=viewmodel:VideoFormatViewModel}"
              d:DesignHeight="450" d:DesignWidth="800">
     <GroupBox        
+        Cursor="Hand"
         d:Width="200"
         d:HorizontalAlignment="Center" d:VerticalAlignment="Center"
+        Background="White"
         Padding="6"                        
         materialDesign:ColorZoneAssist.Foreground="{StaticResource MaterialDesign.Brush.Secondary.Light.Foreground}"
-        materialDesign:ColorZoneAssist.Mode="Custom"
+        materialDesign:ColorZoneAssist.Mode="Custom"        
         Header="{Binding Format}"
         d:Header="Format" >
 

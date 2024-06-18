@@ -8,47 +8,75 @@ namespace kc_yt_downloader.Model
     {
         private const string CACHE_FILEPATH = "cache.json";
 
-        private Dictionary<string, string> _json = [];
+        private List<Video> _cache = [];
+        private readonly string _cachePath;
 
-        public VideoInfo[] GetCachedData()
+        public YtDlp(string cacheDirectory)
         {
-            Open();
-            return _json.Select(kv => JsonConvert.DeserializeObject<VideoInfo>(kv.Value)).ToArray();
-        }            
+            _cachePath = String.IsNullOrEmpty(cacheDirectory) ? CACHE_FILEPATH 
+                : Path.Combine(cacheDirectory, CACHE_FILEPATH);
+        }
 
         public void Open()
         {
-            if (!File.Exists(CACHE_FILEPATH))
+            var dir = Path.GetDirectoryName(_cachePath);
+
+            if(!String.IsNullOrWhiteSpace(dir))
+                Directory.CreateDirectory(dir);
+            
+            if (!File.Exists(_cachePath))
                 return;
 
-            var json = File.ReadAllText(CACHE_FILEPATH);
-            _json = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+            var json = File.ReadAllText(_cachePath);
+            _cache = JsonConvert.DeserializeObject<List<Video>>(json);
         }
 
         public void Save()
         {
-            var json = JsonConvert.SerializeObject(_json, Formatting.Indented);
-            File.WriteAllText(CACHE_FILEPATH, json);
+            var json = JsonConvert.SerializeObject(_cache, Formatting.Indented);
+            File.WriteAllText(_cachePath, json);
         }
 
-        public string? GetPureJson(string url)
+        public Video[] GetCachedData()
+            => [.. _cache];
+
+        public Video? GetVideo(string url)
         {
-            if (_json.TryGetValue(url, out var urlJson))
-                return urlJson;
+            var probe = _cache.SingleOrDefault(v => v.AvailableURLs.Contains(url));
+            if (probe is not null)
+                return probe;
 
             var json = DownloadInfo(url);
-            if (json is not null)
-                _json.Add(url, json);
 
-            // TODO remove
+            if (String.IsNullOrEmpty(json))
+                return null;
+
+            var info = Video.ParseJson(json);
+
+            var similar = _cache.Select((video, idx) => (video, idx))
+                .Where(v => v.video.Id == info.Id)
+                .ToArray();
+
+            Video video;
+            if (similar.Length != 0)
+            {
+                if (similar.Length > 1)
+                    throw new YtCacheException($"Cache has more than one copy of the video {info.Id}");
+
+                (video, int idx) = similar.FirstOrDefault();
+                video = new Video(json, info, [.. video.AvailableURLs, url]);
+
+                _cache[idx] = video;
+            }
+            else
+            {
+                video = new Video(json, info, url);
+                _cache.Add(video);
+            }    
+
             Save();
-            return json;
-        }
 
-        public VideoInfo? GetInfo(string url)
-        {
-            var json = GetPureJson(url);
-            return json is not null ? JsonConvert.DeserializeObject<VideoInfo>(json) : null;
+            return video;
         }
 
         private static string? DownloadInfo(string url)

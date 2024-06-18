@@ -50,8 +50,8 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <controls:YTVideoControl 
-                        Margin="8"
-                        DataContext="{Binding}"/>
+                            Margin="8"
+                            DataContext="{Binding}"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

@@ -5,35 +5,34 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:kc_yt_downloader.GUI.View.Controls"
+             xmlns:viewmodel="clr-namespace:kc_yt_downloader.GUI.ViewModel" d:DataContext="{d:DesignInstance Type=viewmodel:TimeRangeViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <StackPanel
-        Margin="12"
         d:Width="300"
         d:HorizontalAlignment="Center" VerticalAlignment="Center">
 
-        <Grid
-            Margin="8">
+        <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
             <ToggleButton 
+                IsChecked="{Binding FullVideo, Mode=TwoWay}"
                 Style="{StaticResource MaterialDesignSwitchLightToggleButton}" />
 
             <TextBlock 
                 Margin="12 0"
                 VerticalAlignment="Center"
-                TextAlignment="Left"
+                TextAlignment="Left"                
                 Style="{StaticResource MaterialDesignLabelLargeTextBlock}"
                 Grid.Column="1"
                 Text="Full video"/>
         </Grid>
-
         
-        
-        <Grid>
+        <Grid
+            Margin="0 12 0 0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
@@ -41,18 +40,21 @@
 
             <TextBox 
                 Grid.Column="0"
-                Margin="8"
-                materialDesign:HintAssist.Background="White"
+                Margin="0 0 4 0"
+                IsEnabled="{Binding CanEdit}"
                 materialDesign:HintAssist.Hint="From"
+                materialDesign:HintAssist.HelperText="Format: hh:mm:ss.ff"
+                Text="{Binding From}"
                 Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
 
             <TextBox 
                 Grid.Column="1"
-                Margin="8"
-                materialDesign:HintAssist.Background="White"
+                Margin="4 0 0 0"
+                IsEnabled="{Binding CanEdit}"
                 materialDesign:HintAssist.Hint="To"
+                materialDesign:HintAssist.HelperText="Format: hh:mm:ss.ff"
+                Text="{Binding To}"
                 Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
         </Grid>
-        
     </StackPanel>
 </UserControl>

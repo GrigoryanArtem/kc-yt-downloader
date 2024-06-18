@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using kc_yt_downloader.GUI.Model;
 using kc_yt_downloader.GUI.Model.Messages;
 using kc_yt_downloader.Model;
 using NavigationMVVM;
@@ -8,8 +9,11 @@ namespace kc_yt_downloader.GUI.ViewModel
 {
     public class UrlAddingViewModel : ObservableDisposableObject
     {
-        public UrlAddingViewModel()
+        private readonly YtDlp _ytDlp;
+        public UrlAddingViewModel(YtDlp  ytDlp)
         {
+            _ytDlp = ytDlp;
+
             AddUrlCommand = new RelayCommand(async () => await OnAddUrlAsync());
         }
 
@@ -48,11 +52,7 @@ namespace kc_yt_downloader.GUI.ViewModel
             var url = Url;
             Url = String.Empty;
 
-            Task.Delay(3000).Wait();
-
-            var ytdlp = new YtDlp();
-            ytdlp.Open();
-            ytdlp.GetInfo(url);
+            _ytDlp.GetVideo(url);
 
             WeakReferenceMessenger.Default.Send(new UrlAddedMessage());
 

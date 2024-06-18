@@ -1,0 +1,50 @@
+﻿<UserControl x:Class="kc_yt_downloader.GUI.View.Controls.FileNameControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes" 
+             xmlns:local="clr-namespace:kc_yt_downloader.GUI.View.Controls" 
+             xmlns:viewmodel="clr-namespace:kc_yt_downloader.GUI.ViewModel" 
+             d:DataContext="{d:DesignInstance Type=viewmodel:FileNameControlViewModel}"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    
+    <StackPanel
+        d:Width="300"
+        d:HorizontalAlignment="Center" VerticalAlignment="Center">
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBox 
+                Grid.Column="0"
+                materialDesign:HintAssist.Hint="Working Directory"
+                Text="{Binding WorkingDirectory}"
+                IsReadOnly="True"
+                Style="{StaticResource MaterialDesignOutlinedTextBox}" />
+
+            <Button
+                Margin="12 0 0 0"                
+                VerticalAlignment="Stretch" 
+                HorizontalAlignment="Stretch"
+                Padding="12 0"
+                Style="{StaticResource MaterialDesignToolButton}"
+                Command="{Binding ChooseWorkingDirectoryCommand}"
+                Grid.Column="1">
+                
+                <materialDesign:PackIcon 
+                    Kind="Folder" />
+            </Button>
+        </Grid>
+
+        <TextBox             
+            Margin="0 8 0 0"
+            materialDesign:HintAssist.Hint="File name"
+            Text="{Binding FileName}"
+            Style="{StaticResource MaterialDesignOutlinedTextBox}" />
+    </StackPanel>
+</UserControl>

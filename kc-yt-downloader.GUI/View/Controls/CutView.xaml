@@ -9,166 +9,101 @@
              d:DataContext="{d:DesignInstance Type=viewmodel:CutViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="1080" d:DesignWidth="1920">
-    <Grid>
-        
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="auto" />
-        </Grid.RowDefinitions>
-
-
-        <ScrollViewer>
-            <StackPanel
-            
-                MaxWidth="1200"
-                Margin=" 24"
-                Grid.Row="0"            
-                Orientation="Vertical">
-
-                <TextBlock 
-                    Style="{StaticResource MaterialDesignHeadline5TextBlock}"
-                    Text="{Binding Title}" 
-                    d:Text="Long long text"/>
-
-                <GroupBox                
-                    Margin="0 12"                
-                    materialDesign:ColorZoneAssist.Background="{StaticResource MaterialDesign.Brush.Primary.Light}"
-                    materialDesign:ColorZoneAssist.Foreground="{StaticResource MaterialDesign.Brush.Primary.Light.Foreground}"
-                    materialDesign:ColorZoneAssist.Mode="Custom"
-                    Style="{StaticResource MaterialDesignCardGroupBox}"                
-                    materialDesign:ElevationAssist.Elevation="Dp1"
-                    Padding="0">
-
-                    <GroupBox.Header>
-                        <TextBlock 
-                            Margin="6"
-                            Text="Video fromats" />
-                    </GroupBox.Header>
-
-                    <ScrollViewer
-                        VerticalScrollBarVisibility="Hidden"
-                        HorizontalScrollBarVisibility="Visible">
-
-                        <ItemsControl                            
-                            Margin="12 8"
-                            ItemsSource="{Binding VideoFormats}"
-                            d:ItemsSource="{d:SampleData}">
-                            
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel
-                                        Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <local:VideoFormatControl
-                                        Margin="0 0 12 0"
-                                        Width="250"
-                                        DataContext="{Binding}"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
-                </GroupBox>
-
-                <GroupBox
-                    Margin="0 12"                
-                    materialDesign:ColorZoneAssist.Background="{StaticResource MaterialDesign.Brush.Primary.Light}"
-                    materialDesign:ColorZoneAssist.Foreground="{StaticResource MaterialDesign.Brush.Primary.Light.Foreground}"
-                    materialDesign:ColorZoneAssist.Mode="Custom"
-                    Style="{StaticResource MaterialDesignCardGroupBox}"                
-                    materialDesign:ElevationAssist.Elevation="Dp1"
-                    Padding="0">
-
-                    <GroupBox.Header>
-                        <TextBlock 
-                            Margin="6"
-                            Text="Audio fromats" />
-                    </GroupBox.Header>
-
-                    <ScrollViewer                
-                        VerticalScrollBarVisibility="Hidden"
-                        HorizontalScrollBarVisibility="Visible">
-
-                        <ItemsControl
-                            Margin="8"
-                            ItemsSource="{Binding AudioFormats}"
-                            d:ItemsSource="{d:SampleData}">
-
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel
-                                        Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <local:VideoFormatControl
-                                        Margin="0 0 12 0"
-                                        Width="250"
-                                        DataContext="{Binding}"/>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
-                </GroupBox>
-
-                <GroupBox
-                    HorizontalAlignment="Left"
-                    Margin="0 12"                
-                    materialDesign:ColorZoneAssist.Background="{StaticResource MaterialDesign.Brush.Primary.Light}"
-                    materialDesign:ColorZoneAssist.Foreground="{StaticResource MaterialDesign.Brush.Primary.Light.Foreground}"
-                    materialDesign:ColorZoneAssist.Mode="Custom"
-                    Style="{StaticResource MaterialDesignCardGroupBox}"                
-                    materialDesign:ElevationAssist.Elevation="Dp1"
-                    Padding="0">
-
-                    <GroupBox.Header>
-                        <TextBlock 
-                            Margin="6"
-                            Text="Range" />
-                    </GroupBox.Header>
-
-                    <local:TimeRangeControl 
-                        Width="300"/>
-                </GroupBox>
-            </StackPanel>
-        </ScrollViewer>
-
-        <Grid
-            Margin="24"
+    <ScrollViewer>
+        <StackPanel
             MaxWidth="1200"
-            Grid.Row="1">
+            Margin="24 0"
+            Grid.Row="0"            
+            Orientation="Vertical">
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
+            <TextBlock 
+                Style="{StaticResource MaterialDesignHeadline4TextBlock}"
+                Text="{Binding Title}" 
+                TextTrimming="CharacterEllipsis"
+                d:Text="Long long text"/>
 
-            <StackPanel 
+            <TextBlock 
+                Margin="0 24 0 0"                
+                Style="{StaticResource MaterialDesignTitleSmallTextBlock}"
+                Text="Output" />
+
+            <local:FileNameControl  
+                Margin="0 12 0 0"  
                 HorizontalAlignment="Left"
-                Grid.Column="0" >
-                
-                <Button 
-                    Padding="24 4"
-                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                    Command="{Binding BackCommand}"
-                    Content="BACK" />
-            </StackPanel>
+                DataContext="{Binding FileNameControl}"
+                Width="350"/>
 
-            <StackPanel 
-                HorizontalAlignment="Right"
-                Grid.Column="1" >   
+            <TextBlock 
+                Margin="0 24 0 0"                
+                Style="{StaticResource MaterialDesignTitleSmallTextBlock}"
+                Text="Time range" />
 
-                <Button 
-                    Padding="24 4"
-                    Style="{StaticResource MaterialDesignOutlinedButton}"
-                    Command="{Binding BackCommand}"
-                    Content="ADD TASK TO QUEUE" />
-            </StackPanel>
-        </Grid>
-    </Grid>
+            <local:TimeRangeControl 
+                Margin="0 12 0 0"  
+                HorizontalAlignment="Left"
+                DataContext="{Binding TimeRange}"
+                Width="350"/>
+
+            <TextBlock 
+                Margin="0 24 0 0"                
+                Style="{StaticResource MaterialDesignTitleSmallTextBlock}"
+                Text="Convert" />
+
+            <local:RecodeControl 
+                Margin="0 12 0 0" 
+                HorizontalAlignment="Left"
+                Width="350"
+                DataContext="{Binding Recode}"/>
+
+            <TextBlock 
+                Margin="0 24 0 0"                
+                Style="{StaticResource MaterialDesignTitleSmallTextBlock}"
+                Text="Video formats" />
+
+            <local:VideFormatSelectorControl
+                Margin="0 10 0 0"
+                DataContext="{Binding VideoFormatsSelector}" />
+
+            <TextBlock 
+                Margin="0 24 0 0"                
+                Style="{StaticResource MaterialDesignTitleSmallTextBlock}"
+                Text="Audio formats" />
+
+            <local:VideFormatSelectorControl
+                Margin="0 10 0 0"
+                DataContext="{Binding AudioFormatsSelector}" />
+
+            <Grid
+                    Margin="24"
+                    Grid.Row="1">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel 
+                        HorizontalAlignment="Left"
+                        Grid.Column="0" >
+
+                    <Button 
+                            Padding="24 4"
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Command="{Binding BackCommand}"
+                            Content="BACK" />
+                </StackPanel>
+
+                <StackPanel 
+                        HorizontalAlignment="Right"
+                        Grid.Column="1" >
+
+                    <Button 
+                            Padding="24 4"
+                            Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Command="{Binding AddToQueueCommand}"
+                            Content="ADD TASK TO QUEUE" />
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

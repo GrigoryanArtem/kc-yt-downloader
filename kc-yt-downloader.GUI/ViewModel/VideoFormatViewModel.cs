@@ -7,7 +7,7 @@ namespace kc_yt_downloader.GUI.ViewModel
     {
         static readonly string[] SIZE_SUFFIXES = [ "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" ];
 
-        private VideoFormat _format;
+        private readonly VideoFormat _format;
 
         public VideoFormatViewModel(VideoFormat format)
         {
@@ -17,6 +17,7 @@ namespace kc_yt_downloader.GUI.ViewModel
 
         public KeyValuePair<string, string>[] DataTable { get; }
 
+        public string Id => _format.FormatId;
         public string Format => _format.Format;
 
         private bool _isSelected;
