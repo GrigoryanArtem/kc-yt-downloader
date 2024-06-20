@@ -21,12 +21,15 @@ namespace kc_yt_downloader.GUI.ViewModel
             _ytDlp.Open();
 
             UrlAddingViewModel = new(_ytDlp);
+
             WeakReferenceMessenger.Default.Register<UrlAddedMessage>(this, UpdateVideos);
+            WeakReferenceMessenger.Default.Register<AddTaskMessage>(this, UpdateTasks);
 
             _cutNavigation = new ParameterNavigationService<CutViewModelParameters, CutViewModel>(store, cvp => new CutViewModel(cvp));
-            _backNavigation = new NavigationService<ObservableDisposableObject>(store, () => this);
+            _backNavigation = new NavigationService<ObservableDisposableObject>(store, () => this);            
 
             UpdateVideos(null, null);
+            UpdateTasks(null, null);
         }
 
         private YTVideoViewModel[] _videos;
@@ -36,12 +39,32 @@ namespace kc_yt_downloader.GUI.ViewModel
             set => SetProperty(ref _videos, value);
         }
 
+        private CutTaskViewModel[] _tasks;
+        public CutTaskViewModel[] Tasks
+        {
+            get => _tasks;
+            set => SetProperty(ref _tasks, value);
+        }
+
         public UrlAddingViewModel UrlAddingViewModel { get; }
+
+        private void UpdateTasks(object sender, AddTaskMessage message)
+        {
+            if (message is not null)
+            {
+                _ytDlp.AddTask(message.Task);
+            }
+
+            Tasks = _ytDlp.GetCachedTasks()
+                .Select(task => new CutTaskViewModel(task, _ytDlp))
+                .OrderByDescending(video => video.Source.Created)
+                .ToArray();
+        }
 
         private void UpdateVideos(object sender, UrlAddedMessage message)
         {
             Videos = _ytDlp.GetCachedData()
-                .Select(video => new YTVideoViewModel(video, _cutNavigation, _backNavigation))
+                .Select(video => new YTVideoViewModel(video, _cutNavigation, _backNavigation, _backNavigation))
                 .OrderByDescending(video => video.UploadDate)
                 .ToArray();
         }

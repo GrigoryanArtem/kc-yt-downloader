@@ -37,6 +37,6 @@ namespace kc_yt_downloader.GUI.ViewModel
         }
 
         public string GetFullPath()
-            => Path.Combine(WorkingDirectory, _fileName);
+            => String.IsNullOrWhiteSpace(WorkingDirectory) ? _fileName : Path.Combine(WorkingDirectory, _fileName);
     }
 }

@@ -6,8 +6,8 @@
              xmlns:controls="clr-namespace:kc_yt_downloader.GUI.View.Controls" 
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:viewmodel="clr-namespace:kc_yt_downloader.GUI.ViewModel" 
-             d:DataContext="{d:DesignInstance Type=viewmodel:MainWindowViewModel}"
-             xmlns:local="clr-namespace:kc_yt_downloader.GUI.View.Controls"
+             d:DataContext="{d:DesignInstance Type=viewmodel:DashboardViewModel}"
+             xmlns:local="clr-namespace:kc_yt_downloader.GUI.View.Controls" xmlns:base="clr-namespace:kc_yt_downloader.GUI.View.Controls.Base"
              mc:Ignorable="d" 
              d:DesignHeight="1080" d:DesignWidth="1920">
     <Grid>
@@ -19,42 +19,75 @@
         </Grid.RowDefinitions>
 
         <controls:UrlAddingControl 
-        Grid.Row="0" 
-        Margin="24"
-        MaxWidth="800"
-        DataContext="{Binding UrlAddingViewModel}"/>
+            Grid.Row="0" 
+            Margin="24"
+            MaxWidth="800"
+            DataContext="{Binding UrlAddingViewModel}"/>
 
-        <Rectangle 
-        Grid.Row="2"
-        Height="1"
-        Fill="{StaticResource MaterialDesignDarkSeparatorBackground}"
-        MaxWidth="1300"/>
+        <Border
+            Grid.Row="1" 
+            Height="270"
+                
+            BorderThickness="0 1" 
+            BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}">
+
+            <base:SmartScrollViewer
+                VerticalScrollBarVisibility="Hidden"
+                HorizontalScrollBarVisibility="Visible"                        
+                >   
+
+                <ItemsControl          
+                    HorizontalAlignment="Center"
+                    ItemsSource="{Binding Tasks}"
+                    d:ItemsSource="{d:SampleData}">
+
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <controls:CutTaskControl 
+                                Margin="8 0"
+                                DataContext="{Binding}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </base:SmartScrollViewer>
+        </Border>
 
         <ScrollViewer 
-        Grid.Row="3"
-        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-        VerticalScrollBarVisibility="Visible">
+            Grid.Row="3"
+            HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+            VerticalScrollBarVisibility="Visible">
 
-            <ItemsControl
-            Margin="24"
-            MaxWidth="1200"
-            ItemsSource="{Binding Videos}"
-            d:ItemsSource="{d:SampleData}">
+            <StackPanel                
+                Margin="24"
+                MaxWidth="1500"
+                HorizontalAlignment="Center">
 
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
+                <ItemsControl
+                    Margin="12 8"
+                    ItemsSource="{Binding Videos}"
+                    d:ItemsSource="{d:SampleData}">
 
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <controls:YTVideoControl 
-                            Margin="8"
-                            DataContext="{Binding}"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <controls:YTVideoControl 
+                                Margin="8"
+                                DataContext="{Binding}"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
         </ScrollViewer>
     </Grid>
 </UserControl>

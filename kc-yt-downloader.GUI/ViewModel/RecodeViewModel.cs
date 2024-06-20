@@ -1,23 +1,16 @@
-﻿using NavigationMVVM;
+﻿using kc_yt_downloader.Model;
+using NavigationMVVM;
 
 namespace kc_yt_downloader.GUI.ViewModel
 {
     public class RecodeViewModel : ObservableDisposableObject
     {
-        private readonly static string[] FORMATS = 
-        [
-            "avi", "flv", "gif", "mkv", "mov", 
-            "mp4", "webm", "aac", "aiff", "alac", 
-            "flac", "m4a", "mka", "mp3", "ogg", 
-            "opus", "vorbis", "wav"
-        ];
-
         public RecodeViewModel()
         {
             SelectedFormat = Formats.FirstOrDefault();
         }
 
-        public string[] Formats => FORMATS;
+        public string[] Formats => Recode.FORMATS;
 
         private bool _needRecode;
         public bool NeedRecode
@@ -33,7 +26,7 @@ namespace kc_yt_downloader.GUI.ViewModel
             set => SetProperty(ref _selectedFormat, value); 
         }
 
-        public string ToArgs()
-            => NeedRecode ? $" --recode-video {SelectedFormat}" : String.Empty;
+        public Recode? GetRecode()
+            => NeedRecode && SelectedFormat is not null ? new Recode() { Format = SelectedFormat } : null;
     }
 }

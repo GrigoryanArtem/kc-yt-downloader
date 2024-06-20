@@ -1,4 +1,5 @@
-﻿using NavigationMVVM;
+﻿using kc_yt_downloader.Model;
+using NavigationMVVM;
 
 namespace kc_yt_downloader.GUI.ViewModel
 {
@@ -37,7 +38,7 @@ namespace kc_yt_downloader.GUI.ViewModel
             set => SetProperty(ref _to, value);
         }
 
-        public string ToArgs()
-            => FullVideo ? String.Empty : $" --external-downloader ffmpeg --external-downloader-args \"ffmpeg_i:-ss {From} -to {To}\"";
+        public TimeRange? GetTimeRange()
+            => FullVideo ? null : new() { From = From, To = To };
     }
 }

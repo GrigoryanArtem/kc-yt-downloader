@@ -6,43 +6,60 @@ namespace kc_yt_downloader.Model
 {
     public class YtDlp
     {
-        private const string CACHE_FILEPATH = "cache.json";
+        private const string VIDEOS_CACHE_FILEPATH = "videos.json";
+        private const string TASKS_CACHE_FILEPATH = "tasks.json";
 
-        private List<Video> _cache = [];
-        private readonly string _cachePath;
+        private List<Video> _videoCache = [];
+        private List<CutVideoTask> _tasksCache = [];
+
+        private readonly string _videoCachePath;
+        private readonly string _tasksCachePath;
 
         public YtDlp(string cacheDirectory)
         {
-            _cachePath = String.IsNullOrEmpty(cacheDirectory) ? CACHE_FILEPATH 
-                : Path.Combine(cacheDirectory, CACHE_FILEPATH);
+            _videoCachePath = String.IsNullOrEmpty(cacheDirectory) ? VIDEOS_CACHE_FILEPATH
+                : Path.Combine(cacheDirectory, VIDEOS_CACHE_FILEPATH);
+
+            _tasksCachePath = String.IsNullOrEmpty(cacheDirectory) ? TASKS_CACHE_FILEPATH
+                : Path.Combine(cacheDirectory, TASKS_CACHE_FILEPATH);
         }
 
         public void Open()
         {
-            var dir = Path.GetDirectoryName(_cachePath);
+            var dir = Path.GetDirectoryName(_videoCachePath);
 
             if(!String.IsNullOrWhiteSpace(dir))
                 Directory.CreateDirectory(dir);
             
-            if (!File.Exists(_cachePath))
-                return;
+            if (File.Exists(_videoCachePath))
+                _videoCache = JsonConvert.DeserializeObject<List<Video>>(File.ReadAllText(_videoCachePath));
 
-            var json = File.ReadAllText(_cachePath);
-            _cache = JsonConvert.DeserializeObject<List<Video>>(json);
+            if (File.Exists(_tasksCachePath))
+                _tasksCache = JsonConvert.DeserializeObject<List<CutVideoTask>>(File.ReadAllText(_tasksCachePath));
         }
 
         public void Save()
         {
-            var json = JsonConvert.SerializeObject(_cache, Formatting.Indented);
-            File.WriteAllText(_cachePath, json);
+            var json = JsonConvert.SerializeObject(_videoCache, Formatting.Indented);
+            File.WriteAllText(_videoCachePath, json);
+
+            json = JsonConvert.SerializeObject(_tasksCache, Formatting.Indented);
+            File.WriteAllText(_tasksCachePath, json);
         }
 
+        public CutVideoTask[] GetCachedTasks()
+            => [.. _tasksCache];
         public Video[] GetCachedData()
-            => [.. _cache];
+            => [.. _videoCache];
 
-        public Video? GetVideo(string url)
+
+
+        public Video? GetVideoById(string id)
+            => _videoCache.SingleOrDefault(v => v.Id == id);
+
+        public Video? GetVideoByUrl(string url)
         {
-            var probe = _cache.SingleOrDefault(v => v.AvailableURLs.Contains(url));
+            var probe = _videoCache.SingleOrDefault(v => v.AvailableURLs.Contains(url));
             if (probe is not null)
                 return probe;
 
@@ -53,7 +70,7 @@ namespace kc_yt_downloader.Model
 
             var info = Video.ParseJson(json);
 
-            var similar = _cache.Select((video, idx) => (video, idx))
+            var similar = _videoCache.Select((video, idx) => (video, idx))
                 .Where(v => v.video.Id == info.Id)
                 .ToArray();
 
@@ -66,17 +83,42 @@ namespace kc_yt_downloader.Model
                 (video, int idx) = similar.FirstOrDefault();
                 video = new Video(json, info, [.. video.AvailableURLs, url]);
 
-                _cache[idx] = video;
+                _videoCache[idx] = video;
             }
             else
             {
                 video = new Video(json, info, url);
-                _cache.Add(video);
+                _videoCache.Add(video);
             }    
 
             Save();
 
             return video;
+        }
+
+        public void AddTask(CutVideoTask task)
+        {
+            var id = _tasksCache.Count + 1;
+            _tasksCache.Add(task with { Id = id });
+
+            Save();
+        }
+        
+        public Process RunTask(int id)
+        {
+            var task = _tasksCache.SingleOrDefault(t => t.Id == id);
+
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "yt-dlp",
+                Arguments = task.ToArgs(),
+                UseShellExecute = false,
+                RedirectStandardError = true,
+                CreateNoWindow = false,
+                WindowStyle = ProcessWindowStyle.Hidden,
+            };
+
+            return new Process { StartInfo = startInfo };
         }
 
         private static string? DownloadInfo(string url)

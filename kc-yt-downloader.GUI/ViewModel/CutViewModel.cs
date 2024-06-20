@@ -1,9 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using kc_yt_downloader.GUI.Model;
+using kc_yt_downloader.GUI.Model.Messages;
 using kc_yt_downloader.Model;
 using NavigationMVVM;
 using NavigationMVVM.Commands;
-using System.Windows;
 using System.Windows.Input;
 
 namespace kc_yt_downloader.GUI.ViewModel
@@ -14,10 +15,12 @@ namespace kc_yt_downloader.GUI.ViewModel
         private const string NONE = "none";
 
         private readonly VideoInfo _info;
+        private readonly CutViewModelParameters _parameters;
 
         public CutViewModel(CutViewModelParameters parameters)
         {
-            _info = parameters.VideoInfo;
+            _parameters = parameters;
+            _info = _parameters.VideoInfo;
 
             var formats = _info.FormatId.Split("+", StringSplitOptions.RemoveEmptyEntries);
             var (vf, af) = (formats[0], formats[1]);
@@ -37,7 +40,7 @@ namespace kc_yt_downloader.GUI.ViewModel
 
             TimeRange = new(_info.DurationString);
 
-            BackCommand = new NavigateCommand(parameters.BackNavigation);
+            BackCommand = new NavigateCommand(_parameters.BackNavigation);
             AddToQueueCommand = new RelayCommand(OnAddToQueueCommand);
         }
 
@@ -55,9 +58,27 @@ namespace kc_yt_downloader.GUI.ViewModel
 
         private void OnAddToQueueCommand()
         {
-            var args = $"-f \"{VideoFormatsSelector.SelectedFormat.Id}+{AudioFormatsSelector.SelectedFormat.Id}\"{TimeRange.ToArgs()}{Recode.ToArgs()}" +
-                    $" \"https://www.youtube.com/live/NjbOiUBf938\" -o {FileNameControl.GetFullPath()}";
-            MessageBox.Show(args);
+            var task = new CutVideoTask()
+            {
+                Name = _info.Title,
+                Created = DateTime.Now,
+
+                VideoId = _info.Id,
+                URL = _info.WebPageUrl,
+                FilePath = FileNameControl.GetFullPath(),
+
+                TimeRange = TimeRange?.GetTimeRange(),
+                Recode = Recode?.GetRecode(),
+
+                VideoFormatId = VideoFormatsSelector.SelectedFormat?.Id,
+                AudioFormatId = AudioFormatsSelector.SelectedFormat?.Id,
+
+                Status = VideoTaskStatus.Waiting
+            };
+
+
+            WeakReferenceMessenger.Default.Send(new AddTaskMessage() { Task = task });
+            _parameters.DashboardNavigation.Navigate();
         }
     }
 }

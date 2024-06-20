@@ -52,7 +52,7 @@ namespace kc_yt_downloader.GUI.ViewModel
             var url = Url;
             Url = String.Empty;
 
-            _ytDlp.GetVideo(url);
+            _ytDlp.GetVideoByUrl(url);
 
             WeakReferenceMessenger.Default.Send(new UrlAddedMessage());
 

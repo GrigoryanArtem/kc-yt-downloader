@@ -11,7 +11,7 @@
         mc:Ignorable="d"
         Style="{StaticResource MaterialDesignWindow}"
         Title="kc-yt-downloader" 
-        MinWidth="850" MinHeight="500" 
+        MinWidth="850" MinHeight="550" 
         Width="1280" Height="720"
         d:Width="1920" d:Height="1080">
     <Grid>

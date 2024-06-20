@@ -11,7 +11,8 @@ namespace kc_yt_downloader.GUI.ViewModel
 {
     public class YTVideoViewModel : ObservableDisposableObject
     {
-        public YTVideoViewModel(Video video, ParameterNavigationService<CutViewModelParameters, CutViewModel> cutNavigation, NavigationService<ObservableDisposableObject> backNavigation)
+        public YTVideoViewModel(Video video, ParameterNavigationService<CutViewModelParameters, CutViewModel> cutNavigation, 
+            NavigationService<ObservableDisposableObject> backNavigation, NavigationService<ObservableDisposableObject> dashboardNavigation)
         {
             Video = video;
             var videoInfo = Video?.Info;
@@ -25,7 +26,13 @@ namespace kc_yt_downloader.GUI.ViewModel
             if (videoInfo?.UploadDate is not null)
                 UploadDate = DateTime.ParseExact(videoInfo?.UploadDate, "yyyyMMdd", CultureInfo.InvariantCulture);
 
-            CutCommand = new RelayCommand(() => cutNavigation.Navigate(new() { VideoInfo = videoInfo, BackNavigation = backNavigation }));
+            CutCommand = new RelayCommand(() => cutNavigation.Navigate(new() 
+            { 
+                VideoInfo = videoInfo, 
+                BackNavigation = backNavigation,
+                DashboardNavigation = dashboardNavigation
+            }));
+
             OpenCommand = new RelayCommand(OnOpen);
         }
 
