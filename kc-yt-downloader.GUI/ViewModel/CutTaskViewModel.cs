@@ -17,7 +17,7 @@ namespace kc_yt_downloader.GUI.ViewModel
 
         private YtDlp _ytDlp;
         private readonly Video _video;
-        private readonly int _totalFrames;
+        private readonly TimeSpan _totalDuration;
 
         private readonly YtDlpStatusViewModel _ytDlpStatus;
         private readonly string _logsDirectory;
@@ -25,6 +25,7 @@ namespace kc_yt_downloader.GUI.ViewModel
         private readonly string _outLogFileName;
 
         private bool _canShowStatus = false;
+        
 
         public CutTaskViewModel(CutVideoTask task, YtDlp ytDlp)
         {
@@ -36,17 +37,28 @@ namespace kc_yt_downloader.GUI.ViewModel
             _video = _ytDlp.GetVideoById(task.VideoId);
             var format = _video.Info.Formats.SingleOrDefault(f => f.FormatId == task.VideoFormatId);
 
-            var duration = task.TimeRange?.GetDuration() ?? _video.Info.Duration;
-
-            _totalFrames = (int)(duration * format.Fps);
+            _totalDuration = TimeSpan.FromSeconds(task.TimeRange?.GetDuration() ?? _video.Info.Duration);
             _logsDirectory = Path.Combine(YtConfig.Global.CacheDirectory, LOGS_DIRECTORY);
 
             _errLogFileName = Path.Combine(_logsDirectory, $"{task.Id}.err.log.txt");
             _outLogFileName = Path.Combine(_logsDirectory, $"{task.Id}.out.log.txt");
 
+            DonePercent = task.Status == VideoTaskStatus.Completed ? 100 : 0;
+
             Status = new SimpleStatusViewModel(task.Status);
-            RunCommand = new RelayCommand(async () => await OnRun());
+            RunCommand = new RelayCommand(async () => await OnRun(), () => !IsRunning);
             OpenDirectoryCommand = new RelayCommand(OnOpenDirectory);
+        }
+
+        private bool _isRunning = false;
+        private bool IsRunning
+        {
+            get => _isRunning;
+            set
+            {
+                SetProperty(ref _isRunning, value);
+                RunCommand.NotifyCanExecuteChanged();
+            }
         }
 
         private double _donePercent;
@@ -77,48 +89,36 @@ namespace kc_yt_downloader.GUI.ViewModel
             private set => SetProperty(ref _status, value); 
         }        
 
-        public ICommand RunCommand { get; }
+        public RelayCommand RunCommand { get; }
         public ICommand OpenDirectoryCommand { get; }
-
+        
         private async Task OnRun()
         {
+            IsRunning = true;
+
             Directory.CreateDirectory(_logsDirectory);
-            await OnUpdate();            
+            await OnUpdate();
+
+            IsRunning = false;
         }
 
-        private Regex STATUS_REGEX =new(@"frame=\s*(?<frame>.*?)\s*fps=\s*(?<fps>.*?)\s*q=\s*(?<q>.*?)\s*size=\s*(?<size>.*?)\s*time=\s*(?<time>.*?)\s*bitrate=\s*(?<bitrate>.*?)\s*speed=\s*(?<speed>.*?)\s", RegexOptions.Compiled);
         private void UpdateStatus(string str)
         {
             if (str is null)
                 return;
 
-            var match = STATUS_REGEX.Match(str);
-            File.AppendAllText(_errLogFileName, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.ffff} | ERR | {str}" + Environment.NewLine);
-
-            if (!match.Success)
-                return;
-
-            if (!_canShowStatus)
+            if (!_ytDlpStatus.TryUpdate(str))
+            {
+                File.AppendAllText(_errLogFileName, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.ffff} | ERR | {str}" + Environment.NewLine);
+            }
+            else if (!_canShowStatus)
             {
                 Status = _ytDlpStatus;
                 _canShowStatus = true;
             }
 
-            var speed = match.Groups["speed"].Value;
-            var bitRate = match.Groups["bitrate"].Value;
-            var size = match.Groups["size"].Value;
-            var time = match.Groups["time"].Value;
-
-            var ts = TimeSpan.Parse(time);
-
-            _ytDlpStatus.Frame = match.Groups["frame"].Value;
-            _ytDlpStatus.FPS = match.Groups["fps"].Value;
-            _ytDlpStatus.Size = size.Length > 2 && size[^2..] == "kB" ? size[..^2] : size;
-            _ytDlpStatus.Time = ts.ToString(@"hh\:mm\:ss");
-            _ytDlpStatus.BitRate = bitRate.Length > 7 && bitRate[^7..] == "kbits/s" ? bitRate[..^7] : bitRate;
-            _ytDlpStatus.Speed = speed.Length > 1 && speed[^1..] == "x" ? speed[..^1] : speed;
-
-            DonePercent = (double) Convert.ToInt32(_ytDlpStatus.Frame) / _totalFrames * 100.0;
+            DonePercent = _ytDlpStatus.Time.HasValue ? 
+                _ytDlpStatus.Time.Value.TotalSeconds / _totalDuration.TotalSeconds * 100.0 : 0;
         }
 
 

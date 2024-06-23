@@ -1,9 +1,22 @@
-﻿using NavigationMVVM;
+﻿using kc_yt_downloader.GUI.Model;
+using NavigationMVVM;
 
 namespace kc_yt_downloader.GUI.ViewModel
 {
     public class YtDlpStatusViewModel : ObservableDisposableObject
     {
+        private Dictionary<string, Action<string>> _updateFunctions;
+        public YtDlpStatusViewModel()
+        {
+            _updateFunctions = new()
+            {
+                { "out_time", s => Time = TimeSpan.Parse(s) },
+                { "total_size", s => (Size, SizeSuffix) = SizeConverter.FormatSize(Convert.ToInt64(s)) },
+                { "speed", s => Speed = s.EndsWith("x") ? s[..^1] : s },
+                { "bitrate", s => BitRate = s.EndsWith("kbits/s") ? s[..^7] : s },
+            };
+        }
+
         private string _frame;
         public string Frame 
         {
@@ -11,8 +24,8 @@ namespace kc_yt_downloader.GUI.ViewModel
             set => SetProperty(ref _frame, value);
         }
 
-        private string _time;
-        public string Time
+        private TimeSpan? _time;
+        public TimeSpan? Time
         {
             get => _time;
             set => SetProperty(ref _time, value);
@@ -25,8 +38,15 @@ namespace kc_yt_downloader.GUI.ViewModel
             set => SetProperty(ref _fps, value);
         }
 
-        private string _size;
-        public string Size
+        private string _sizeSuffix;
+        public string SizeSuffix
+        {
+            get => _sizeSuffix;
+            set => SetProperty(ref _sizeSuffix, value);
+        }
+
+        private decimal _size;
+        public decimal Size
         {
             get => _size;
             set => SetProperty(ref _size, value);
@@ -44,6 +64,24 @@ namespace kc_yt_downloader.GUI.ViewModel
         {
             get => _bitRate;
             set => SetProperty(ref _bitRate, value);
+        }
+
+        public bool TryUpdate(string propertString)
+        {
+            var eqIndex = propertString.IndexOf('=');
+
+            if (eqIndex == -1)
+                return false;
+
+            var valIndex = eqIndex + 1;
+            var functions = _updateFunctions
+                .Where(uf => uf.Key.Length == eqIndex && propertString.StartsWith(uf.Key))
+                .ToArray();
+
+            foreach(var (_, function) in functions)
+                function(propertString[valIndex..]);
+            
+            return functions.Length != 0;
         }
     }
 }

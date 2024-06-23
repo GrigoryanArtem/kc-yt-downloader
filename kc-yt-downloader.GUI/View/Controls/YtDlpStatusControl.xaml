@@ -6,12 +6,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:kc_yt_downloader.GUI.View.Controls" xmlns:viewmodel="clr-namespace:kc_yt_downloader.GUI.ViewModel" d:DataContext="{d:DesignInstance Type=viewmodel:YtDlpStatusViewModel}"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid        
+             d:DesignHeight="450" d:DesignWidth="300">
+    <WrapPanel        
         HorizontalAlignment="Center"
         VerticalAlignment="Center">
 
-        <Grid.Resources>
+        <WrapPanel.Resources>
             <ResourceDictionary>
                 <Style
                     TargetType="TextBox"
@@ -30,6 +30,10 @@
                         Value="8 10" />
 
                     <Setter
+                        Property="Margin"
+                        Value="4" />
+
+                    <Setter
                         Property="TextAlignment"
                         Value="Center" />
 
@@ -44,70 +48,61 @@
                     <Setter
                         Property="IsReadOnly"
                         Value="True" />
+
+                    <Setter
+                        Property="Visibility"
+                        Value="Visible" />
+
+                    <Style.Triggers>
+                        <Trigger
+                            Property="Text"
+                            Value="">
+
+                            <Setter
+                                Property="Visibility"
+                                Value="Collapsed" />
+                        </Trigger>
+                    </Style.Triggers>
                 </Style>
             </ResourceDictionary>
-        </Grid.Resources>
+        </WrapPanel.Resources>
         
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        
-        <StackPanel
-            Grid.Row="0"
-            Orientation="Horizontal">
+        <TextBox 
+            materialDesign:HintAssist.Background="White"
+            materialDesign:HintAssist.Hint="Frame"
+            d:Text="123"
+            Text="{Binding Frame}"/>
 
-            <TextBox 
-                Margin="0 0 4 0"
-                materialDesign:HintAssist.Background="White"
-                materialDesign:HintAssist.Hint="Frame"
-                d:Text="2710"
-                Text="{Binding Frame}"/>
+        <TextBox 
+            materialDesign:HintAssist.Background="White"
+            materialDesign:HintAssist.Hint="Time"
+            d:Text="00:01:46"
+            Text="{Binding Time, StringFormat=hh\\:mm\\:ss}" />
 
-            <TextBox 
-                Margin="0 0 4 0"
-                materialDesign:HintAssist.Background="White"
-                materialDesign:HintAssist.Hint="Time"
-                d:Text="00:01:46"
-                Text="{Binding Time}" />
+        <TextBox 
+            materialDesign:HintAssist.Background="White"
+            materialDesign:HintAssist.Hint="FPS"
+            d:Text="64"
+            Text="{Binding FPS}" />
+            
+        <TextBox 
+            materialDesign:HintAssist.Background="White"
+            materialDesign:HintAssist.Hint="Size"                
+            materialDesign:TextFieldAssist.SuffixText="{Binding SizeSuffix}"
+            TextAlignment="Center"
+            d:Text="16127"
+            Text="{Binding Size, StringFormat=f1}" />
 
-            <TextBox 
-                Margin="0 0 0 0"
-                materialDesign:HintAssist.Background="White"
-                materialDesign:HintAssist.Hint="FPS"
-                d:Text="60"
-                Text="{Binding FPS}" />
-        </StackPanel>
+        <TextBox 
+            materialDesign:HintAssist.Background="White"
+            materialDesign:HintAssist.Hint="Speed"
+            d:Text="2.34"
+            Text="{Binding Speed}" />
 
-        <StackPanel
-            Margin="0 8 0 0"
-            Grid.Row="1"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Orientation="Horizontal">
-
-            <TextBox 
-                Margin="0 0 4 0"
-                materialDesign:HintAssist.Background="White"
-                materialDesign:HintAssist.Hint="Size"                
-                materialDesign:TextFieldAssist.SuffixText="kB"
-                TextAlignment="Center"
-                d:Text="16127"
-                Text="{Binding Size}" />
-
-            <TextBox 
-                Margin="0 0 4 0"
-                materialDesign:HintAssist.Background="White"
-                materialDesign:HintAssist.Hint="Speed"
-                d:Text="2.34"
-                Text="{Binding Speed}" />
-
-            <TextBox 
-                Margin="0 0 0 0"
-                materialDesign:HintAssist.Background="White"
-                materialDesign:HintAssist.Hint="Bitrate"
-                d:Text="1246.4"
-                Text="{Binding BitRate}"/>
-        </StackPanel>
-    </Grid>
+        <TextBox 
+            materialDesign:HintAssist.Background="White"
+            materialDesign:HintAssist.Hint="Bitrate"
+            d:Text="1246.4"
+            Text="{Binding BitRate}"/>
+    </WrapPanel>
 </UserControl>
