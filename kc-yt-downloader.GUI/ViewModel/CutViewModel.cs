@@ -73,7 +73,7 @@ namespace kc_yt_downloader.GUI.ViewModel
                 VideoFormatId = VideoFormatsSelector.SelectedFormat?.Id,
                 AudioFormatId = AudioFormatsSelector.SelectedFormat?.Id,
 
-                Status = VideoTaskStatus.Waiting
+                Status = VideoTaskStatus.Prepared
             };
 
             YtConfig.Global.Save();

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using kc_yt_downloader.GUI.Model;
 using kc_yt_downloader.Model;
 using NavigationMVVM;
 using System.Diagnostics;
@@ -12,11 +13,18 @@ namespace kc_yt_downloader.GUI.ViewModel
 {
     public class CutTaskViewModel : ObservableDisposableObject
     {
+        private const string LOGS_DIRECTORY = "logs";
+
         private YtDlp _ytDlp;
         private readonly Video _video;
         private readonly int _totalFrames;
 
         private readonly YtDlpStatusViewModel _ytDlpStatus;
+        private readonly string _logsDirectory;
+        private readonly string _errLogFileName;
+        private readonly string _outLogFileName;
+
+        private bool _canShowStatus = false;
 
         public CutTaskViewModel(CutVideoTask task, YtDlp ytDlp)
         {
@@ -31,7 +39,10 @@ namespace kc_yt_downloader.GUI.ViewModel
             var duration = task.TimeRange?.GetDuration() ?? _video.Info.Duration;
 
             _totalFrames = (int)(duration * format.Fps);
+            _logsDirectory = Path.Combine(YtConfig.Global.CacheDirectory, LOGS_DIRECTORY);
 
+            _errLogFileName = Path.Combine(_logsDirectory, $"{task.Id}.err.log.txt");
+            _outLogFileName = Path.Combine(_logsDirectory, $"{task.Id}.out.log.txt");
 
             Status = new SimpleStatusViewModel(task.Status);
             RunCommand = new RelayCommand(async () => await OnRun());
@@ -70,7 +81,8 @@ namespace kc_yt_downloader.GUI.ViewModel
         public ICommand OpenDirectoryCommand { get; }
 
         private async Task OnRun()
-        {            
+        {
+            Directory.CreateDirectory(_logsDirectory);
             await OnUpdate();            
         }
 
@@ -81,9 +93,16 @@ namespace kc_yt_downloader.GUI.ViewModel
                 return;
 
             var match = STATUS_REGEX.Match(str);
+            File.AppendAllText(_errLogFileName, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.ffff} | ERR | {str}" + Environment.NewLine);
 
             if (!match.Success)
                 return;
+
+            if (!_canShowStatus)
+            {
+                Status = _ytDlpStatus;
+                _canShowStatus = true;
+            }
 
             var speed = match.Groups["speed"].Value;
             var bitRate = match.Groups["bitrate"].Value;
@@ -125,11 +144,16 @@ namespace kc_yt_downloader.GUI.ViewModel
 
             try
             {
-                Status = _ytDlpStatus;
+                _canShowStatus = false;                
+                Status = new LoadingViewModel();
                 proc.Start();
 
                 proc.ErrorDataReceived += (sender, args) => UpdateStatus(args.Data);
                 proc.BeginErrorReadLine();
+
+                proc.OutputDataReceived += (sender, args) =>  File.AppendAllText(_outLogFileName, 
+                    $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.ffff} | STD | {args.Data}" + Environment.NewLine);
+                proc.BeginOutputReadLine();
 
                 await proc.WaitForExitAsync();
             }
@@ -142,14 +166,15 @@ namespace kc_yt_downloader.GUI.ViewModel
                 proc.Kill();
             }
 
-            Source = Source with 
-            { 
-                Status = VideoTaskStatus.Completed,
+            var status = proc.ExitCode == 0 ? VideoTaskStatus.Completed : VideoTaskStatus.Error;
+            Source = Source with
+            {
+                Status = status,
                 Completed = DateTime.Now
             };
 
             _ytDlp.UpdateTask(Source);
-            Status = new SimpleStatusViewModel(Source.Status);
+            Status = new SimpleStatusViewModel(status);            
         }
     }
 }

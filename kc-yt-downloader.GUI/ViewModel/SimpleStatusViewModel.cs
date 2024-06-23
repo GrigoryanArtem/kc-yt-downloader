@@ -12,7 +12,9 @@ namespace kc_yt_downloader.GUI.ViewModel
             StatusColor = status switch
             {
                 VideoTaskStatus.Completed => Brushes.Green,
-                VideoTaskStatus.Waiting => Brushes.SandyBrown,
+                VideoTaskStatus.Prepared => Brushes.SandyBrown,
+                VideoTaskStatus.Error => Brushes.DarkRed,
+
                 _ => Brushes.Black
             };
         }

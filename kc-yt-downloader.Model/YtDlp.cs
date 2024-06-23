@@ -123,7 +123,10 @@ namespace kc_yt_downloader.Model
                 FileName = "yt-dlp",
                 Arguments = task.ToArgs(),
                 UseShellExecute = false,
+
                 RedirectStandardError = true,
+                RedirectStandardOutput = true,
+
                 CreateNoWindow = false,
                 WindowStyle = ProcessWindowStyle.Hidden,
             };

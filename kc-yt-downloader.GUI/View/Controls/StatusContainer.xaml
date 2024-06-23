@@ -16,6 +16,10 @@
             <DataTemplate DataType="{x:Type viewmodel:SimpleStatusViewModel}">
                 <local:SimpleStatusControl />
             </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewmodel:LoadingViewModel}">
+                <local:LoadingControl />
+            </DataTemplate>
         </Grid.Resources>
 
         <ContentControl Content="{Binding}" />

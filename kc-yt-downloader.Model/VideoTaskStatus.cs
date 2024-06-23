@@ -2,8 +2,8 @@
 {
     public enum VideoTaskStatus
     {
-        Waiting,
-        Running,
+        Prepared,
         Completed,
+        Error,
     }
 }

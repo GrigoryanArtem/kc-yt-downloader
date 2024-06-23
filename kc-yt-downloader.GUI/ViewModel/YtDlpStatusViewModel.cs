@@ -4,8 +4,6 @@ namespace kc_yt_downloader.GUI.ViewModel
 {
     public class YtDlpStatusViewModel : ObservableDisposableObject
     {
-        
-
         private string _frame;
         public string Frame 
         {

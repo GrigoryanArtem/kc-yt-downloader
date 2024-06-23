@@ -20,13 +20,13 @@
         public string? VideoFormatId { get; init; }
         public string? AudioFormatId { get; init; }
 
-
+        
         public string ToArgs()
         {
             var timeRange = TimeRange?.ToArgs() ?? String.Empty;
             var recode = Recode?.ToArgs() ?? String.Empty;
 
-            return $"-f \"{VideoFormatId ?? "bv"}+{AudioFormatId ?? "ba"}\"{timeRange}{recode} \"{URL}\" -o {FilePath}";
+            return $"-vU -f \"{VideoFormatId ?? "bv"}+{AudioFormatId ?? "ba"}\"{timeRange}{recode} \"{URL}\" -o {FilePath}";
         }
 
     }
