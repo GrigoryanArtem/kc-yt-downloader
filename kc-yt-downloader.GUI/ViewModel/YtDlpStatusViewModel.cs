@@ -14,11 +14,14 @@ namespace kc_yt_downloader.GUI.ViewModel
                 { "total_size", s => (Size, SizeSuffix) = SizeConverter.FormatSize(Convert.ToInt64(s)) },
                 { "speed", s => Speed = s.EndsWith("x") ? s[..^1] : s },
                 { "bitrate", s => BitRate = s.EndsWith("kbits/s") ? s[..^7] : s },
+
+                { "fps", s => FPS = ParseDouble(s) },
+                { "frame", s => Frame = ParseInt(s) },
             };
         }
 
-        private string _frame;
-        public string Frame 
+        private int _frame;
+        public int Frame 
         {
             get => _frame;
             set => SetProperty(ref _frame, value);
@@ -31,8 +34,8 @@ namespace kc_yt_downloader.GUI.ViewModel
             set => SetProperty(ref _time, value);
         }
 
-        private string _fps;
-        public string FPS
+        private double _fps;
+        public double FPS
         {
             get => _fps;
             set => SetProperty(ref _fps, value);
@@ -66,22 +69,28 @@ namespace kc_yt_downloader.GUI.ViewModel
             set => SetProperty(ref _bitRate, value);
         }
 
-        public bool TryUpdate(string propertString)
+        public bool TryUpdate(string propertyString)
         {
-            var eqIndex = propertString.IndexOf('=');
+            var eqIndex = propertyString.IndexOf('=');
 
             if (eqIndex == -1)
                 return false;
 
             var valIndex = eqIndex + 1;
             var functions = _updateFunctions
-                .Where(uf => uf.Key.Length == eqIndex && propertString.StartsWith(uf.Key))
+                .Where(uf => uf.Key.Length == eqIndex && propertyString.StartsWith(uf.Key))
                 .ToArray();
 
             foreach(var (_, function) in functions)
-                function(propertString[valIndex..]);
+                function(propertyString[valIndex..]);
             
             return functions.Length != 0;
         }
+
+        private double ParseDouble(string str)
+            => Double.TryParse(str, out var d) ? d : 0d;
+
+        private int ParseInt(string str)
+            => Int32.TryParse(str, out var d) ? d : 0;
     }
 }

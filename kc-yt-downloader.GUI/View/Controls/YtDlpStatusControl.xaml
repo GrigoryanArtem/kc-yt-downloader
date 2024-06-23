@@ -83,7 +83,7 @@
             materialDesign:HintAssist.Background="White"
             materialDesign:HintAssist.Hint="FPS"
             d:Text="64"
-            Text="{Binding FPS}" />
+            Text="{Binding FPS, StringFormat=f1}" />
             
         <TextBox 
             materialDesign:HintAssist.Background="White"

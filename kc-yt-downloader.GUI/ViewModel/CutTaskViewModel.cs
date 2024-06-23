@@ -97,6 +97,13 @@ namespace kc_yt_downloader.GUI.ViewModel
             IsRunning = true;
 
             Directory.CreateDirectory(_logsDirectory);
+
+            var nl = Environment.NewLine;
+            var startLogString = $"{nl}RUN {DateTime.Now:yyyy-MM-dd HH:mm:ss}{nl}{nl}";
+
+            File.AppendAllText(_errLogFileName, startLogString);
+            File.AppendAllText(_outLogFileName, startLogString);
+
             await OnUpdate();
 
             IsRunning = false;
@@ -107,15 +114,13 @@ namespace kc_yt_downloader.GUI.ViewModel
             if (str is null)
                 return;
 
-            if (!_ytDlpStatus.TryUpdate(str))
-            {
-                File.AppendAllText(_errLogFileName, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.ffff} | ERR | {str}" + Environment.NewLine);
-            }
-            else if (!_canShowStatus)
+            if (_ytDlpStatus.TryUpdate(str) && !_canShowStatus)
             {
                 Status = _ytDlpStatus;
                 _canShowStatus = true;
             }
+
+            File.AppendAllText(_errLogFileName, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.ffff} | ERR | {str}" + Environment.NewLine);
 
             DonePercent = _ytDlpStatus.Time.HasValue ? 
                 _ytDlpStatus.Time.Value.TotalSeconds / _totalDuration.TotalSeconds * 100.0 : 0;
