@@ -67,8 +67,8 @@ namespace kc_yt_downloader.GUI.ViewModel
                 URL = _info.WebPageUrl,
                 FilePath = FileNameControl.GetFullPath(),
 
-                TimeRange = TimeRange?.GetTimeRange(),
-                Recode = Recode?.GetRecode(),
+                TimeRange = TimeRange.GetTimeRange(),
+                Recode = Recode.GetRecode(),
 
                 VideoFormatId = VideoFormatsSelector.SelectedFormat?.Id,
                 AudioFormatId = AudioFormatsSelector.SelectedFormat?.Id,
@@ -76,7 +76,7 @@ namespace kc_yt_downloader.GUI.ViewModel
                 Status = VideoTaskStatus.Waiting
             };
 
-
+            YtConfig.Global.Save();
             WeakReferenceMessenger.Default.Send(new AddTaskMessage() { Task = task });
             _parameters.DashboardNavigation.Navigate();
         }

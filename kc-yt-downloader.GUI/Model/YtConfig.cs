@@ -11,7 +11,9 @@ namespace kc_yt_downloader.GUI.Model
         private YtConfig() { }    
         public static YtConfig Global => _lazy.Value;
 
-        public string CacheDirectory { get; init; } = "data";
+        public string CacheDirectory { get; set; } = "data";
+
+        public SelectedSettings SelectedSettings { get; set; } = new();
 
         public void Save()
         {

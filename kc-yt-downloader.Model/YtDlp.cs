@@ -96,6 +96,16 @@ namespace kc_yt_downloader.Model
             return video;
         }
 
+        public void UpdateTask(CutVideoTask task)
+        {
+            var idx = _tasksCache
+                .Select((tsk, idx) => (tsk, idx))
+                .First(d => d.tsk.Id == task.Id).idx;
+
+            _tasksCache[idx] = task;
+            Save();
+        }
+
         public void AddTask(CutVideoTask task)
         {
             var id = _tasksCache.Count + 1;

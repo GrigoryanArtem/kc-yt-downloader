@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using kc_yt_downloader.GUI.Model;
 using Microsoft.Win32;
 using NavigationMVVM;
 using System.IO;
@@ -7,16 +8,17 @@ namespace kc_yt_downloader.GUI.ViewModel
 {
     public class FileNameControlViewModel : ObservableDisposableObject
     {
+        private static SelectedSettings Settings => YtConfig.Global.SelectedSettings;
+
         public FileNameControlViewModel()
         {
             ChooseWorkingDirectoryCommand = new RelayCommand(async () => await OnChooseWorkingDirectory());
         }
-
-        private string _workingDirectory;
-        public string WorkingDirectory 
+        
+        public string? WorkingDirectory 
         {
-            get => _workingDirectory;
-            set => SetProperty(ref _workingDirectory, value); 
+            get => Settings.WorkingDirectory;
+            set => SetProperty(Settings.WorkingDirectory, value, nv => Settings.WorkingDirectory = nv); 
         }
 
         private string _fileName;

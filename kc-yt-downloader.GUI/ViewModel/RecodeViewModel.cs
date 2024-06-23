@@ -1,29 +1,24 @@
-﻿using kc_yt_downloader.Model;
+﻿using kc_yt_downloader.GUI.Model;
+using kc_yt_downloader.Model;
 using NavigationMVVM;
 
 namespace kc_yt_downloader.GUI.ViewModel
 {
     public class RecodeViewModel : ObservableDisposableObject
     {
-        public RecodeViewModel()
-        {
-            SelectedFormat = Formats.FirstOrDefault();
-        }
-
+        private static SelectedSettings Settings => YtConfig.Global.SelectedSettings;
         public string[] Formats => Recode.FORMATS;
 
-        private bool _needRecode;
         public bool NeedRecode
         {
-            get => _needRecode;
-            set => SetProperty(ref _needRecode, value);
+            get => Settings.NeedRecode;
+            set => SetProperty(Settings.NeedRecode, value, nv => Settings.NeedRecode = nv);
         }
-
-        private string _selectedFormat;
+        
         public string SelectedFormat 
         {
-            get => _selectedFormat; 
-            set => SetProperty(ref _selectedFormat, value); 
+            get => Settings.RecodeFormat;
+            set => SetProperty(Settings.RecodeFormat, value, nv => Settings.RecodeFormat = nv);
         }
 
         public Recode? GetRecode()

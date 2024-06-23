@@ -1,23 +1,25 @@
-﻿using kc_yt_downloader.Model;
+﻿using kc_yt_downloader.GUI.Model;
+using kc_yt_downloader.Model;
 using NavigationMVVM;
 
 namespace kc_yt_downloader.GUI.ViewModel
 {
     public class TimeRangeViewModel : ObservableDisposableObject
     {
+        private static SelectedSettings Settings => YtConfig.Global.SelectedSettings;
+
         public TimeRangeViewModel(string duration)
         {
             From = "0";
             To = duration;
         }
 
-        private bool _fullVideo;
         public bool FullVideo
         {
-            get => _fullVideo;
+            get => Settings.FullVideo;
             set
             {
-                SetProperty(ref _fullVideo, value);
+                SetProperty(Settings.FullVideo, value, nv => Settings.FullVideo = nv);
                 OnPropertyChanged(nameof(CanEdit));
             }
         }

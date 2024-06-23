@@ -64,8 +64,8 @@ namespace kc_yt_downloader.GUI.ViewModel
         private void UpdateVideos(object sender, UrlAddedMessage message)
         {
             Videos = _ytDlp.GetCachedData()
-                .Select(video => new YTVideoViewModel(video, _cutNavigation, _backNavigation, _backNavigation))
-                .OrderByDescending(video => video.UploadDate)
+                .OrderByDescending(video => video.ParseDate)
+                .Select(video => new YTVideoViewModel(video, _cutNavigation, _backNavigation, _backNavigation))                
                 .ToArray();
         }
     }

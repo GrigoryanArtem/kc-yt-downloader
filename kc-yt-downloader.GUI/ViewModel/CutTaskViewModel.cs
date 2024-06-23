@@ -2,6 +2,7 @@
 using kc_yt_downloader.Model;
 using NavigationMVVM;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -50,8 +51,13 @@ namespace kc_yt_downloader.GUI.ViewModel
             get => _taskStatus;
             set => SetProperty(ref _taskStatus, value);
         }
-        
-        public CutVideoTask Source { get; }
+
+        private CutVideoTask _source;
+        public CutVideoTask Source 
+        { 
+            get => _source;
+            private set => SetProperty(ref _source, value);
+        }
 
         private ObservableDisposableObject _status;
         public ObservableDisposableObject Status 
@@ -79,12 +85,19 @@ namespace kc_yt_downloader.GUI.ViewModel
             if (!match.Success)
                 return;
 
+            var speed = match.Groups["speed"].Value;
+            var bitRate = match.Groups["bitrate"].Value;
+            var size = match.Groups["size"].Value;
+            var time = match.Groups["time"].Value;
+
+            var ts = TimeSpan.Parse(time);
+
             _ytDlpStatus.Frame = match.Groups["frame"].Value;
             _ytDlpStatus.FPS = match.Groups["fps"].Value;
-            _ytDlpStatus.Size = match.Groups["size"].Value;
-            _ytDlpStatus.Time = match.Groups["time"].Value;
-            _ytDlpStatus.BitRate = match.Groups["bitrate"].Value;
-            _ytDlpStatus.Speed = match.Groups["speed"].Value;
+            _ytDlpStatus.Size = size.Length > 2 && size[^2..] == "kB" ? size[..^2] : size;
+            _ytDlpStatus.Time = ts.ToString(@"hh\:mm\:ss");
+            _ytDlpStatus.BitRate = bitRate.Length > 7 && bitRate[^7..] == "kbits/s" ? bitRate[..^7] : bitRate;
+            _ytDlpStatus.Speed = speed.Length > 1 && speed[^1..] == "x" ? speed[..^1] : speed;
 
             DonePercent = (double) Convert.ToInt32(_ytDlpStatus.Frame) / _totalFrames * 100.0;
         }
@@ -129,7 +142,14 @@ namespace kc_yt_downloader.GUI.ViewModel
                 proc.Kill();
             }
 
-            Status = new SimpleStatusViewModel(VideoTaskStatus.Completed);
+            Source = Source with 
+            { 
+                Status = VideoTaskStatus.Completed,
+                Completed = DateTime.Now
+            };
+
+            _ytDlp.UpdateTask(Source);
+            Status = new SimpleStatusViewModel(Source.Status);
         }
     }
 }

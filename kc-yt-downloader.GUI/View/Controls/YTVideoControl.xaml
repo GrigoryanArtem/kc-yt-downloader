@@ -92,6 +92,7 @@
                     Orientation="Horizontal">
 
                     <Button 
+                        IsEnabled="False"
                         Margin="4"
                         Style="{StaticResource MaterialDesignOutlinedSecondaryButton}"
                         Content="{materialDesign:PackIcon Delete}"
