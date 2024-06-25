@@ -36,7 +36,8 @@
                 HorizontalScrollBarVisibility="Visible"                        
                 >   
 
-                <ItemsControl          
+                <ItemsControl   
+                    Margin="24 0"
                     HorizontalAlignment="Center"
                     ItemsSource="{Binding Tasks}"
                     d:ItemsSource="{d:SampleData}">

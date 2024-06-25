@@ -20,8 +20,8 @@ namespace kc_yt_downloader.GUI.ViewModel
             };
         }
 
-        private int _frame;
-        public int Frame 
+        private int? _frame;
+        public int? Frame 
         {
             get => _frame;
             set => SetProperty(ref _frame, value);
@@ -34,8 +34,8 @@ namespace kc_yt_downloader.GUI.ViewModel
             set => SetProperty(ref _time, value);
         }
 
-        private double _fps;
-        public double FPS
+        private double? _fps;
+        public double? FPS
         {
             get => _fps;
             set => SetProperty(ref _fps, value);
@@ -87,10 +87,10 @@ namespace kc_yt_downloader.GUI.ViewModel
             return functions.Length != 0;
         }
 
-        private double ParseDouble(string str)
-            => Double.TryParse(str, out var d) ? d : 0d;
+        private double? ParseDouble(string str)
+            => Double.TryParse(str, out var d) ? d : null;
 
-        private int ParseInt(string str)
-            => Int32.TryParse(str, out var d) ? d : 0;
+        private int? ParseInt(string str)
+            => Int32.TryParse(str, out var d) ? d : null;
     }
 }

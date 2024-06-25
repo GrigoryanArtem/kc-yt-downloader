@@ -82,6 +82,9 @@ namespace kc_yt_downloader.GUI.ViewModel
             private set => SetProperty(ref _source, value);
         }
 
+        public string? TimeRangeString 
+            => FormatTimeSpan(TimeSpan.FromSeconds(Source?.TimeRange?.GetDuration() ?? 0));
+
         private ObservableDisposableObject _status;
         public ObservableDisposableObject Status 
         {
@@ -123,7 +126,7 @@ namespace kc_yt_downloader.GUI.ViewModel
             File.AppendAllText(_errLogFileName, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.ffff} | ERR | {str}" + Environment.NewLine);
 
             DonePercent = _ytDlpStatus.Time.HasValue ? 
-                _ytDlpStatus.Time.Value.TotalSeconds / _totalDuration.TotalSeconds * 100.0 : 0;
+                (_ytDlpStatus.Time.Value.TotalSeconds / _totalDuration.TotalSeconds) * 100.0 : 0;
         }
 
 
@@ -181,5 +184,16 @@ namespace kc_yt_downloader.GUI.ViewModel
             _ytDlp.UpdateTask(Source);
             Status = new SimpleStatusViewModel(status);            
         }
+
+        public static string FormatTimeSpan(TimeSpan timeSpan) => string.Join(" ", new[] 
+        {
+            FormatPart((int)timeSpan.TotalHours, "h."),
+            FormatPart(timeSpan.Minutes, "min."),
+            FormatPart(timeSpan.Seconds, "sec.") 
+        }.Where(x => x != null));
+        
+
+        public static string? FormatPart(int quantity, string name) 
+            => quantity > 0 ? $"{quantity} {name}" : null;
     }
 }

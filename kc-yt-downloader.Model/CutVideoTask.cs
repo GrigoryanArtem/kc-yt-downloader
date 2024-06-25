@@ -26,7 +26,7 @@
             var timeRange = TimeRange?.ToArgs() ?? String.Empty;
             var recode = Recode?.ToArgs() ?? String.Empty;
 
-            return $"-vU -f \"{VideoFormatId ?? "bv"}+{AudioFormatId ?? "ba"}\"{timeRange}{recode} \"{URL}\" -o {FilePath}";
+            return $"-vU --verbose -f \"{VideoFormatId ?? "bv"}+{AudioFormatId ?? "ba"}\"{timeRange}{recode} \"{URL}\" -o \"{FilePath}\"";
         }
 
     }

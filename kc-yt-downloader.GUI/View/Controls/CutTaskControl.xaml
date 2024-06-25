@@ -34,20 +34,40 @@
                     TextTrimming="CharacterEllipsis"
                     d:Text="Long long text"/>
 
-                <TextBlock                     
-                    Style="{StaticResource MaterialDesignOverlineTextBlock}"                    
-                    TextTrimming="CharacterEllipsis">
-                    
-                    <Hyperlink
-                        Command="{Binding OpenDirectoryCommand}">
-                        <Hyperlink.Inlines>
-                            <Run 
-                                Text="{Binding Source.FilePath}" 
-                                d:Text="Long long text"/>
-                        </Hyperlink.Inlines>
-                    </Hyperlink>
-                </TextBlock>
-                
+                <StackPanel
+                    Orientation="Horizontal">
+                    <TextBlock 
+                        Style="{StaticResource MaterialDesignOverlineTextBlock}"
+                        ToolTip="{Binding Source.Created}"
+                        Text="{Binding Source.Created, StringFormat=yyyy-MM-dd}"/>
+
+                    <Rectangle 
+                        Margin="4 2"
+                        Width="1"
+                        Fill="{StaticResource MaterialDesignDarkSeparatorBackground}"/>
+
+                    <TextBlock 
+                        Style="{StaticResource MaterialDesignOverlineTextBlock}"     
+                        Text="{Binding Source.TimeRange.From, StringFormat=hh//:mm//:ss}"/>
+
+                    <Rectangle 
+                        Margin="4 2"
+                        Width="1"
+                        Fill="{StaticResource MaterialDesignDarkSeparatorBackground}"/>
+
+                    <TextBlock 
+                        Style="{StaticResource MaterialDesignOverlineTextBlock}"     
+                        Text="{Binding TimeRangeString}"/>
+
+                    <Rectangle 
+                        Margin="4 2"
+                        Width="1"
+                        Fill="{StaticResource MaterialDesignDarkSeparatorBackground}"/>
+
+                    <TextBlock 
+                        Style="{StaticResource MaterialDesignOverlineTextBlock}"     
+                        Text="{Binding Source.Recode.Format}"/>
+                </StackPanel>                
             </StackPanel>
 
             <local:StatusContainer 
@@ -71,7 +91,7 @@
                         IsEnabled="False"
                         Margin="4"
                         Style="{StaticResource MaterialDesignOutlinedSecondaryButton}"
-                        Content="{materialDesign:PackIcon Delete}"
+                        Content="{materialDesign:PackIcon DeleteOutline}"
                         ToolTip="Delete" />
                 </StackPanel>
 
@@ -79,11 +99,34 @@
                     Grid.Column="1"                    
                     Orientation="Horizontal">
 
+                    <StackPanel.Resources>
+                        <Style
+                            TargetType="Button"
+                            BasedOn="{StaticResource MaterialDesignOutlinedLightButton}">
+
+                            <Setter
+                                Property="Margin"
+                                Value="2" />
+
+                            <Setter
+                                Property="Padding"
+                                Value="10 0" />
+                        </Style>
+                    </StackPanel.Resources>
+
+                    <Button 
+                        IsEnabled="False"                        
+                        Content="{materialDesign:PackIcon Edit}"
+                        ToolTip="Edit" />
+                    
+                    <Button                         
+                        Command="{Binding OpenDirectoryCommand}"
+                        Content="{materialDesign:PackIcon FolderOpenOutline}"
+                        ToolTip="Open Directory" />
+                    
                     <Button 
                         IsEnabled="False"
-                        Margin="4"
-                        Style="{StaticResource MaterialDesignOutlinedButton}"
-                        Content="{materialDesign:PackIcon Edit}"
+                        Content="{materialDesign:PackIcon TextBoxMultipleOutline}"
                         ToolTip="Edit" />
 
                     <Button 

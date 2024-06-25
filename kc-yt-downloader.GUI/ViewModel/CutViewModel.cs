@@ -38,6 +38,7 @@ namespace kc_yt_downloader.GUI.ViewModel
                 .Select(f => new VideoFormatViewModel(f))
                 .ToArray(), af);
 
+            FileNameControl = new(_info.Title);
             TimeRange = new(_info.DurationString);
 
             BackCommand = new NavigateCommand(_parameters.BackNavigation);
@@ -50,7 +51,7 @@ namespace kc_yt_downloader.GUI.ViewModel
         public VideFormatSelectorViewModel AudioFormatsSelector { get; }
         public RecodeViewModel Recode { get; } = new();
 
-        public FileNameControlViewModel FileNameControl { get; } = new();
+        public FileNameControlViewModel FileNameControl { get; }
         public TimeRangeViewModel TimeRange { get; }
 
         public ICommand BackCommand { get; }
