@@ -10,15 +10,8 @@ namespace kc_yt_downloader.GUI.ViewModel
     {
         private static SelectedSettings Settings => YtConfig.Global.SelectedSettings;
 
-        public FileNameControlViewModel(string name)
-        {
-            ChooseWorkingDirectoryCommand = new RelayCommand(async () => await OnChooseWorkingDirectory());
-
-            var invalidChars = Path.GetInvalidFileNameChars().Concat([' ']);
-            var ch = name.Select(c => (invalidChars.Contains(c) ? '_' : c))
-                .ToArray();
-            FileName =  new string(ch);
-        }
+        private FileNameControlViewModel()
+            => ChooseWorkingDirectoryCommand = new RelayCommand(async () => await OnChooseWorkingDirectory());
         
         public string? WorkingDirectory 
         {
@@ -45,5 +38,23 @@ namespace kc_yt_downloader.GUI.ViewModel
 
         public string GetFullPath()
             => String.IsNullOrWhiteSpace(WorkingDirectory) ? _fileName : Path.Combine(WorkingDirectory, _fileName);
+
+        public static FileNameControlViewModel CreateFromName(string name)
+        {
+            var invalidChars = Path.GetInvalidFileNameChars().Concat([' ']);
+            var ch = name.Select(c => (invalidChars.Contains(c) ? '_' : c))
+                .ToArray();
+
+            return new ()
+            {
+                FileName = new string(ch)
+            };
+        }
+
+        public static FileNameControlViewModel CreateFromPath(string path) =>  new()
+        {
+            WorkingDirectory = Path.GetDirectoryName(path),
+            FileName = Path.GetFileName(path)
+        }; 
     }
 }

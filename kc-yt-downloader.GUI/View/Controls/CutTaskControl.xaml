@@ -114,9 +114,9 @@
                         </Style>
                     </StackPanel.Resources>
 
-                    <Button 
-                        IsEnabled="False"                        
+                    <Button                     
                         Content="{materialDesign:PackIcon Edit}"
+                        Command="{Binding EditTaskCommand}"
                         ToolTip="Edit" />
                     
                     <Button                         

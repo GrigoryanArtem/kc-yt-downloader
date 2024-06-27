@@ -2,6 +2,7 @@
 using kc_yt_downloader.GUI.Model;
 using kc_yt_downloader.Model;
 using NavigationMVVM;
+using NavigationMVVM.Services;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -27,7 +28,8 @@ namespace kc_yt_downloader.GUI.ViewModel
         private bool _canShowStatus = false;
         
 
-        public CutTaskViewModel(CutVideoTask task, YtDlp ytDlp)
+        public CutTaskViewModel(CutVideoTask task, YtDlp ytDlp, ParameterNavigationService<CutViewModelParameters, CutViewModel> cutNavidation,
+            NavigationService<ObservableDisposableObject> backNavigation, NavigationService<ObservableDisposableObject> dashboardNavigation)
         {
             _ytDlp = ytDlp;
             Source = task;
@@ -46,8 +48,18 @@ namespace kc_yt_downloader.GUI.ViewModel
             DonePercent = task.Status == VideoTaskStatus.Completed ? 100 : 0;
 
             Status = new SimpleStatusViewModel(task.Status);
+
             RunCommand = new RelayCommand(async () => await OnRun(), () => !IsRunning);
             OpenDirectoryCommand = new RelayCommand(OnOpenDirectory);
+
+            EditTaskCommand = new RelayCommand(() => cutNavidation.Navigate(new()
+            {
+                BackNavigation = backNavigation,
+                DashboardNavigation = dashboardNavigation,
+
+                Source = task,
+                VideoInfo = _video.Info
+            }));
         }
 
         private bool _isRunning = false;
@@ -93,6 +105,7 @@ namespace kc_yt_downloader.GUI.ViewModel
         }        
 
         public RelayCommand RunCommand { get; }
+        public ICommand EditTaskCommand { get; }
         public ICommand OpenDirectoryCommand { get; }
         
         private async Task OnRun()

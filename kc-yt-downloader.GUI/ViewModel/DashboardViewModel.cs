@@ -56,7 +56,7 @@ namespace kc_yt_downloader.GUI.ViewModel
             }
 
             Tasks = _ytDlp.GetCachedTasks()
-                .Select(task => new CutTaskViewModel(task, _ytDlp))
+                .Select(task => new CutTaskViewModel(task, _ytDlp, _cutNavigation, _backNavigation, _backNavigation))
                 .OrderByDescending(video => video.Source.Created)
                 .ToArray();
         }

@@ -38,8 +38,13 @@ namespace kc_yt_downloader.GUI.ViewModel
                 .Select(f => new VideoFormatViewModel(f))
                 .ToArray(), af);
 
-            FileNameControl = new(_info.Title);
+            FileNameControl = parameters.Source is not null ? FileNameControlViewModel.CreateFromPath(parameters.Source.FilePath) :
+                FileNameControlViewModel.CreateFromName(_info.Title);
+
             TimeRange = new(_info.DurationString);
+
+            if (parameters.Source is not null)
+                InitData(parameters.Source);
 
             BackCommand = new NavigateCommand(_parameters.BackNavigation);
             AddToQueueCommand = new RelayCommand(OnAddToQueueCommand);
@@ -80,6 +85,25 @@ namespace kc_yt_downloader.GUI.ViewModel
             YtConfig.Global.Save();
             WeakReferenceMessenger.Default.Send(new AddTaskMessage() { Task = task });
             _parameters.DashboardNavigation.Navigate();
+        }
+
+        private void InitData(CutVideoTask task)
+        {
+            VideoFormatsSelector.SelectedFormat = VideoFormatsSelector.Formats?.FirstOrDefault(f => f.Id == task.VideoFormatId);
+            AudioFormatsSelector.SelectedFormat = AudioFormatsSelector.Formats?.FirstOrDefault(f => f.Id == task.AudioFormatId);
+
+            TimeRange.FullVideo = !(task.TimeRange is not null);
+            if (!TimeRange.FullVideo)
+            {
+                TimeRange.From = task.TimeRange.From;
+                TimeRange.To = task.TimeRange.To;
+            }
+
+            Recode.NeedRecode = task.Recode is not null;
+            if (Recode.NeedRecode)
+            {
+                Recode.SelectedFormat = task.Recode.Format;
+            }
         }
     }
 }

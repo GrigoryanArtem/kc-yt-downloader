@@ -23,7 +23,7 @@ namespace kc_yt_downloader.GUI.ViewModel
         }
 
         public VideoFormatViewModel[] Formats { get; set; }
-        public VideoFormatViewModel SelectedFormat { get; set; }
+        public VideoFormatViewModel? SelectedFormat { get; set; }
 
         public RelayCommand<VideoFormatViewModel> SelectFormatCommand { get; }
     }
