@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using kc_yt_downloader.GUI.Model;
+using kc_yt_downloader.GUI.Model.Messages;
 using kc_yt_downloader.Model;
 using NavigationMVVM;
 using NavigationMVVM.Services;
@@ -9,11 +11,15 @@ using System.Windows.Input;
 
 namespace kc_yt_downloader.GUI.ViewModel
 {
-    public class YTVideoViewModel : ObservableDisposableObject
+    public partial class YTVideoViewModel : ObservableDisposableObject
     {
-        public YTVideoViewModel(Video video, ParameterNavigationService<CutViewModelParameters, CutViewModel> cutNavigation, 
+        private YtDlp _ytDlp;
+
+        public YTVideoViewModel(YtDlp ytDlp, Video video, ParameterNavigationService<CutViewModelParameters, CutViewModel> cutNavigation, 
             NavigationService<ObservableDisposableObject> backNavigation, NavigationService<ObservableDisposableObject> dashboardNavigation)
         {
+            _ytDlp = ytDlp;
+
             Video = video;
             var videoInfo = Video?.Info;
             ThumbnailUrl = videoInfo?.Thumbnails
@@ -63,6 +69,14 @@ namespace kc_yt_downloader.GUI.ViewModel
                 FileName = Video.Info.OriginalUrl,
                 UseShellExecute = true
             });
+        }
+
+        [RelayCommand]
+        public void DeleteVideo()
+        {
+            _ytDlp.DeleteVideo(Video);
+
+            WeakReferenceMessenger.Default.Send(new VideosUpdatedMessage());
         }
     }
 }

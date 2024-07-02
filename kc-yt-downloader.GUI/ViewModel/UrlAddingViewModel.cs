@@ -54,7 +54,7 @@ namespace kc_yt_downloader.GUI.ViewModel
 
             _ytDlp.GetVideoByUrl(url);
 
-            WeakReferenceMessenger.Default.Send(new UrlAddedMessage());
+            WeakReferenceMessenger.Default.Send(new VideosUpdatedMessage());
 
             IsProgress = false;
         }

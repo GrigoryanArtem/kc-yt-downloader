@@ -1,18 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using kc_yt_downloader.GUI.Model;
+using kc_yt_downloader.GUI.Model.Messages;
 using kc_yt_downloader.Model;
 using NavigationMVVM;
 using NavigationMVVM.Services;
-using System.Diagnostics;
-using System.Globalization;
 using System.IO;
-using System.Text.RegularExpressions;
-using System.Windows;
 using System.Windows.Input;
 
 namespace kc_yt_downloader.GUI.ViewModel
 {
-    public class CutTaskViewModel : ObservableDisposableObject
+    public partial class CutTaskViewModel : ObservableDisposableObject
     {
         private const string LOGS_DIRECTORY = "logs";
 
@@ -146,18 +144,15 @@ namespace kc_yt_downloader.GUI.ViewModel
         private void OnOpenDirectory()
         {
             var dir = Path.GetDirectoryName(Path.GetFullPath(Source.FilePath));
+            var ext = Source.Recode is not null ? $".{Source.Recode.Format}" : String.Empty;
+            var fileName = Path.GetFileName(Source.FilePath) + ext;
 
-            if (Directory.Exists(dir))
-            {
-                ProcessStartInfo startInfo = new()
-                {
-                    Arguments = dir,
-                    FileName = "explorer.exe"
-                };
-
-                Process.Start(startInfo);
-            }
+            ExplorerHelper.OpenFolderAndSelectItem(dir, fileName);
         }
+
+        [RelayCommand]
+        private void DeleteTask()
+            => WeakReferenceMessenger.Default.Send(new DeleteTaskMessage() { Task = Source });
 
         private async Task OnUpdate()
         {
@@ -203,7 +198,7 @@ namespace kc_yt_downloader.GUI.ViewModel
             FormatPart((int)timeSpan.TotalHours, "h."),
             FormatPart(timeSpan.Minutes, "min."),
             FormatPart(timeSpan.Seconds, "sec.") 
-        }.Where(x => x != null));
+        }.Where(p => p is not null));
         
 
         public static string? FormatPart(int quantity, string name) 

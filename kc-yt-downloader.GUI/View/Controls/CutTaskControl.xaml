@@ -88,8 +88,8 @@
                     Orientation="Horizontal">
 
                     <Button 
-                        IsEnabled="False"
                         Margin="4"
+                        Command="{Binding DeleteTaskCommand}"
                         Style="{StaticResource MaterialDesignOutlinedSecondaryButton}"
                         Content="{materialDesign:PackIcon DeleteOutline}"
                         ToolTip="Delete" />

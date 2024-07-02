@@ -52,7 +52,14 @@ namespace kc_yt_downloader.Model
         public Video[] GetCachedData()
             => [.. _videoCache];
 
+        public void DeleteVideo(Video video)
+        {
+            _videoCache = _videoCache
+                .Where(v => v.Id != video.Id)
+                .ToList();
 
+            Save();
+        }
 
         public Video? GetVideoById(string id)
             => _videoCache.SingleOrDefault(v => v.Id == id);
@@ -94,6 +101,19 @@ namespace kc_yt_downloader.Model
             Save();
 
             return video;
+        }
+
+        public void DeleteTask(CutVideoTask task)
+        {
+            var idx = _tasksCache
+                .Select((tsk, idx) => (tsk, idx))
+                .First(d => d.tsk.Id == task.Id).idx;
+
+            _tasksCache = _tasksCache
+                .Where(t => t.Id != task.Id)
+                .ToList();
+
+            Save();
         }
 
         public void UpdateTask(CutVideoTask task)

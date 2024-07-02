@@ -22,14 +22,16 @@ namespace kc_yt_downloader.GUI.ViewModel
 
             UrlAddingViewModel = new(_ytDlp);
 
-            WeakReferenceMessenger.Default.Register<UrlAddedMessage>(this, UpdateVideos);
+            WeakReferenceMessenger.Default.Register<VideosUpdatedMessage>(this, UpdateVideos);
             WeakReferenceMessenger.Default.Register<AddTaskMessage>(this, UpdateTasks);
+
+            WeakReferenceMessenger.Default.Register<DeleteTaskMessage>(this, UpdateTasks);
 
             _cutNavigation = new ParameterNavigationService<CutViewModelParameters, CutViewModel>(store, cvp => new CutViewModel(cvp));
             _backNavigation = new NavigationService<ObservableDisposableObject>(store, () => this);            
 
-            UpdateVideos(null, null);
-            UpdateTasks(null, null);
+            UpdateVideos();
+            UpdateTasks();
         }
 
         private YTVideoViewModel[] _videos;
@@ -48,24 +50,36 @@ namespace kc_yt_downloader.GUI.ViewModel
 
         public UrlAddingViewModel UrlAddingViewModel { get; }
 
+        private void UpdateTasks(object sender, DeleteTaskMessage message)
+        {
+            if (message is not null)
+                _ytDlp.DeleteTask(message.Task);
+
+            UpdateTasks();
+        }
+
         private void UpdateTasks(object sender, AddTaskMessage message)
         {
             if (message is not null)
-            {
                 _ytDlp.AddTask(message.Task);
-            }
 
-            Tasks = _ytDlp.GetCachedTasks()
+            UpdateTasks();
+        }
+
+        private void UpdateTasks()
+            => Tasks = _ytDlp.GetCachedTasks()
                 .Select(task => new CutTaskViewModel(task, _ytDlp, _cutNavigation, _backNavigation, _backNavigation))
                 .OrderByDescending(video => video.Source.Created)
                 .ToArray();
-        }
 
-        private void UpdateVideos(object sender, UrlAddedMessage message)
+        private void UpdateVideos(object sender, VideosUpdatedMessage message)
+            => UpdateVideos();
+
+        private void UpdateVideos()
         {
             Videos = _ytDlp.GetCachedData()
                 .OrderByDescending(video => video.ParseDate)
-                .Select(video => new YTVideoViewModel(video, _cutNavigation, _backNavigation, _backNavigation))                
+                .Select(video => new YTVideoViewModel(_ytDlp, video, _cutNavigation, _backNavigation, _backNavigation))                
                 .ToArray();
         }
     }
