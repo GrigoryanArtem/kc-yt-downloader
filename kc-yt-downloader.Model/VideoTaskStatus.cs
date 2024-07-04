@@ -5,5 +5,7 @@
         Prepared,
         Completed,
         Error,
+        Cancelled,
+        Unknown
     }
 }

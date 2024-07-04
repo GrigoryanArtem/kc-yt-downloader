@@ -175,7 +175,15 @@ namespace kc_yt_downloader.GUI.ViewModel
                 proc.Kill();
             }
 
-            var status = proc.ExitCode == 0 ? VideoTaskStatus.Completed : VideoTaskStatus.Error;
+            var status = proc.ExitCode switch
+            {
+                0 or 100 => VideoTaskStatus.Completed,
+                1 or 2 => VideoTaskStatus.Error,
+                101 => VideoTaskStatus.Cancelled,
+
+                _ => VideoTaskStatus.Unknown
+            };
+
             Source = Source with
             {
                 Status = status,
