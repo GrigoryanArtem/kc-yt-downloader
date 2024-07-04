@@ -34,8 +34,8 @@ namespace kc_yt_downloader.GUI.ViewModel
             UpdateTasks();
         }
 
-        private YTVideoViewModel[] _videos;
-        public YTVideoViewModel[] Videos
+        private IGrouping<DateTime, YTVideoViewModel>[] _videos;
+        public IGrouping<DateTime, YTVideoViewModel>[] Videos
         {
             get => _videos;
             set => SetProperty(ref _videos, value);
@@ -79,7 +79,8 @@ namespace kc_yt_downloader.GUI.ViewModel
         {
             Videos = _ytDlp.GetCachedData()
                 .OrderByDescending(video => video.ParseDate)
-                .Select(video => new YTVideoViewModel(_ytDlp, video, _cutNavigation, _backNavigation, _backNavigation))                
+                .Select(video => new YTVideoViewModel(_ytDlp, video, _cutNavigation, _backNavigation, _backNavigation)) 
+                .GroupBy(v => new DateTime(year: v.Video.ParseDate.Year, month: v.Video.ParseDate.Month, day: 1))
                 .ToArray();
         }
     }

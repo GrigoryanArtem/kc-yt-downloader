@@ -24,11 +24,12 @@
             MaxWidth="800"
             DataContext="{Binding UrlAddingViewModel}"/>
 
-        <Border
+        <materialDesign:Card
             Grid.Row="1" 
+            UniformCornerRadius="0"
             Height="270"
-                
-            BorderThickness="0 1" 
+            
+            materialDesign:ElevationAssist.Elevation="Dp4"
             BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}">
 
             <base:SmartScrollViewer
@@ -57,38 +58,65 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </base:SmartScrollViewer>
-        </Border>
+        </materialDesign:Card>
 
         <ScrollViewer 
             Grid.Row="3"
+            Padding="24"
             HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
             VerticalScrollBarVisibility="Visible">
 
-            <StackPanel                
-                Margin="24"
+            <ItemsControl
+                Margin="12 8"
                 MaxWidth="1500"
-                HorizontalAlignment="Center">
+                HorizontalAlignment="Center"
+                ItemsSource="{Binding Videos}"
+                d:ItemsSource="{d:SampleData}">
 
-                <ItemsControl
-                    Margin="12 8"
-                    ItemsSource="{Binding Videos}"
-                    d:ItemsSource="{d:SampleData}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel
+                            HorizontalAlignment="Left"
+                            Orientation="Vertical" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
 
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid
+                            HorizontalAlignment="Left">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
 
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <controls:YTVideoControl 
-                                Margin="8"
-                                DataContext="{Binding}"/>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
+                            <TextBlock
+                                Margin="0 12"
+                                Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                Text="{Binding Key, StringFormat='{}{0:MMMM yyyy}'}" />
+
+                            <ItemsControl
+                                Grid.Row="1"
+                                ItemsSource="{Binding }" >
+
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <WrapPanel />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <controls:YTVideoControl 
+                                            Margin="8"
+                                            DataContext="{Binding}"/>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
         </ScrollViewer>
     </Grid>
 </UserControl>
