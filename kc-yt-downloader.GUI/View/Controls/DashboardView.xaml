@@ -11,112 +11,140 @@
              mc:Ignorable="d" 
              d:DesignHeight="1080" d:DesignWidth="1920">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="auto" />
+        </Grid.ColumnDefinitions>
 
-        <controls:UrlAddingControl 
-            Grid.Row="0" 
-            Margin="24"
-            MaxWidth="800"
-            DataContext="{Binding UrlAddingViewModel}"/>
+        <Border
+            Grid.Column="1" 
+            BorderThickness="1 0 0 0"
+            BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
+            Padding="0">
+            <Grid
+                Background="White">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                
+                <TextBlock
+                     Margin="0"
+                     Grid.Row="0"
+                     Padding="8 12 8 8"
+                     Style="{StaticResource MaterialDesignHeadline5TextBlock}"
+                     Background="{StaticResource MaterialDesign.Brush.Primary.Dark}"
+                     Foreground="{StaticResource MaterialDesign.Brush.Primary.Dark.Foreground}"
+                     TextAlignment="Center"
+                     FontWeight="Bold"
+                     Text="QUEUE" />
 
-        <materialDesign:Card
-            Grid.Row="1" 
-            UniformCornerRadius="0"
-            Height="270"
+                <ScrollViewer
+                    Grid.Row="1"
+                    VerticalScrollBarVisibility="Visible">
+
+                    <ItemsControl   
+                        Margin="20 24 12 24"
+                        HorizontalAlignment="Center"
+                        ItemsSource="{Binding Tasks}"
+                        d:ItemsSource="{d:SampleData}">
+
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <controls:CutTaskControl 
+                                    Margin="0 8"
+                                    DataContext="{Binding}"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
             
-            materialDesign:ElevationAssist.Elevation="Dp4"
-            BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}">
+        <Grid
+            Grid.Column="0" >
 
-            <base:SmartScrollViewer
-                VerticalScrollBarVisibility="Hidden"
-                HorizontalScrollBarVisibility="Visible"                        
-                >   
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            
+            <controls:UrlAddingControl 
+                Grid.Row="0"
+                Margin="24"
+                MaxWidth="800"
+                DataContext="{Binding UrlAddingViewModel}"/>
 
-                <ItemsControl   
-                    Margin="24 0"
-                    HorizontalAlignment="Center"
-                    ItemsSource="{Binding Tasks}"
+            <Rectangle
+                Grid.Row="1"
+                Fill="{StaticResource MaterialDesignDarkSeparatorBackground}"
+                Height="1" />
+
+            <ScrollViewer 
+                Grid.Row="2"
+                Padding="12 24"
+                HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                VerticalScrollBarVisibility="Visible">
+
+                <ItemsControl
+                    Margin="12 8"
+                    MaxWidth="1500"
+                    HorizontalAlignment="Stretch"
+                    ItemsSource="{Binding Videos}"
                     d:ItemsSource="{d:SampleData}">
 
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal"/>
+                            <StackPanel
+                                HorizontalAlignment="Left"
+                                Orientation="Vertical" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
 
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <controls:CutTaskControl 
-                                Margin="8 0"
-                                DataContext="{Binding}"/>
+                            <Grid
+                                HorizontalAlignment="Left">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto" />
+                                    <RowDefinition Height="auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock
+                                    Margin="8 12"
+                                    Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                    Text="{Binding Key, StringFormat='{}{0:MMMM yyyy}'}" />
+
+                                <ItemsControl
+                                    Grid.Row="1"
+                                    ItemsSource="{Binding }" >
+
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <controls:YTVideoControl 
+                                                Margin="8"
+                                                DataContext="{Binding}"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-            </base:SmartScrollViewer>
-        </materialDesign:Card>
-
-        <ScrollViewer 
-            Grid.Row="3"
-            Padding="24"
-            HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-            VerticalScrollBarVisibility="Visible">
-
-            <ItemsControl
-                Margin="12 8"
-                MaxWidth="1500"
-                HorizontalAlignment="Center"
-                ItemsSource="{Binding Videos}"
-                d:ItemsSource="{d:SampleData}">
-
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel
-                            HorizontalAlignment="Left"
-                            Orientation="Vertical" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Grid
-                            HorizontalAlignment="Left">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto" />
-                                <RowDefinition Height="auto" />
-                            </Grid.RowDefinitions>
-
-                            <TextBlock
-                                Margin="0 12"
-                                Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-                                Text="{Binding Key, StringFormat='{}{0:MMMM yyyy}'}" />
-
-                            <ItemsControl
-                                Grid.Row="1"
-                                ItemsSource="{Binding }" >
-
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <WrapPanel />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <controls:YTVideoControl 
-                                            Margin="8"
-                                            DataContext="{Binding}"/>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
+            </ScrollViewer>
+        </Grid>
     </Grid>
 </UserControl>

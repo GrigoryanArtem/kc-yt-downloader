@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <materialDesign:Card
-        Width="350" Height="330"        
+        Width="330" Height="310"        
         materialDesign:ElevationAssist.Elevation="Dp4"
         UniformCornerRadius="12">
 

@@ -28,7 +28,10 @@
                 Margin="8 8 8 0"
                 Orientation="Vertical">
 
-                <TextBlock                     
+                <TextBlock  
+                    TextOptions.TextRenderingMode="Auto"
+                    TextOptions.TextFormattingMode="Ideal"
+                    RenderOptions.ClearTypeHint="Auto"
                     Style="{StaticResource MaterialDesignBodyLargeTextBlock}"
                     Text="{Binding Source.Name}"
                     TextTrimming="CharacterEllipsis"

@@ -1,0 +1,59 @@
+[
+  {
+    "Id": 2,
+    "Name": "Blender  - LEVIATHAN Creature 3D Sculpt (Timelapse)",
+    "Created": "2024-06-23T15:17:28.7690594+03:00",
+    "Completed": "2024-06-23T23:42:52.2397151+03:00",
+    "Status": 1,
+    "VideoId": "k-mEz54_p90",
+    "URL": "https://www.youtube.com/watch?v=k-mEz54_p90",
+    "TimeRange": {
+      "From": "0",
+      "To": "11:07"
+    },
+    "Recode": {
+      "Format": "mp4"
+    },
+    "FilePath": "C:\\Users\\artem\\Data\\Programs\\CS\\kc-yt-downloader\\test\\test3",
+    "VideoFormatId": "299",
+    "AudioFormatId": "140"
+  },
+  {
+    "Id": 3,
+    "Name": "Blender  - LEVIATHAN Creature 3D Sculpt (Timelapse)",
+    "Created": "2024-06-23T23:54:01.6470602+03:00",
+    "Completed": "2024-06-26T00:20:31.1465389+03:00",
+    "Status": 1,
+    "VideoId": "k-mEz54_p90",
+    "URL": "https://www.youtube.com/watch?v=k-mEz54_p90",
+    "TimeRange": {
+      "From": "5:00",
+      "To": "6:00"
+    },
+    "Recode": {
+      "Format": "mp4"
+    },
+    "FilePath": "C:\\Users\\artem\\Data\\Programs\\CS\\kc-yt-downloader\\test\\test4",
+    "VideoFormatId": "303",
+    "AudioFormatId": "251"
+  },
+  {
+    "Id": 3,
+    "Name": "Wolfpack Обучение № 1: Пост рулевого",
+    "Created": "2024-07-03T00:13:48.1922828+03:00",
+    "Completed": null,
+    "Status": 0,
+    "VideoId": "7bfQLPXP5JE",
+    "URL": "https://www.youtube.com/watch?v=7bfQLPXP5JE",
+    "TimeRange": {
+      "From": "0",
+      "To": "6:10"
+    },
+    "Recode": {
+      "Format": "mp4"
+    },
+    "FilePath": "C:\\Users\\artem\\Data\\Programs\\CS\\kc-yt-downloader\\test\\Wolfpack_Обучение_№_1__Пост_рулевого",
+    "VideoFormatId": "137",
+    "AudioFormatId": "251"
+  }
+]
