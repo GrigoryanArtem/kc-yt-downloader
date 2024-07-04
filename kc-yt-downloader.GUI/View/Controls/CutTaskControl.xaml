@@ -128,7 +128,7 @@
                         ToolTip="Open Directory" />
                     
                     <Button 
-                        IsEnabled="False"
+                        Command="{Binding OpenLogCommand}"
                         Content="{materialDesign:PackIcon TextBoxMultipleOutline}"
                         ToolTip="Edit" />
 

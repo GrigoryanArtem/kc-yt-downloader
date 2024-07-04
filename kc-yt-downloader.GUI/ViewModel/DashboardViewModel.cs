@@ -5,6 +5,7 @@ using kc_yt_downloader.Model;
 using NavigationMVVM;
 using NavigationMVVM.Services;
 using NavigationMVVM.Stores;
+using static kc_yt_downloader.GUI.ViewModel.LogViewModel;
 
 namespace kc_yt_downloader.GUI.ViewModel
 {
@@ -13,7 +14,8 @@ namespace kc_yt_downloader.GUI.ViewModel
         private readonly YtDlp _ytDlp;
 
         private readonly ParameterNavigationService<CutViewModelParameters, CutViewModel> _cutNavigation;
-        private readonly NavigationService<ObservableDisposableObject> _backNavigation;
+        private readonly ParameterNavigationService<LogViewModelParameters, LogViewModel> _logNavigation;
+        private readonly NavigationService<ObservableDisposableObject> _backNavigation;        
 
         public DashboardViewModel(NavigationStore store, YtDlp ytDlp)
         {
@@ -28,6 +30,7 @@ namespace kc_yt_downloader.GUI.ViewModel
             WeakReferenceMessenger.Default.Register<DeleteTaskMessage>(this, UpdateTasks);
 
             _cutNavigation = new ParameterNavigationService<CutViewModelParameters, CutViewModel>(store, cvp => new CutViewModel(cvp));
+            _logNavigation = new ParameterNavigationService<LogViewModelParameters, LogViewModel>(store, p => new LogViewModel(p));
             _backNavigation = new NavigationService<ObservableDisposableObject>(store, () => this);            
 
             UpdateVideos();
@@ -68,7 +71,7 @@ namespace kc_yt_downloader.GUI.ViewModel
 
         private void UpdateTasks()
             => Tasks = _ytDlp.GetCachedTasks()
-                .Select(task => new CutTaskViewModel(task, _ytDlp, _cutNavigation, _backNavigation, _backNavigation))
+                .Select(task => new CutTaskViewModel(task, _ytDlp, _cutNavigation, _logNavigation, _backNavigation, _backNavigation))
                 .OrderByDescending(video => video.Source.Created)
                 .ToArray();
 

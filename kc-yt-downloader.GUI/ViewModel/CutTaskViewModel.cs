@@ -7,6 +7,7 @@ using NavigationMVVM;
 using NavigationMVVM.Services;
 using System.IO;
 using System.Windows.Input;
+using static kc_yt_downloader.GUI.ViewModel.LogViewModel;
 
 namespace kc_yt_downloader.GUI.ViewModel
 {
@@ -22,10 +23,12 @@ namespace kc_yt_downloader.GUI.ViewModel
         private readonly string _logsDirectory;      
 
         private bool _canShowStatus = false;
-        private LogPersister _persister;
 
-        public CutTaskViewModel(CutVideoTask task, YtDlp ytDlp, ParameterNavigationService<CutViewModelParameters, CutViewModel> cutNavidation,
-            NavigationService<ObservableDisposableObject> backNavigation, NavigationService<ObservableDisposableObject> dashboardNavigation)
+        public CutTaskViewModel(CutVideoTask task, YtDlp ytDlp, 
+            ParameterNavigationService<CutViewModelParameters, CutViewModel> cutNavigation,
+            ParameterNavigationService<LogViewModelParameters, LogViewModel> logNavigation,
+            NavigationService<ObservableDisposableObject> backNavigation, 
+            NavigationService<ObservableDisposableObject> dashboardNavigation)
         {
             _ytDlp = ytDlp;
             Source = task;
@@ -45,7 +48,7 @@ namespace kc_yt_downloader.GUI.ViewModel
             RunCommand = new RelayCommand(async () => await OnRun(), () => !IsRunning);
             OpenDirectoryCommand = new RelayCommand(OnOpenDirectory);
 
-            EditTaskCommand = new RelayCommand(() => cutNavidation.Navigate(new()
+            EditTaskCommand = new RelayCommand(() => cutNavigation.Navigate(new()
             {
                 BackNavigation = backNavigation,
                 DashboardNavigation = dashboardNavigation,
@@ -53,6 +56,16 @@ namespace kc_yt_downloader.GUI.ViewModel
                 Source = task,
                 VideoInfo = _video.Info
             }));
+
+            OpenLogCommand = new RelayCommand
+            (
+                execute: () => logNavigation.Navigate(new()
+                {
+                    Persister = _persister,
+                    BackNavigation = backNavigation
+                }), 
+                canExecute: () => _persister is not null
+            );
         }
 
         private bool _isRunning = false;
@@ -87,6 +100,18 @@ namespace kc_yt_downloader.GUI.ViewModel
             private set => SetProperty(ref _source, value);
         }
 
+
+        private LogPersister _persister;
+        private LogPersister Persister
+        {
+            get => _persister;
+            set
+            {
+                _persister = value;
+                OpenLogCommand.NotifyCanExecuteChanged();
+            }
+        }
+
         public string? TimeRangeString 
             => FormatTimeSpan(TimeSpan.FromSeconds(Source?.TimeRange?.GetDuration() ?? 0));
 
@@ -100,6 +125,7 @@ namespace kc_yt_downloader.GUI.ViewModel
         public RelayCommand RunCommand { get; }
         public ICommand EditTaskCommand { get; }
         public ICommand OpenDirectoryCommand { get; }
+        public RelayCommand OpenLogCommand { get; }
         
         private async Task OnRun()
         {
@@ -107,12 +133,12 @@ namespace kc_yt_downloader.GUI.ViewModel
 
             Directory.CreateDirectory(_logsDirectory);
 
-            _persister?.Dispose();
-            _persister = new LogPersister(Path.Combine(_logsDirectory, $"{Source.Id}.{DateTime.Now:yyyyMMdd_HHmmss}.log"));
+            Persister?.Dispose();
+            Persister = new LogPersister(Path.Combine(_logsDirectory, $"{Source.Id}.{DateTime.Now:yyyyMMdd_HHmmss}.log"));
 
             await OnUpdate();
 
-            _persister.Stop();            
+            Persister.Stop();            
 
             IsRunning = false;
         }
@@ -128,7 +154,7 @@ namespace kc_yt_downloader.GUI.ViewModel
                 _canShowStatus = true;
             }
 
-            _persister.Write(LogPersister.LogLevel.Standard, str);
+            Persister.Write(LogPersister.LogLevel.Error, str);
 
             DonePercent = _ytDlpStatus.Time.HasValue ? 
                 (_ytDlpStatus.Time.Value.TotalSeconds / _totalDuration.TotalSeconds) * 100.0 : 0;
@@ -161,7 +187,7 @@ namespace kc_yt_downloader.GUI.ViewModel
                 proc.ErrorDataReceived += (sender, args) => UpdateStatus(args.Data);
                 proc.BeginErrorReadLine();
 
-                proc.OutputDataReceived += (sender, args) => _persister.Write(LogPersister.LogLevel.Standard, args.Data);
+                proc.OutputDataReceived += (sender, args) => Persister.Write(LogPersister.LogLevel.Standard, args.Data);
                 proc.BeginOutputReadLine();
 
                 await proc.WaitForExitAsync();

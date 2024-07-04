@@ -151,6 +151,9 @@ namespace kc_yt_downloader.Model
                 RedirectStandardError = true,
                 RedirectStandardOutput = true,
 
+                StandardErrorEncoding = Encoding.UTF8,
+                StandardOutputEncoding = Encoding.UTF8,
+
                 CreateNoWindow = false,
                 WindowStyle = ProcessWindowStyle.Hidden,
             };

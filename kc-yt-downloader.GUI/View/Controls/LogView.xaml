@@ -4,10 +4,12 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:kc_yt_downloader.GUI.View.Controls"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:viewmodel="clr-namespace:kc_yt_downloader.GUI.ViewModel" 
+             d:DataContext="{d:DesignInstance Type=viewmodel:LogViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="1080" d:DesignWidth="1920">
     <Grid
-        MaxWidth="1200"
         Margin="24 0">
         
         <Grid.RowDefinitions>
@@ -15,12 +17,58 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
+        <ListView
+            ItemsSource="{Binding Persister.Messages}"
+            d:ItemsSource="{d:SampleData}">
+
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn
+                        Header="Time">
+                        
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    Text="{Binding Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss.ffff}}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
+                    <GridViewColumn
+                        DisplayMemberBinding="{Binding Delta}"
+                        Header="Delta" />
+
+                    <GridViewColumn                        
+                        DisplayMemberBinding="{Binding Level}"
+                        Header="PIPE" />
+
+                    <GridViewColumn
+                        Width="350"
+                        DisplayMemberBinding="{Binding Context}"
+                        Header="Context" />
+
+                    <GridViewColumn
+                        Width="700"
+                        Header="Message">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    TextWrapping="Wrap"
+                                    Text="{Binding Message}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
         <StackPanel
             Grid.Row="1"
             Orientation="Horizontal">
 
             <Button 
                 Style="{StaticResource MaterialDesignOutlinedButton}"
+                Command="{Binding BackCommand}"
                 Padding="24 4"
                 Content="Back"/>
         </StackPanel>

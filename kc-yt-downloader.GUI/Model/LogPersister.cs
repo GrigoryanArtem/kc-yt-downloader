@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.IO;
 
 namespace kc_yt_downloader.GUI.Model
@@ -10,8 +11,19 @@ namespace kc_yt_downloader.GUI.Model
             public DateTime Time { get; init; }
             public TimeSpan Delta { get; init; }
             public LogLevel Level{ get; init; }
-            public string? SubLevel { get; init; }
-            public string? Message { get; init; } 
+            public string? Context { get; init; }
+            public string? Message { get; init; }
+
+            public string ToLogString()
+                => $"{Time:yyyy-MM-dd HH:mm:ss.ffff} | {Delta:G} | {GetLevelString(Level)} | {Context} | {Message}";
+
+            private string GetLevelString(LogLevel level) => level switch
+            {
+                LogLevel.Standard => "STD",
+                LogLevel.Error => "ERR",
+
+                _ => throw new NotSupportedException()
+            };
         }
 
         public enum LogLevel
@@ -20,7 +32,7 @@ namespace kc_yt_downloader.GUI.Model
             Standard
         }
 
-        private readonly ConcurrentQueue<string> _textQueue = new();
+        private readonly ConcurrentQueue<LogMessage> _messagesQueue = new();
         private readonly CancellationTokenSource _source = new();
         private readonly CancellationToken _token;
 
@@ -34,10 +46,28 @@ namespace kc_yt_downloader.GUI.Model
             Task.Run(WriteToFile, _token);
         }
 
+        public ObservableCollection<LogMessage> Messages { get; } = new();
+
         public void Write(LogLevel level, string message)
         {
-            var str = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.ffff} | {GetLevelString(level)} | {message}";
-            _textQueue.Enqueue(str);
+            string clearMessage = (message ?? String.Empty).Trim();
+            string context = String.Empty;
+
+            if (clearMessage.StartsWith('['))
+            {
+                var index = clearMessage.IndexOf(']');
+
+                context = clearMessage[1..index];
+                clearMessage = clearMessage[(index + 1)..].Trim();
+            }
+
+            _messagesQueue.Enqueue(new()
+            {
+                Level = level,
+                Message = clearMessage.Trim(),
+                Context = context,
+                Time = DateTime.Now,                
+            });
         }
 
         public void Stop()
@@ -48,24 +78,25 @@ namespace kc_yt_downloader.GUI.Model
 
         private async void WriteToFile()
         {
-            while (!_token.IsCancellationRequested || !_textQueue.IsEmpty)
+            DateTime? prevTime = null;
+            while (!_token.IsCancellationRequested || !_messagesQueue.IsEmpty)
             {
-                using StreamWriter w = File.AppendText(_path);
+                using StreamWriter writer = File.AppendText(_path);
 
-                while (_textQueue.TryDequeue(out var textLine))
-                    await w.WriteLineAsync(textLine);
+                while (_messagesQueue.TryDequeue(out var message))
+                {
+                    var messageWithDelta = message with { Delta = message.Time - (prevTime ?? message.Time) };
+                    var write = writer.WriteLineAsync(messageWithDelta.ToLogString());
 
-                w.Flush();
+                    prevTime = messageWithDelta.Time;
+                    App.Current.Dispatcher.Invoke(() => Messages.Insert(0, messageWithDelta));
+
+                    await write;
+                }
+
+                writer.Flush();
                 await Task.Delay(100);
             }
         }
-
-        private string GetLevelString(LogLevel level) => level switch
-        { 
-            LogLevel.Standard => "STD",
-            LogLevel.Error => "ERR",
-
-            _ => throw new NotSupportedException()
-        };
     }
 }
