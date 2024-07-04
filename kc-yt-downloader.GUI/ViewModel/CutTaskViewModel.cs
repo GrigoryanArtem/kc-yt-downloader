@@ -19,12 +19,10 @@ namespace kc_yt_downloader.GUI.ViewModel
         private readonly TimeSpan _totalDuration;
 
         private readonly YtDlpStatusViewModel _ytDlpStatus;
-        private readonly string _logsDirectory;
-        private readonly string _errLogFileName;
-        private readonly string _outLogFileName;
+        private readonly string _logsDirectory;      
 
         private bool _canShowStatus = false;
-        
+        private LogPersister _persister;
 
         public CutTaskViewModel(CutVideoTask task, YtDlp ytDlp, ParameterNavigationService<CutViewModelParameters, CutViewModel> cutNavidation,
             NavigationService<ObservableDisposableObject> backNavigation, NavigationService<ObservableDisposableObject> dashboardNavigation)
@@ -39,9 +37,6 @@ namespace kc_yt_downloader.GUI.ViewModel
 
             _totalDuration = TimeSpan.FromSeconds(task.TimeRange?.GetDuration() ?? _video.Info.Duration);
             _logsDirectory = Path.Combine(YtConfig.Global.CacheDirectory, LOGS_DIRECTORY);
-
-            _errLogFileName = Path.Combine(_logsDirectory, $"{task.Id}.err.log.txt");
-            _outLogFileName = Path.Combine(_logsDirectory, $"{task.Id}.out.log.txt");
 
             DonePercent = task.Status == VideoTaskStatus.Completed ? 100 : 0;
 
@@ -112,13 +107,12 @@ namespace kc_yt_downloader.GUI.ViewModel
 
             Directory.CreateDirectory(_logsDirectory);
 
-            var nl = Environment.NewLine;
-            var startLogString = $"{nl}RUN {DateTime.Now:yyyy-MM-dd HH:mm:ss}{nl}{nl}";
-
-            File.AppendAllText(_errLogFileName, startLogString);
-            File.AppendAllText(_outLogFileName, startLogString);
+            _persister?.Dispose();
+            _persister = new LogPersister(Path.Combine(_logsDirectory, $"{Source.Id}.{DateTime.Now:yyyyMMdd_HHmmss}.log"));
 
             await OnUpdate();
+
+            _persister.Stop();            
 
             IsRunning = false;
         }
@@ -134,7 +128,7 @@ namespace kc_yt_downloader.GUI.ViewModel
                 _canShowStatus = true;
             }
 
-            File.AppendAllText(_errLogFileName, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.ffff} | ERR | {str}" + Environment.NewLine);
+            _persister.Write(LogPersister.LogLevel.Standard, str);
 
             DonePercent = _ytDlpStatus.Time.HasValue ? 
                 (_ytDlpStatus.Time.Value.TotalSeconds / _totalDuration.TotalSeconds) * 100.0 : 0;
@@ -167,8 +161,7 @@ namespace kc_yt_downloader.GUI.ViewModel
                 proc.ErrorDataReceived += (sender, args) => UpdateStatus(args.Data);
                 proc.BeginErrorReadLine();
 
-                proc.OutputDataReceived += (sender, args) =>  File.AppendAllText(_outLogFileName, 
-                    $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.ffff} | STD | {args.Data}" + Environment.NewLine);
+                proc.OutputDataReceived += (sender, args) => _persister.Write(LogPersister.LogLevel.Standard, args.Data);
                 proc.BeginOutputReadLine();
 
                 await proc.WaitForExitAsync();
