@@ -94,7 +94,7 @@
                     <Button 
                         Margin="4"
                         Style="{StaticResource MaterialDesignOutlinedSecondaryButton}"
-                        Content="{materialDesign:PackIcon Delete}"
+                        Content="{materialDesign:PackIcon DeleteOutline}"
                         Command="{Binding DeleteVideoCommand}"
                         ToolTip="Delete" />
                 </StackPanel>
