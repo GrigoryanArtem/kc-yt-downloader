@@ -6,21 +6,40 @@
              xmlns:local="clr-namespace:kc_yt_downloader.GUI.View.Controls"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:viewmodel="clr-namespace:kc_yt_downloader.GUI.ViewModel" 
+             xmlns:converters="clr-namespace:kc_yt_downloader.GUI.Model.Converters" 
              d:DataContext="{d:DesignInstance Type=viewmodel:LogViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="1080" d:DesignWidth="1920">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <converters:TimeSpanToStringConverter x:Key="TimeSpanConverter"/>
+            
+            <Style
+                x:Key="Consolas"
+                TargetType="TextBlock">
+
+                <Style.Setters>
+                    <Setter
+                            Property="FontFamily"
+                            Value="Consolas" />
+                </Style.Setters>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
     <Grid
-        Margin="24 0">
+        Margin="0">
         
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
         <ListView
             ItemsSource="{Binding Persister.Messages}"
             d:ItemsSource="{d:SampleData}">
-
+            
             <ListView.View>
                 <GridView>
                     <GridViewColumn
@@ -29,30 +48,56 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock
+                                    Style="{StaticResource Consolas}"
                                     Text="{Binding Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss.ffff}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
 
                     <GridViewColumn
-                        DisplayMemberBinding="{Binding Delta}"
-                        Header="Delta" />
+                        Header="Delta">
+                        
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    Style="{StaticResource Consolas}"
+                                    Text="{Binding Delta, Converter={StaticResource TimeSpanConverter}}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
 
-                    <GridViewColumn                        
-                        DisplayMemberBinding="{Binding Level}"
-                        Header="PIPE" />
+                    <GridViewColumn
+                        Header="PIPE">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    Style="{StaticResource Consolas}"
+                                    Text="{Binding Level }" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
 
                     <GridViewColumn
                         Width="350"
-                        DisplayMemberBinding="{Binding Context}"
-                        Header="Context" />
+                        Header="Context">
+
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock
+                                    Style="{StaticResource Consolas}"
+                                    Text="{Binding Context }" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
 
                     <GridViewColumn
                         Width="700"
                         Header="Message">
+                        
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock
+                                    Style="{StaticResource Consolas}"
                                     TextWrapping="Wrap"
                                     Text="{Binding Message}" />
                             </DataTemplate>
@@ -62,8 +107,14 @@
             </ListView.View>
         </ListView>
 
-        <StackPanel
+        <Rectangle
             Grid.Row="1"
+            Fill="{StaticResource MaterialDesignDarkSeparatorBackground}"
+            Height="1"/>
+
+        <StackPanel
+            Grid.Row="2"
+            Margin="24"
             Orientation="Horizontal">
 
             <Button 

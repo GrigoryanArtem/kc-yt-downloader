@@ -55,7 +55,7 @@ namespace kc_yt_downloader.Model
         public void DeleteVideo(Video video)
         {
             _tasksCache = _tasksCache
-                .Where(t => t.VideoId == video.Id)
+                .Where(t => t.VideoId != video.Id)
                 .ToList();
 
             _videoCache = _videoCache

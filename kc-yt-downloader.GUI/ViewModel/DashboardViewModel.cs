@@ -85,6 +85,8 @@ namespace kc_yt_downloader.GUI.ViewModel
                 .Select(video => new YTVideoViewModel(_ytDlp, video, _cutNavigation, _backNavigation, _backNavigation)) 
                 .GroupBy(v => new DateTime(year: v.Video.ParseDate.Year, month: v.Video.ParseDate.Month, day: 1))
                 .ToArray();
+
+            UpdateTasks();
         }
     }
 }
