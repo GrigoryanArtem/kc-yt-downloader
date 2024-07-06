@@ -132,7 +132,7 @@ namespace kc_yt_downloader.Model
 
         public void AddTask(CutVideoTask task)
         {
-            var id = _tasksCache.Count + 1;
+            var id = (int)((DateTime.Now - new DateTime(year: 2024, month: 1, day: 1)).Ticks / 100);
             _tasksCache.Add(task with { Id = id });
 
             Save();
