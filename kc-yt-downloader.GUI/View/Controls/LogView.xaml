@@ -13,6 +13,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <converters:TimeSpanToStringConverter x:Key="TimeSpanConverter"/>
+            <converters:LogLevelToPipeConverter x:Key="LogToPipeConverter"/>
             
             <Style
                 x:Key="Consolas"
@@ -72,7 +73,7 @@
                             <DataTemplate>
                                 <TextBlock
                                     Style="{StaticResource Consolas}"
-                                    Text="{Binding Level }" />
+                                    Text="{Binding Level, Converter={StaticResource LogToPipeConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
