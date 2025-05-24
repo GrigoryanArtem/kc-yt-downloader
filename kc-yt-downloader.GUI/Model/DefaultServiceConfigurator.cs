@@ -1,6 +1,7 @@
 ﻿using kc_yt_downloader.GUI.ViewModel;
 using kc_yt_downloader.Model;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using NavigationMVVM.Services;
 using NavigationMVVM.Stores;
 
@@ -8,7 +9,7 @@ namespace kc_yt_downloader.GUI.Model
 {
     public class DefaultServiceConfigurator : IServicesConfigurator
     {
-        public void ConfigureServices(ServiceCollection services)
+        public void ConfigureServices(HostBuilderContext context, IServiceCollection services)
         {
             ConfigureViewModels(services);
             services.AddSingleton(s => new MainWindow
@@ -17,7 +18,7 @@ namespace kc_yt_downloader.GUI.Model
             });
         }
 
-        private static void ConfigureViewModels(ServiceCollection services)
+        private static void ConfigureViewModels(IServiceCollection services)
         {
             var ytDlp = new YtDlp(YtConfig.Global.CacheDirectory);
             ytDlp.Open();
