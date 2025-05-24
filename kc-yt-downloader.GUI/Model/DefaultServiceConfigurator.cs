@@ -18,14 +18,11 @@ namespace kc_yt_downloader.GUI.Model
         }
 
         private static void ConfigureViewModels(ServiceCollection services)
-        {            
-            services.AddSingleton(s => 
-            {
-                var ytDlp = new YtDlp(YtConfig.Global.CacheDirectory);
-                ytDlp.Open();
+        {
+            var ytDlp = new YtDlp(YtConfig.Global.CacheDirectory);
+            ytDlp.Open();
 
-                return ytDlp;
-            });
+            services.AddSingleton(ytDlp);
 
             services.AddSingleton<NavigationStore>();
             services.AddSingleton<ModalNavigationStore>();

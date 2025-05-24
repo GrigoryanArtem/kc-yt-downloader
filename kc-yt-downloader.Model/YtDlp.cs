@@ -6,6 +6,7 @@ namespace kc_yt_downloader.Model
 {
     public class YtDlp
     {
+        private const string YT_DLP = "yt-dlp";
         private const string VIDEOS_CACHE_FILEPATH = "videos.json";
         private const string TASKS_CACHE_FILEPATH = "tasks.json";
 
@@ -144,7 +145,7 @@ namespace kc_yt_downloader.Model
 
             var startInfo = new ProcessStartInfo
             {
-                FileName = "yt-dlp",
+                FileName = YT_DLP,
                 Arguments = task.ToArgs(),
                 UseShellExecute = false,
 
@@ -165,7 +166,7 @@ namespace kc_yt_downloader.Model
         {
             var startInfo = new ProcessStartInfo
             {
-                FileName = "yt-dlp",
+                FileName = YT_DLP,
                 Arguments = $"--dump-json {url}",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
@@ -199,5 +200,68 @@ namespace kc_yt_downloader.Model
 
             return null;
         }
+
+        public static async Task<bool> UpdateYtDlpAsync(YtDlpUpdateChannel updateChannel = YtDlpUpdateChannel.Stable, IProgress<string>? progress = null)
+        {
+            if (!File.Exists(YT_DLP))
+                throw new FileNotFoundException("yt-dlp executable not found", YT_DLP);
+
+            var args = MapChannelToArgs(updateChannel);
+
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = YT_DLP,
+                Arguments = args,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                StandardOutputEncoding = Encoding.UTF8,
+                StandardErrorEncoding = Encoding.UTF8,
+                CreateNoWindow = true
+            };
+
+            var process = new Process { StartInfo = startInfo };
+
+            process.OutputDataReceived += (s, e) =>
+            {
+                if (!string.IsNullOrWhiteSpace(e.Data))
+                    progress?.Report($"std: {e.Data}");
+            };
+
+            process.ErrorDataReceived += (s, e) =>
+            {
+                if (!string.IsNullOrWhiteSpace(e.Data))
+                    progress?.Report($"err: {e.Data}");
+            };
+
+            progress?.Report($"Updating yt-dlp ({updateChannel})...");
+
+            process.Start();
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+
+            await process.WaitForExitAsync();
+
+            var success = process.ExitCode == 0;
+            if (success)
+            {
+                progress?.Report("yt-dlp updated!");
+            }
+            else
+            {
+                progress?.Report($"yt-dlp not updated, exit code: {process.ExitCode}");
+            }
+
+            return success;
+        }
+
+        public static string MapChannelToArgs(YtDlpUpdateChannel channel) => channel switch
+        {
+            YtDlpUpdateChannel.Stable => "-U",
+            YtDlpUpdateChannel.Nightly => "--update-to nightly",
+            YtDlpUpdateChannel.Master => "--update-to master",
+
+            _ => throw new ArgumentOutOfRangeException(nameof(channel), $"Unknown update channel: {channel}"),
+        };
     }
 }
