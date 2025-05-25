@@ -28,7 +28,7 @@ public partial class App : Application
 
     private void OnStartup(object sender, StartupEventArgs e)
     {
-        var initialNavigationService = Services.GetRequiredService<NavigationService<DashboardViewModel>>();
+        var initialNavigationService = Services.GetRequiredService<NavigationService<UpdateViewModel>>();
         initialNavigationService.Navigate();
 
         var mainWindow = Services.GetService<MainWindow>();

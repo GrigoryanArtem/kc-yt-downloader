@@ -201,15 +201,12 @@ namespace kc_yt_downloader.Model
             return null;
         }
 
-        public static async Task<bool> UpdateYtDlpAsync(YtDlpUpdateChannel updateChannel = YtDlpUpdateChannel.Stable, IProgress<string>? progress = null)
-        {
-            if (!File.Exists(YT_DLP))
-                throw new FileNotFoundException("yt-dlp executable not found", YT_DLP);
-
+        public async Task<bool> UpdateYtDlpAsync(YtDlpUpdateChannel updateChannel = YtDlpUpdateChannel.Stable, IProgress<string>? progress = null)
+        {            
             var args = MapChannelToArgs(updateChannel);
 
             var startInfo = new ProcessStartInfo
-            {
+            {                
                 FileName = YT_DLP,
                 Arguments = args,
                 UseShellExecute = false,
@@ -225,13 +222,13 @@ namespace kc_yt_downloader.Model
             process.OutputDataReceived += (s, e) =>
             {
                 if (!string.IsNullOrWhiteSpace(e.Data))
-                    progress?.Report($"std: {e.Data}");
+                    progress?.Report(e.Data);
             };
 
             process.ErrorDataReceived += (s, e) =>
             {
                 if (!string.IsNullOrWhiteSpace(e.Data))
-                    progress?.Report($"err: {e.Data}");
+                    progress?.Report(e.Data);
             };
 
             progress?.Report($"Updating yt-dlp ({updateChannel})...");

@@ -3,12 +3,22 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:kc_yt_downloader.GUI.View.Controls"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodel="clr-namespace:kc_yt_downloader.GUI.ViewModel"
+    d:DataContext="{d:DesignInstance Type=viewmodel:UpdateViewModel}"
     d:DesignHeight="720"
     d:DesignWidth="1280"
     mc:Ignorable="d">
+
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -44,7 +54,8 @@
             <ScrollViewer>
                 <ItemsControl
                     Margin="8"
-                    d:ItemsSource="{d:SampleData}">
+                    d:ItemsSource="{d:SampleData}"
+                    ItemsSource="{Binding ProgressMessages}">
 
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>

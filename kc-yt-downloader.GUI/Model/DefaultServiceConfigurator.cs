@@ -37,7 +37,13 @@ namespace kc_yt_downloader.GUI.Model
                 () => s.GetRequiredService<DashboardViewModel>()
             ));
 
-            
+            services.AddSingleton<UpdateViewModel>();
+            services.AddSingleton(s => new NavigationService<UpdateViewModel>
+            (
+                s.GetRequiredService<NavigationStore>(),
+                () => s.GetRequiredService<UpdateViewModel>()
+            ));
+
             services.AddSingleton<MainWindowViewModel>();
         }
     }

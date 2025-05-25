@@ -9,6 +9,7 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>kc-yt-downloader</AssemblyName>
     <ApplicationIcon>arrow.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
   <ItemGroup>
