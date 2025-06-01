@@ -36,6 +36,10 @@
             <DataTemplate DataType="{x:Type viewmodel:UpdateViewModel}">
                 <controls:UpdateView />
             </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewmodel:CutViewLoadingViewModel}">
+                <controls:LoadingView />
+            </DataTemplate>
         </Grid.Resources>
 
         <materialDesign:DialogHost

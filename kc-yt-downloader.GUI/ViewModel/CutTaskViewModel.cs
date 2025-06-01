@@ -3,8 +3,10 @@ using CommunityToolkit.Mvvm.Messaging;
 using kc_yt_downloader.GUI.Model;
 using kc_yt_downloader.GUI.Model.Messages;
 using kc_yt_downloader.Model;
+using Microsoft.Extensions.DependencyInjection;
 using NavigationMVVM;
 using NavigationMVVM.Services;
+using NavigationMVVM.Stores;
 using System.IO;
 using System.Windows.Input;
 using static kc_yt_downloader.GUI.ViewModel.LogViewModel;
@@ -16,7 +18,7 @@ namespace kc_yt_downloader.GUI.ViewModel
         private const string LOGS_DIRECTORY = "logs";
 
         private YtDlp _ytDlp;
-        private readonly Video _video;
+        private readonly VideoPreview _video;
         private readonly TimeSpan _totalDuration;
 
         private readonly YtDlpStatusViewModel _ytDlpStatus;
@@ -24,10 +26,10 @@ namespace kc_yt_downloader.GUI.ViewModel
 
         private bool _canShowStatus = false;
 
-        public CutTaskViewModel(CutVideoTask task, YtDlp ytDlp, 
+        public CutTaskViewModel(CutVideoTask task, YtDlp ytDlp,
             ParameterNavigationService<CutViewModelParameters, CutViewModel> cutNavigation,
             ParameterNavigationService<LogViewModelParameters, LogViewModel> logNavigation,
-            NavigationService<ObservableDisposableObject> backNavigation, 
+            NavigationService<ObservableDisposableObject> backNavigation,
             NavigationService<ObservableDisposableObject> dashboardNavigation)
         {
             _ytDlp = ytDlp;
@@ -35,8 +37,7 @@ namespace kc_yt_downloader.GUI.ViewModel
 
             _ytDlpStatus = new();
 
-            _video = _ytDlp.GetVideoById(task.VideoId);
-            var format = _video.Info.Formats.SingleOrDefault(f => f.FormatId == task.VideoFormatId);
+            _video = _ytDlp.GetPreviewVideoByUrl(task.URL);
 
             _totalDuration = TimeSpan.FromSeconds(task.TimeRange?.GetDuration() ?? _video.Info.Duration);
             _logsDirectory = Path.Combine(YtConfig.Global.CacheDirectory, LOGS_DIRECTORY);
@@ -48,14 +49,27 @@ namespace kc_yt_downloader.GUI.ViewModel
             RunCommand = new RelayCommand(async () => await OnRun(), () => !IsRunning);
             OpenDirectoryCommand = new RelayCommand(OnOpenDirectory);
 
-            EditTaskCommand = new RelayCommand(() => cutNavigation.Navigate(new()
-            {
-                BackNavigation = backNavigation,
-                DashboardNavigation = dashboardNavigation,
 
-                Source = task,
-                VideoInfo = _video.Info
+            var cutViewLoadingViewModel = new CutViewLoadingViewModel(() => Task.Run(() => { 
+            {
+                var video = _ytDlp.GetVideoByUrl(_video.Info.OriginalUrl);
+
+                return new CutViewModelParameters()
+                {
+                    BackNavigation = backNavigation,
+                    DashboardNavigation = dashboardNavigation,
+
+                    Source = task,
+                    Video = video
+                };
+            }
             }));
+
+            var services = App.Current.Services;
+            var store = services.GetRequiredService<NavigationStore>();
+            var navigation = new NavigationService<CutViewLoadingViewModel>(store, () => cutViewLoadingViewModel);
+
+            EditTaskCommand = new RelayCommand(navigation.Navigate);
 
             OpenLogCommand = new RelayCommand
             (
@@ -66,7 +80,7 @@ namespace kc_yt_downloader.GUI.ViewModel
                 }), 
                 canExecute: () => _persister is not null
             );
-        }
+        }        
 
         private bool _isRunning = false;
         private bool IsRunning

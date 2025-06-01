@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kc-yt-downloader.Model", "k
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kc-yt-downloader.GUI", "kc-yt-downloader.GUI\kc-yt-downloader.GUI.csproj", "{3D947EBD-C486-4263-A755-483D1FA0EA64}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kc-yt-downloader.DataMigration", "kc-yt-downloader.DataMigration\kc-yt-downloader.DataMigration.csproj", "{7D1ECF7C-8ED0-4F71-8EDE-3D3084DFFA11}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{3D947EBD-C486-4263-A755-483D1FA0EA64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D947EBD-C486-4263-A755-483D1FA0EA64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D947EBD-C486-4263-A755-483D1FA0EA64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D1ECF7C-8ED0-4F71-8EDE-3D3084DFFA11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D1ECF7C-8ED0-4F71-8EDE-3D3084DFFA11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D1ECF7C-8ED0-4F71-8EDE-3D3084DFFA11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D1ECF7C-8ED0-4F71-8EDE-3D3084DFFA11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

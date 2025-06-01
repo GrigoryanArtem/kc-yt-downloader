@@ -19,8 +19,7 @@ namespace kc_yt_downloader.GUI.ViewModel
 
         public DashboardViewModel(NavigationStore store, YtDlp ytDlp)
         {
-            _ytDlp = ytDlp;
-            _ytDlp.Open();
+            _ytDlp = ytDlp;            
 
             UrlAddingViewModel = new(_ytDlp);
 
@@ -34,7 +33,6 @@ namespace kc_yt_downloader.GUI.ViewModel
             _backNavigation = new NavigationService<ObservableDisposableObject>(store, () => this);            
 
             UpdateVideos();
-            UpdateTasks();
         }
 
         private IGrouping<DateTime, YTVideoViewModel>[] _videos;

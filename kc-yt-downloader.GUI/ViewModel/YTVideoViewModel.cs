@@ -3,8 +3,10 @@ using CommunityToolkit.Mvvm.Messaging;
 using kc_yt_downloader.GUI.Model;
 using kc_yt_downloader.GUI.Model.Messages;
 using kc_yt_downloader.Model;
+using Microsoft.Extensions.DependencyInjection;
 using NavigationMVVM;
 using NavigationMVVM.Services;
+using NavigationMVVM.Stores;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Input;
@@ -15,8 +17,12 @@ namespace kc_yt_downloader.GUI.ViewModel
     {
         private YtDlp _ytDlp;
 
-        public YTVideoViewModel(YtDlp ytDlp, Video video, ParameterNavigationService<CutViewModelParameters, CutViewModel> cutNavigation, 
-            NavigationService<ObservableDisposableObject> backNavigation, NavigationService<ObservableDisposableObject> dashboardNavigation)
+        public YTVideoViewModel(
+            YtDlp ytDlp, 
+            VideoPreview video, 
+            ParameterNavigationService<CutViewModelParameters, CutViewModel> cutNavigation, 
+            NavigationService<ObservableDisposableObject> backNavigation, 
+            NavigationService<ObservableDisposableObject> dashboardNavigation)
         {
             _ytDlp = ytDlp;
 
@@ -32,17 +38,29 @@ namespace kc_yt_downloader.GUI.ViewModel
             if (videoInfo?.UploadDate is not null)
                 UploadDate = DateTime.ParseExact(videoInfo?.UploadDate, "yyyyMMdd", CultureInfo.InvariantCulture);
 
-            CutCommand = new RelayCommand(() => cutNavigation.Navigate(new() 
-            { 
-                VideoInfo = videoInfo, 
-                BackNavigation = backNavigation,
-                DashboardNavigation = dashboardNavigation
+            var cutViewLoadingViewModel = new CutViewLoadingViewModel(() => Task.Run(() => {
+                {
+                    var video = _ytDlp.GetVideoByUrl(Video.Info.OriginalUrl);
+
+                    return new CutViewModelParameters()
+                    {
+                        BackNavigation = backNavigation,
+                        DashboardNavigation = dashboardNavigation,                        
+                        Video = video
+                    };
+                }
             }));
+
+            var services = App.Current.Services;
+            var store = services.GetRequiredService<NavigationStore>();
+            var navigation = new NavigationService<CutViewLoadingViewModel>(store, () => cutViewLoadingViewModel);
+
+            CutCommand = new RelayCommand(navigation.Navigate);
 
             OpenCommand = new RelayCommand(OnOpen);
         }
 
-        public Video? Video { get; }
+        public VideoPreview? Video { get; }
         public string? ThumbnailUrl { get; }
         public string DurationString { get; }
         public DateTime UploadDate { get; }

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using kc_yt_downloader.GUI.Model;
 using kc_yt_downloader.GUI.Model.Messages;
 using kc_yt_downloader.Model;
+using Microsoft.Extensions.DependencyInjection;
 using NavigationMVVM;
 using NavigationMVVM.Commands;
 using System.Windows.Input;
@@ -19,8 +20,10 @@ namespace kc_yt_downloader.GUI.ViewModel
 
         public CutViewModel(CutViewModelParameters parameters)
         {
-            _parameters = parameters;
-            _info = _parameters.VideoInfo;
+            var ytDlp = App.Current.Services.GetRequiredService<YtDlp>();
+
+            _parameters = parameters;            
+            _info = _parameters.Video.Info;
 
             var formats = _info.FormatId.Split("+", StringSplitOptions.RemoveEmptyEntries);
             var (vf, af) = (formats[0], formats[1]);
@@ -66,6 +69,7 @@ namespace kc_yt_downloader.GUI.ViewModel
         {
             var task = new CutVideoTask()
             {
+
                 Name = _info.Title,
                 Created = DateTime.Now,
 
