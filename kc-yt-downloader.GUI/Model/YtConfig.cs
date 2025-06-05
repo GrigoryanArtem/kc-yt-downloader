@@ -8,7 +8,7 @@ namespace kc_yt_downloader.GUI.Model
         private const string CONFIG_PATH = "config.json";
         private static readonly Lazy<YtConfig> _lazy = new(Load);
 
-        private YtConfig() { }    
+        private YtConfig() { }
         public static YtConfig Global => _lazy.Value;
 
         public string CacheDirectory { get; set; } = "data";

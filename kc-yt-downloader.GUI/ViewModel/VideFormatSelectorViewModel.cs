@@ -1,15 +1,15 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using NavigationMVVM;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace kc_yt_downloader.GUI.ViewModel
 {
-    public class VideFormatSelectorViewModel : ObservableDisposableObject
+    public class VideFormatSelectorViewModel : ObservableObject
     {
         public VideFormatSelectorViewModel(VideoFormatViewModel[] videoFormats, string targetId)
         {
             Formats = videoFormats;
 
-            SelectFormatCommand = new((vf) => 
+            SelectFormatCommand = new((vf) =>
             {
                 Array.ForEach(Formats, f => f.IsSelected = false);
 
@@ -18,8 +18,8 @@ namespace kc_yt_downloader.GUI.ViewModel
             });
 
             SelectedFormat = Formats.FirstOrDefault(f => targetId is null || f.Id == targetId);
-            if(SelectedFormat is not null)
-                SelectedFormat .IsSelected = true;
+            if (SelectedFormat is not null)
+                SelectedFormat.IsSelected = true;
         }
 
         public VideoFormatViewModel[] Formats { get; set; }

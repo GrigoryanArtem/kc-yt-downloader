@@ -12,114 +12,54 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <materialDesign:Card
-        Width="330"
-        Height="310"
+        Width="450"
         materialDesign:ElevationAssist.Elevation="Dp4"
         UniformCornerRadius="12">
 
         <Grid x:Name="_mainGrid">
             <Grid.RowDefinitions>
-                <RowDefinition Height="auto" MaxHeight="200" />
-                <RowDefinition Height="auto" />
+                <RowDefinition Height="255" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
             <Image
                 Grid.Row="0"
                 Source="{Binding ThumbnailUrl}" />
 
-            <TextBlock
-                Grid.Row="1"
-                Padding="8 6"
-                d:Text="long long text"
-                Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-                Text="{Binding Video.Info.Title}"
-                TextTrimming="CharacterEllipsis"
-                ToolTip="{Binding Video.Info.Title}" />
-
-            <WrapPanel
-                Grid.Row="2"
-                Margin="8 0"
-                Orientation="Horizontal">
-
-                <materialDesign:Chip
-                    Margin="0 0 8 2"
-                    Cursor="Arrow"
-                    IconBackground="{DynamicResource MaterialDesign.Brush.Primary.Light}"
-                    IconForeground="{DynamicResource MaterialDesign.Brush.Primary.Light.Foreground}">
-
-                    <materialDesign:Chip.Icon>
-                        <materialDesign:PackIcon Kind="TimerPlay" />
-                    </materialDesign:Chip.Icon>
-
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        d:Text="Duration: 1:23:45"
-                        Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                        Text="{Binding DurationString}"
-                        ToolTip="Duration" />
-                </materialDesign:Chip>
-
-                <materialDesign:Chip
-                    Margin="0 0 8 2"
-                    Cursor="Arrow"
-                    IconBackground="{DynamicResource MaterialDesign.Brush.Primary.Light}"
-                    IconForeground="{DynamicResource MaterialDesign.Brush.Primary.Light.Foreground}">
-
-                    <materialDesign:Chip.Icon>
-                        <materialDesign:PackIcon Kind="CalendarRange" />
-                    </materialDesign:Chip.Icon>
-
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        d:Text="Upload Date: 2024-06-15"
-                        Style="{StaticResource MaterialDesignCaptionTextBlock}"
-                        Text="{Binding UploadDate, StringFormat={}{0:yyyy-MM-dd}}"
-                        ToolTip="Upload Date" />
-                </materialDesign:Chip>
-            </WrapPanel>
-
             <Grid
-                Grid.Row="3"
-                Margin="8 6">
+                Grid.Row="1"
+                Margin="8">
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
 
-                <StackPanel
+                <TextBlock
                     Grid.Column="0"
-                    Orientation="Horizontal">
+                    VerticalAlignment="Center"
+                    d:Text="long long text"
+                    Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                    Text="{Binding Video.Info.Title}"
+                    TextTrimming="CharacterEllipsis"
+                    ToolTip="{Binding Video.Info.Title}" />
 
-                    <Button
-                        Margin="4"
-                        Command="{Binding DeleteVideoCommand}"
-                        Content="{materialDesign:PackIcon DeleteOutline}"
-                        Style="{StaticResource MaterialDesignOutlinedSecondaryButton}"
-                        ToolTip="Delete" />
-                </StackPanel>
-
-                <StackPanel
+                <Button
                     Grid.Column="1"
-                    Orientation="Horizontal">
+                    Padding="8 2"
+                    Command="{Binding OpenCommand}"
+                    Content="{materialDesign:PackIcon Kind=InfoOutline}"
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    ToolTip="Info" />
 
-                    <Button
-                        Margin="4"
-                        Command="{Binding OpenCommand}"
-                        Content="{materialDesign:PackIcon Youtube}"
-                        Style="{StaticResource MaterialDesignOutlinedButton}"
-                        ToolTip="Open" />
-
-                    <Button
-                        Margin="4"
-                        Command="{Binding CutCommand}"
-                        Content="{materialDesign:PackIcon ContentCut}"
-                        Style="{StaticResource MaterialDesignOutlinedButton}"
-                        ToolTip="Cut" />
-                </StackPanel>
+                <Button
+                    Grid.Column="2"
+                    Padding="8 2"
+                    Command="{Binding CutCommand}"
+                    Content="{materialDesign:PackIcon ContentCut}"
+                    Style="{StaticResource MaterialDesignFlatButton}"
+                    ToolTip="Cut" />
             </Grid>
         </Grid>
     </materialDesign:Card>

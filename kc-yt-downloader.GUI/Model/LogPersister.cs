@@ -10,7 +10,7 @@ namespace kc_yt_downloader.GUI.Model
         {
             public DateTime Time { get; init; }
             public TimeSpan Delta { get; init; }
-            public LogLevel Level{ get; init; }
+            public LogLevel Level { get; init; }
             public string? Context { get; init; }
             public string? Message { get; init; }
 
@@ -66,7 +66,7 @@ namespace kc_yt_downloader.GUI.Model
                 Level = level,
                 Message = clearMessage.Trim(),
                 Context = context,
-                Time = DateTime.Now,                
+                Time = DateTime.Now,
             });
         }
 

@@ -1,19 +1,23 @@
-﻿<UserControl x:Class="kc_yt_downloader.GUI.View.Controls.CutTaskControl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:kc_yt_downloader.GUI.View.Controls" 
-             xmlns:viewmodel="clr-namespace:kc_yt_downloader.GUI.ViewModel" 
-             d:DataContext="{d:DesignInstance Type=viewmodel:CutTaskViewModel}"
-             mc:Ignorable="d" 
-             x:Name="_this"
-             d:DesignHeight="450" d:DesignWidth="800">
-    <materialDesign:Card
-        Width="300" Height="220"        
-        materialDesign:ElevationAssist.Elevation="Dp4"
-        UniformCornerRadius="12">
+﻿<UserControl
+    x:Class="kc_yt_downloader.GUI.View.Controls.CutTaskControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:kc_yt_downloader.GUI.View.Controls"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodel="clr-namespace:kc_yt_downloader.GUI.ViewModel"
+    x:Name="_this"
+    d:DataContext="{d:DesignInstance Type=viewmodel:CutTaskViewModel}"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Border
+        Width="300"
+        Height="220"
+        Padding="0 8"
+        BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
+        BorderThickness="0 0 0 1">
 
         <Grid>
 
@@ -28,58 +32,57 @@
                 Margin="8 8 8 0"
                 Orientation="Vertical">
 
-                <TextBlock  
-                    TextOptions.TextRenderingMode="Auto"
-                    TextOptions.TextFormattingMode="Ideal"
+                <TextBlock
+                    d:Text="Long long text"
                     RenderOptions.ClearTypeHint="Auto"
                     Style="{StaticResource MaterialDesignBodyLargeTextBlock}"
                     Text="{Binding Source.Name}"
-                    TextTrimming="CharacterEllipsis"
-                    d:Text="Long long text"/>
+                    TextOptions.TextFormattingMode="Ideal"
+                    TextOptions.TextRenderingMode="Auto"
+                    TextTrimming="CharacterEllipsis" />
 
-                <StackPanel
-                    Orientation="Horizontal">
-                    <TextBlock 
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock
                         Style="{StaticResource MaterialDesignOverlineTextBlock}"
-                        ToolTip="{Binding Source.Created}"
-                        Text="{Binding Source.Created, StringFormat=yyyy-MM-dd}"/>
+                        Text="{Binding Source.Created, StringFormat=yyyy-MM-dd}"
+                        ToolTip="{Binding Source.Created}" />
 
-                    <Rectangle 
-                        Margin="4 2"
+                    <Rectangle
                         Width="1"
-                        Fill="{StaticResource MaterialDesignDarkSeparatorBackground}"/>
-
-                    <TextBlock 
-                        Style="{StaticResource MaterialDesignOverlineTextBlock}"     
-                        Text="{Binding Source.TimeRange.From, StringFormat=hh//:mm//:ss}"/>
-
-                    <Rectangle 
                         Margin="4 2"
+                        Fill="{StaticResource MaterialDesignDarkSeparatorBackground}" />
+
+                    <TextBlock
+                        Style="{StaticResource MaterialDesignOverlineTextBlock}"
+                        Text="{Binding Source.TimeRange.From, StringFormat=hh//:mm//:ss}" />
+
+                    <Rectangle
                         Width="1"
-                        Fill="{StaticResource MaterialDesignDarkSeparatorBackground}"/>
-
-                    <TextBlock 
-                        Style="{StaticResource MaterialDesignOverlineTextBlock}"     
-                        Text="{Binding TimeRangeString}"/>
-
-                    <Rectangle 
                         Margin="4 2"
-                        Width="1"
-                        Fill="{StaticResource MaterialDesignDarkSeparatorBackground}"/>
+                        Fill="{StaticResource MaterialDesignDarkSeparatorBackground}" />
 
-                    <TextBlock 
-                        Style="{StaticResource MaterialDesignOverlineTextBlock}"     
-                        Text="{Binding Source.Recode.Format}"/>
-                </StackPanel>                
+                    <TextBlock
+                        Style="{StaticResource MaterialDesignOverlineTextBlock}"
+                        Text="{Binding TimeRangeString}" />
+
+                    <Rectangle
+                        Width="1"
+                        Margin="4 2"
+                        Fill="{StaticResource MaterialDesignDarkSeparatorBackground}" />
+
+                    <TextBlock
+                        Style="{StaticResource MaterialDesignOverlineTextBlock}"
+                        Text="{Binding Source.Recode.Format}" />
+                </StackPanel>
             </StackPanel>
 
-            <local:StatusContainer 
-                DataContext="{Binding Status}"
-                Grid.Row="1"/>
+            <local:StatusContainer
+                Grid.Row="1"
+                DataContext="{Binding Status}" />
 
             <Grid
-                Margin="8 0"
-                Grid.Row="2">
+                Grid.Row="2"
+                Margin="8 0">
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -87,73 +90,65 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel
-                    Grid.Column="0" 
+                    Grid.Column="0"
                     Orientation="Horizontal">
 
-                    <Button 
+                    <Button
                         Margin="4"
                         Command="{Binding DeleteTaskCommand}"
-                        Style="{StaticResource MaterialDesignOutlinedSecondaryButton}"
                         Content="{materialDesign:PackIcon DeleteOutline}"
+                        Style="{StaticResource MaterialDesignFlatSecondaryButton}"
                         ToolTip="Delete" />
                 </StackPanel>
 
-                <StackPanel 
-                    Grid.Column="1"                    
+                <StackPanel
+                    Grid.Column="1"
                     Orientation="Horizontal">
 
                     <StackPanel.Resources>
                         <Style
-                            TargetType="Button"
-                            BasedOn="{StaticResource MaterialDesignOutlinedLightButton}">
+                            BasedOn="{StaticResource MaterialDesignFlatButton}"
+                            TargetType="Button">
 
-                            <Setter
-                                Property="Margin"
-                                Value="2" />
+                            <Setter Property="Margin" Value="2" />
 
-                            <Setter
-                                Property="Padding"
-                                Value="10 0" />
+                            <Setter Property="Padding" Value="10 0" />
                         </Style>
                     </StackPanel.Resources>
 
-                    <Button                     
-                        Content="{materialDesign:PackIcon Edit}"
+                    <Button
                         Command="{Binding EditTaskCommand}"
+                        Content="{materialDesign:PackIcon Edit}"
                         ToolTip="Edit" />
-                    
-                    <Button                         
+
+                    <Button
                         Command="{Binding OpenDirectoryCommand}"
                         Content="{materialDesign:PackIcon FolderOpenOutline}"
                         ToolTip="Open Directory" />
-                    
-                    <Button 
+
+                    <Button
                         Command="{Binding OpenLogCommand}"
                         Content="{materialDesign:PackIcon TextBoxMultipleOutline}"
                         ToolTip="Edit" />
 
-                    <Button 
+                    <Button
                         Margin="4"
                         Command="{Binding RunCommand}"
                         ToolTip="Run">
 
                         <Button.Style>
                             <Style
-                                TargetType="Button"
-                                BasedOn="{StaticResource MaterialDesignOutlinedButton}">
+                                BasedOn="{StaticResource MaterialDesignFlatButton}"
+                                TargetType="Button">
 
-                                <Setter
-                                    Property="Content"
-                                    Value="{materialDesign:PackIcon Replay}" />
+                                <Setter Property="Content" Value="{materialDesign:PackIcon Replay}" />
 
                                 <Style.Triggers>
                                     <DataTrigger
                                         Binding="{Binding ElementName=_this, Path=DataContext.Source.Status}"
                                         Value="Prepared">
 
-                                        <Setter
-                                            Property="Content"
-                                            Value="{materialDesign:PackIcon Play}" />
+                                        <Setter Property="Content" Value="{materialDesign:PackIcon Play}" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -161,11 +156,11 @@
                     </Button>
                 </StackPanel>
             </Grid>
-            
+
             <ProgressBar
-                Margin="0 4 0 0"     
-                Value="{Binding DonePercent}"
-                Grid.Row="3"/>
+                Grid.Row="3"
+                Margin="0 4 0 0"
+                Value="{Binding DonePercent}" />
         </Grid>
-    </materialDesign:Card>
+    </Border>
 </UserControl>

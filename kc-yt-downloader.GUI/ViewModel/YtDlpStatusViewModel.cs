@@ -1,9 +1,9 @@
-﻿using kc_yt_downloader.GUI.Model;
-using NavigationMVVM;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using kc_yt_downloader.GUI.Model;
 
 namespace kc_yt_downloader.GUI.ViewModel
 {
-    public class YtDlpStatusViewModel : ObservableDisposableObject
+    public class YtDlpStatusViewModel : ObservableObject
     {
         private Dictionary<string, Action<string>> _updateFunctions;
         public YtDlpStatusViewModel()
@@ -21,7 +21,7 @@ namespace kc_yt_downloader.GUI.ViewModel
         }
 
         private int? _frame;
-        public int? Frame 
+        public int? Frame
         {
             get => _frame;
             set => SetProperty(ref _frame, value);
@@ -81,9 +81,9 @@ namespace kc_yt_downloader.GUI.ViewModel
                 .Where(uf => uf.Key.Length == eqIndex && propertyString.StartsWith(uf.Key))
                 .ToArray();
 
-            foreach(var (_, function) in functions)
+            foreach (var (_, function) in functions)
                 function(propertyString[valIndex..]);
-            
+
             return functions.Length != 0;
         }
 

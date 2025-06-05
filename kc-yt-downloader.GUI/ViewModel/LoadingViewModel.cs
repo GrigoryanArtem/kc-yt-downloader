@@ -1,5 +1,5 @@
-﻿using NavigationMVVM;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace kc_yt_downloader.GUI.ViewModel;
 
-public class LoadingViewModel : ObservableDisposableObject;
+public class LoadingViewModel : ObservableObject;

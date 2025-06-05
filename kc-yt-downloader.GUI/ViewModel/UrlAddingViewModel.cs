@@ -1,16 +1,15 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using kc_yt_downloader.GUI.Model;
 using kc_yt_downloader.GUI.Model.Messages;
 using kc_yt_downloader.Model;
-using NavigationMVVM;
 
 namespace kc_yt_downloader.GUI.ViewModel
 {
-    public class UrlAddingViewModel : ObservableDisposableObject
+    public class UrlAddingViewModel : ObservableObject
     {
         private readonly YtDlp _ytDlp;
-        public UrlAddingViewModel(YtDlp  ytDlp)
+        public UrlAddingViewModel(YtDlp ytDlp)
         {
             _ytDlp = ytDlp;
 
@@ -27,11 +26,11 @@ namespace kc_yt_downloader.GUI.ViewModel
                 OnPropertyChanged(nameof(IsAddButtonEnable));
             }
         }
-                
+
         public bool IsAddButtonEnable => !IsProgress && !String.IsNullOrEmpty(Url);
 
         private bool _isProgress;
-        public bool IsProgress 
+        public bool IsProgress
         {
             get => _isProgress;
             set

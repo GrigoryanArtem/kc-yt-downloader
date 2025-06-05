@@ -8,7 +8,7 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodel="clr-namespace:kc_yt_downloader.GUI.ViewModel"
-    Title="kc-yt-downloader"
+    Title="Clipper"
     Width="1280"
     Height="720"
     MinWidth="850"
@@ -16,7 +16,12 @@
     d:DataContext="{d:DesignInstance Type=viewmodel:MainWindowViewModel}"
     d:Height="1080"
     d:Width="1920"
+    Background="{DynamicResource MaterialDesignPaper}"
+    FontFamily="{DynamicResource MaterialDesignFont}"
     Style="{StaticResource MaterialDesignWindow}"
+    TextOptions.TextFormattingMode="Ideal"
+    TextOptions.TextRenderingMode="Auto"
+    WindowState="Maximized"
     mc:Ignorable="d">
 
     <Grid>

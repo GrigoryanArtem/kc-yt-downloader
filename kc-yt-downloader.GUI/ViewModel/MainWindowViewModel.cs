@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using NavigationMVVM;
+using kc_yt_downloader.GUI.Model;
 using NavigationMVVM.Stores;
 
 namespace kc_yt_downloader.GUI.ViewModel
@@ -9,9 +9,9 @@ namespace kc_yt_downloader.GUI.ViewModel
         private readonly NavigationStore _navigationStore;
         private readonly ModalNavigationStore _modalNavigationStore;
 
-        public ObservableDisposableObject? CurrentViewModel
+        public ObservableObject? CurrentViewModel
             => _navigationStore.CurrentViewModel;
-        public ObservableDisposableObject? CurrentModalViewModel
+        public ObservableObject? CurrentModalViewModel
             => _modalNavigationStore.CurrentViewModel;
         public bool IsOpen => _modalNavigationStore.IsOpen;
 
@@ -27,6 +27,7 @@ namespace kc_yt_downloader.GUI.ViewModel
         private void OnCurrentViewModelChanged()
         {
             OnPropertyChanged(nameof(CurrentViewModel));
+            NavigationHistory.Current.Navigate(CurrentViewModel!);
         }
 
         private void OnCurrentModalViewModelChanged()

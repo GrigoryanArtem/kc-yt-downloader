@@ -1,22 +1,22 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using kc_yt_downloader.GUI.Model;
 using Microsoft.Win32;
-using NavigationMVVM;
 using System.IO;
 
 namespace kc_yt_downloader.GUI.ViewModel
 {
-    public class FileNameControlViewModel : ObservableDisposableObject
+    public class FileNameControlViewModel : ObservableObject
     {
         private static SelectedSettings Settings => YtConfig.Global.SelectedSettings;
 
         private FileNameControlViewModel()
             => ChooseWorkingDirectoryCommand = new RelayCommand(async () => await OnChooseWorkingDirectory());
-        
-        public string? WorkingDirectory 
+
+        public string? WorkingDirectory
         {
             get => Settings.WorkingDirectory;
-            set => SetProperty(Settings.WorkingDirectory, value, nv => Settings.WorkingDirectory = nv); 
+            set => SetProperty(Settings.WorkingDirectory, value, nv => Settings.WorkingDirectory = nv);
         }
 
         private string _fileName;
@@ -32,8 +32,8 @@ namespace kc_yt_downloader.GUI.ViewModel
         {
             var folderDialog = new OpenFolderDialog();
 
-            if (folderDialog.ShowDialog() == true)            
-                WorkingDirectory = folderDialog.FolderName;                            
+            if (folderDialog.ShowDialog() == true)
+                WorkingDirectory = folderDialog.FolderName;
         }
 
         public string GetFullPath()
@@ -45,16 +45,16 @@ namespace kc_yt_downloader.GUI.ViewModel
             var ch = name.Select(c => (invalidChars.Contains(c) ? '_' : c))
                 .ToArray();
 
-            return new ()
+            return new()
             {
                 FileName = new string(ch)
             };
         }
 
-        public static FileNameControlViewModel CreateFromPath(string path) =>  new()
+        public static FileNameControlViewModel CreateFromPath(string path) => new()
         {
             WorkingDirectory = Path.GetDirectoryName(path),
             FileName = Path.GetFileName(path)
-        }; 
+        };
     }
 }

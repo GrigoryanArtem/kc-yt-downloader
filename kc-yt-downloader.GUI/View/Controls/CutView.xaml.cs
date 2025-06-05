@@ -1,5 +1,4 @@
 ﻿using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace kc_yt_downloader.GUI.View.Controls
 {

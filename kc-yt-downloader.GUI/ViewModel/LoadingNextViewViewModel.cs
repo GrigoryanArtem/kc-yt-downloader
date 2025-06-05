@@ -1,11 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using NavigationMVVM;
 using NavigationMVVM.Services;
 
 namespace kc_yt_downloader.GUI.ViewModel;
 
-public partial class LoadingNextViewViewModel<TParameter> : ObservableDisposableObject
+public partial class LoadingNextViewViewModel<TParameter> : ObservableObject
 {
     protected Func<Task<TParameter>> _loadingTask;
     protected IParameterNavigationService<TParameter> _navigationService;
