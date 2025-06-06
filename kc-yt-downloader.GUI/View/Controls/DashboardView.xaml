@@ -71,13 +71,17 @@
 
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <StackPanel Orientation="Vertical" />
+                                <StackPanel
+                                    Background="{DynamicResource MaterialDesignPaper}"
+                                    Orientation="Vertical" />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
 
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <controls:CutTaskControl DataContext="{Binding}" />
+                                <controls:CutTaskControl
+                                    Margin="0 2"
+                                    DataContext="{Binding}" />
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

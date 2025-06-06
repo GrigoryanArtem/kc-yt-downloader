@@ -15,9 +15,9 @@
     <Border
         Width="300"
         Height="220"
-        Padding="0 8"
+        Background="WhiteSmoke"
         BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
-        BorderThickness="0 0 0 1">
+        BorderThickness="0 1">
 
         <Grid>
 

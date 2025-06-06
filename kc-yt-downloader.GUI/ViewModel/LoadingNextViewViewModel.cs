@@ -12,13 +12,12 @@ public partial class LoadingNextViewViewModel<TParameter> : ObservableObject
     [ObservableProperty]
     private bool _isProgress = true;
 
-
     public LoadingNextViewViewModel() { }
 
     public LoadingNextViewViewModel(
         string title,
         Func<Task<TParameter>> loadingTask,
-        IParameterNavigationService<TParameter> navigationService)
+        IParameterNavigationService<TParameter> navigationService) : this()
     {
         _loadingTask = loadingTask;
         _navigationService = navigationService;

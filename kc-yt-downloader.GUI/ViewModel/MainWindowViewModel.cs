@@ -26,8 +26,10 @@ namespace kc_yt_downloader.GUI.ViewModel
 
         private void OnCurrentViewModelChanged()
         {
-            OnPropertyChanged(nameof(CurrentViewModel));
-            NavigationHistory.Current.Navigate(CurrentViewModel!);
+            OnPropertyChanged(nameof(CurrentViewModel));        
+            
+            if(CurrentViewModel is not CutViewLoadingViewModel)
+                NavigationHistory.Current.Navigate(CurrentViewModel!);
         }
 
         private void OnCurrentModalViewModelChanged()
