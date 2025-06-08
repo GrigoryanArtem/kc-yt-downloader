@@ -1,0 +1,22 @@
+.yt-cut-btn {
+    margin: 4px 4px;
+    background-color: #6f51ce;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.yt-cut-btn:hover {
+    background-color: #8964ff;
+}
+
+#yt-cut-flag-start,
+#yt-cut-flag-end {
+    transition: left 0.3s ease;
+}

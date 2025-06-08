@@ -1,0 +1,29 @@
+{
+    "manifest_version": 3,
+    "name": "Clipper",
+    "version": "1.0",
+    "description": "Select and highlight a portion of a YouTube video to send to a desktop app.",
+    "permissions": [
+        "scripting",
+        "activeTab"
+    ],
+    "host_permissions": [
+        "*://*.youtube.com/*"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*.youtube.com/watch*"
+            ],
+            "js": [
+                "content.js"
+            ],
+            "css": [
+                "style.css"
+            ]
+        }
+    ],
+    "action": {
+        "default_title": "YouTube Cutter"
+    }
+}

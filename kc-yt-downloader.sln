@@ -11,6 +11,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kc-yt-downloader.GUI", "kc-
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kc-yt-downloader.DataMigration", "kc-yt-downloader.DataMigration\kc-yt-downloader.DataMigration.csproj", "{7D1ECF7C-8ED0-4F71-8EDE-3D3084DFFA11}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "chrome-extension", "chrome-extension", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		clipper-extension\content.js = clipper-extension\content.js
+		clipper-extension\manifest.json = clipper-extension\manifest.json
+		clipper-extension\style.css = clipper-extension\style.css
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
