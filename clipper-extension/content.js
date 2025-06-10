@@ -28,11 +28,13 @@ function injectButtons() {
         const videoId = new URLSearchParams(window.location.search).get("v");
         const data = { videoId, start, end };
 
+        alert(JSON.stringify(data));
+
         fetch("http://localhost:5000/api/cut", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data)
-        }).then(r => alert("Sent to app"));
+        });
     };
 
     controls.appendChild(startBtn);

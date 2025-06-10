@@ -40,10 +40,12 @@ public class CutViewModel : ObservableObject
             .Select(f => new VideoFormatViewModel(f))
             .ToArray(), af);
 
-        FileNameControl = parameters.Source is not null ? FileNameControlViewModel.CreateFromPath(parameters.Source.FilePath) :
-            FileNameControlViewModel.CreateFromName(_info.Title);
+        FileNameControl = String.IsNullOrEmpty(parameters.Source?.FilePath) 
+            ? FileNameControlViewModel.CreateFromName(_info.Title)
+            : FileNameControlViewModel.CreateFromPath(parameters.Source.FilePath);
 
-        TimeRange = new(_info.DurationString);
+        var sourceTimeRange = parameters.Source?.TimeRange;
+        TimeRange = sourceTimeRange is not null ? new(sourceTimeRange.From, sourceTimeRange.To) : new(_info.DurationString);
 
         if (parameters.Source is not null)
             InitData(parameters.Source);
@@ -68,7 +70,6 @@ public class CutViewModel : ObservableObject
     {
         var task = new CutVideoTask()
         {
-
             Name = _info.Title,
             Created = DateTime.Now,
 

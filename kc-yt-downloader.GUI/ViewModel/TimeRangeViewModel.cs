@@ -8,6 +8,12 @@ public class TimeRangeViewModel : ObservableObject
 {
     private static SelectedSettings Settings => YtConfig.Global.SelectedSettings;
 
+    public TimeRangeViewModel(string from, string to)
+    {
+        From = from;
+        To = to;
+    }
+
     public TimeRangeViewModel(string duration)
     {
         From = "0";
