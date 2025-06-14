@@ -3,14 +3,9 @@ using System.Text.Json;
 
 namespace kc_yt_downloader.Model;
 
-public class CutTaskListener
-{        
-    public CutTaskListener()
-    {
-        
-    }
-
-    public Task Listen(Action<CutTaskRequest> callback, CancellationToken cancellationToken)
+public static class CutTaskListener
+{   
+    public static Task Listen(string prefix, Action<CutTaskRequest> callback, CancellationToken cancellationToken)
     {
         var jsonSerializerOptions = new JsonSerializerOptions()
         {
@@ -19,7 +14,7 @@ public class CutTaskListener
 
         var listener = new HttpListener
         { 
-            Prefixes = { "http://localhost:5000/api/cut/" }
+            Prefixes = { prefix }
         };
 
         listener.Start();

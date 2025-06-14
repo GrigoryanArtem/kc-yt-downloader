@@ -3,18 +3,15 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using kc_yt_downloader.GUI.Model.Messages;
 using kc_yt_downloader.Model;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace kc_yt_downloader.GUI.ViewModel
 {
     public class UrlAddingViewModel : ObservableObject
     {
-        private readonly YtDlp _ytDlp;
-        public UrlAddingViewModel(YtDlp ytDlp)
-        {
-            _ytDlp = ytDlp;
+        public UrlAddingViewModel()
+            => AddUrlCommand = new RelayCommand(async () => await OnAddUrlAsync());
 
-            AddUrlCommand = new RelayCommand(async () => await OnAddUrlAsync());
-        }
 
         private string? _url;
         public string? Url
@@ -51,7 +48,8 @@ namespace kc_yt_downloader.GUI.ViewModel
             var url = Url;
             Url = String.Empty;
 
-            _ytDlp.GetVideoByUrl(url);
+            var ytDlp = App.Current.Services.GetRequiredService<YtDlp>();
+            ytDlp.GetVideoByUrl(url!);
 
             WeakReferenceMessenger.Default.Send(new VideosUpdatedMessage());
 

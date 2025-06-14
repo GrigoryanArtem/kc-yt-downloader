@@ -1,11 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using kc_yt_downloader.GUI.Model;
 using kc_yt_downloader.GUI.Model.Messages;
 using kc_yt_downloader.Model;
-using NavigationMVVM.Services;
 using NavigationMVVM.Stores;
-using static kc_yt_downloader.GUI.ViewModel.LogViewModel;
 
 namespace kc_yt_downloader.GUI.ViewModel;
 
@@ -13,22 +10,13 @@ public class DashboardViewModel : ObservableObject
 {
     private readonly YtDlp _ytDlp;
 
-    private readonly ParameterNavigationService<CutViewModelParameters, CutViewModel> _cutNavigation;
-    private readonly ParameterNavigationService<LogViewModelParameters, LogViewModel> _logNavigation;
-
     public DashboardViewModel(NavigationStore store, YtDlp ytDlp)
     {
         _ytDlp = ytDlp;
 
-        UrlAddingViewModel = new(_ytDlp);
-
         WeakReferenceMessenger.Default.Register<VideosUpdatedMessage>(this, UpdateVideos);
         WeakReferenceMessenger.Default.Register<AddTaskMessage>(this, UpdateTasks);
-
         WeakReferenceMessenger.Default.Register<DeleteTaskMessage>(this, UpdateTasks);
-
-        _cutNavigation = new ParameterNavigationService<CutViewModelParameters, CutViewModel>(store, cvp => new CutViewModel(cvp));
-        _logNavigation = new ParameterNavigationService<LogViewModelParameters, LogViewModel>(store, p => new LogViewModel(p));
 
         UpdateVideos();
     }
@@ -47,7 +35,7 @@ public class DashboardViewModel : ObservableObject
         set => SetProperty(ref _tasks, value);
     }
 
-    public UrlAddingViewModel UrlAddingViewModel { get; }
+    public UrlAddingViewModel UrlAddingViewModel { get; } = new();
 
     private void UpdateTasks(object sender, DeleteTaskMessage message)
     {
@@ -66,22 +54,20 @@ public class DashboardViewModel : ObservableObject
     }
 
     private void UpdateTasks()
-        => Tasks = _ytDlp.GetCachedTasks()
+        => Tasks = [.. _ytDlp.GetCachedTasks()
             .Where(t => t.Status != VideoTaskStatus.Completed)
             .Select(task => new CutTaskViewModel(task, _ytDlp))
-            .OrderByDescending(video => video.Source.Created)
-            .ToArray();
+            .OrderByDescending(video => video.Source.Created)];
 
     private void UpdateVideos(object sender, VideosUpdatedMessage message)
         => UpdateVideos();
 
     private void UpdateVideos()
     {
-        Videos = _ytDlp.GetCachedData()
+        Videos = [.. _ytDlp.GetCachedData()
             .OrderByDescending(video => video.ParseDate)
             .Select(video => new YTVideoViewModel(_ytDlp, video))
-            .GroupBy(v => new DateTime(year: v.Video.ParseDate.Year, month: v.Video.ParseDate.Month, day: 1))
-            .ToArray();
+            .GroupBy(v => new DateTime(year: v.Video.ParseDate.Year, month: v.Video.ParseDate.Month, day: 1))];
 
         UpdateTasks();
     }
