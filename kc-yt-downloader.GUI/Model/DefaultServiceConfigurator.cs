@@ -16,6 +16,8 @@ namespace kc_yt_downloader.GUI.Model
             {
                 DataContext = s.GetRequiredService<MainWindowViewModel>()
             });
+
+            services.AddSingleton<BrowserExtensionHandler>(_ => new());
         }
 
         private static void ConfigureViewModels(IServiceCollection services)
