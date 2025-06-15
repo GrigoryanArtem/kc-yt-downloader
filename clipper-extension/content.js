@@ -14,12 +14,18 @@ function injectButtons() {
 
         const video = document.querySelector("video");
         start = Math.floor(video.currentTime);
+
+        const percentStart = (start / video.duration) * 100;
+        createStartMarker(percentStart);
     };
 
     const endBtn = document.createElement("button");
     endBtn.innerText = "Cut End";
     endBtn.className = "yt-cut-btn";
     endBtn.onclick = () => {
+        const marker = document.getElementById("yt-cut-start-flag");
+        if (marker) marker.remove();
+
         const video = document.querySelector("video");
         end = Math.floor(video.currentTime);
 
@@ -27,8 +33,6 @@ function injectButtons() {
 
         const videoId = new URLSearchParams(window.location.search).get("v");
         const data = { videoId, start, end };
-
-        alert(JSON.stringify(data));
 
         fetch("http://localhost:5000/api/cut", {
             method: "POST",
@@ -79,3 +83,46 @@ function removeHighlightBar() {
 }
 
 setInterval(injectButtons, 1000);
+
+
+function createStartMarker(positionPercent) {
+    const container = document.querySelector('.ytp-progress-bar-container');
+    if (!container) return;
+
+    const existing = document.getElementById('yt-cut-start-flag');
+    if (existing) existing.remove();
+
+    const marker = document.createElement('div');
+    marker.id = 'yt-cut-start-flag';
+    marker.style.position = 'absolute';
+    marker.style.left = `${positionPercent}%`;
+    marker.style.bottom = '0';
+    marker.style.width = '20px';
+    marker.style.height = '60px';
+    marker.style.display = 'flex';
+    marker.style.flexDirection = 'column';
+    marker.style.alignItems = 'center';
+    marker.style.pointerEvents = 'none';
+    marker.style.zIndex = '9999';
+    marker.style.transform = 'translateX(-50%)';
+
+
+    const line = document.createElement('div');
+    line.style.width = '3px';
+    line.style.height = '40px';
+    line.style.backgroundColor = '#FF4081';
+    line.style.borderRadius = '1px';
+
+    const label = document.createElement('div');
+    label.innerText = 'Start';
+    label.style.color = '#FF4081';
+    label.style.fontSize = '10px';
+    label.style.fontWeight = 'bold';
+    label.style.marginBottom = '2px';
+
+    marker.appendChild(label);
+    marker.appendChild(line);
+
+    container.style.position = 'relative';
+    container.appendChild(marker);
+}
