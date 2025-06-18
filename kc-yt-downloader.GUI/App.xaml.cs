@@ -11,7 +11,7 @@ namespace kc_yt_downloader.GUI;
 public partial class App : Application
 {
     private readonly IHost _host;
-    private readonly BrowserExtensionHandler _browserExtensionHandler;
+    private BrowserExtensionHandler _browserExtensionHandler;
 
     public App()
     {
@@ -34,10 +34,10 @@ public partial class App : Application
         initialNavigationService.Navigate();
 
         var mainWindow = Services.GetRequiredService<MainWindow>();
-        mainWindow!.Show();
+        _browserExtensionHandler = Services.GetRequiredService<BrowserExtensionHandler>();
+        _browserExtensionHandler.Run();
 
-        var browserExtensionHandler = Services.GetRequiredService<BrowserExtensionHandler>();
-        browserExtensionHandler.Run();
+        mainWindow!.Show();
     }
 
     protected async override void OnExit(ExitEventArgs e)

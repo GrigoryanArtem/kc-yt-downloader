@@ -1,0 +1,65 @@
+﻿<UserControl
+    x:Class="kc_yt_downloader.GUI.View.Controls.ErrorInformationView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:kc_yt_downloader.GUI.View.Controls"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:model="clr-namespace:kc_yt_downloader.GUI.Model"
+    d:DesignHeight="600"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid
+        Width="550"
+        Height="425"
+        Margin="24"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel
+            Grid.Row="0"
+            Orientation="Horizontal">
+
+            <materialDesign:PackIcon
+                Width="20"
+                Height="20"
+                Margin="12 8"
+                VerticalAlignment="Center"
+                Kind="Bug" />
+
+            <TextBlock
+                Style="{StaticResource MaterialDesignHeadline4TextBlock}"
+                Text="Error details:" />
+        </StackPanel>
+
+        <ScrollViewer
+            Grid.Row="1"
+            Margin="4 12">
+
+            <TextBlock
+                Text="{Binding Details}"
+                TextWrapping="Wrap" />
+        </ScrollViewer>
+
+        <StackPanel
+            Grid.Row="2"
+            Grid.ColumnSpan="2"
+            Margin="12 0"
+            HorizontalAlignment="Right"
+            Orientation="Horizontal">
+
+            <Button
+                Margin="4 0"
+                Command="{x:Static model:NavigationCommands.CloseModalCommand}"
+                Content="Close"
+                Style="{StaticResource MaterialDesignOutlinedSecondaryButton}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

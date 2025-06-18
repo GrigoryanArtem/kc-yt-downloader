@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using kc_yt_downloader.GUI.Model;
 using kc_yt_downloader.GUI.Model.Messages;
 using kc_yt_downloader.Model;
+using Microsoft.Extensions.DependencyInjection;
 using NavigationMVVM.Stores;
 
 namespace kc_yt_downloader.GUI.ViewModel;
@@ -12,21 +14,19 @@ public class DashboardViewModel : ObservableObject
 
     public DashboardViewModel(NavigationStore store, YtDlp ytDlp)
     {
-        _ytDlp = ytDlp;
+        var services = App.Current.Services;
 
-        WeakReferenceMessenger.Default.Register<VideosUpdatedMessage>(this, UpdateVideos);
+        _ytDlp = ytDlp;
+        DlpProxy = services.GetRequiredService<YtDlpProxy>();
+
         WeakReferenceMessenger.Default.Register<AddTaskMessage>(this, UpdateTasks);
         WeakReferenceMessenger.Default.Register<DeleteTaskMessage>(this, UpdateTasks);
 
-        UpdateVideos();
+        UpdateTasks();
     }
-
-    private IGrouping<DateTime, YTVideoViewModel>[] _videos;
-    public IGrouping<DateTime, YTVideoViewModel>[] Videos
-    {
-        get => _videos;
-        set => SetProperty(ref _videos, value);
-    }
+    
+    public YtDlpProxy DlpProxy { get; set; }
+    
 
     private CutTaskViewModel[] _tasks;
     public CutTaskViewModel[] Tasks
@@ -58,17 +58,4 @@ public class DashboardViewModel : ObservableObject
             .Where(t => t.Status != VideoTaskStatus.Completed)
             .Select(task => new CutTaskViewModel(task, _ytDlp))
             .OrderByDescending(video => video.Source.Created)];
-
-    private void UpdateVideos(object sender, VideosUpdatedMessage message)
-        => UpdateVideos();
-
-    private void UpdateVideos()
-    {
-        Videos = [.. _ytDlp.GetCachedData()
-            .OrderByDescending(video => video.ParseDate)
-            .Select(video => new YTVideoViewModel(_ytDlp, video))
-            .GroupBy(v => new DateTime(year: v.Video.ParseDate.Year, month: v.Video.ParseDate.Month, day: 1))];
-
-        UpdateTasks();
-    }
 }

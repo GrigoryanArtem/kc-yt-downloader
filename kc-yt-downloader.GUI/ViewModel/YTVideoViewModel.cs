@@ -1,8 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using kc_yt_downloader.GUI.Model;
-using kc_yt_downloader.GUI.Model.Messages;
 using kc_yt_downloader.Model;
 using Microsoft.Extensions.DependencyInjection;
 using NavigationMVVM.Services;
@@ -15,13 +13,14 @@ namespace kc_yt_downloader.GUI.ViewModel;
 
 public partial class YTVideoViewModel : ObservableObject
 {
-    private readonly YtDlp _ytDlp;
+    private readonly YtDlp _ytDlp;    
 
     public YTVideoViewModel(
         YtDlp ytDlp,
         VideoPreview video)
     {
         _ytDlp = ytDlp;
+
 
         Video = video;
         var videoInfo = Video?.Info;
@@ -49,10 +48,9 @@ public partial class YTVideoViewModel : ObservableObject
 
         var services = App.Current.Services;
         var store = services.GetRequiredService<NavigationStore>();
-        var navigation = new NavigationService<CutViewLoadingViewModel>(store, () => cutViewLoadingViewModel);
+        var navigation = new NavigationService<CutViewLoadingViewModel>(store, () => cutViewLoadingViewModel);        
 
         CutCommand = new RelayCommand(navigation.Navigate);
-
         OpenCommand = new RelayCommand(OnOpen);
     }
 
@@ -88,8 +86,7 @@ public partial class YTVideoViewModel : ObservableObject
     [RelayCommand]
     public void DeleteVideo()
     {
-        _ytDlp.DeleteVideo(Video);
-
-        WeakReferenceMessenger.Default.Send(new VideosUpdatedMessage());
-    }
+        var proxy = App.Current.Services.GetRequiredService<YtDlpProxy>();
+        proxy.DeleteVideo(Video);
+    }        
 }

@@ -16,6 +16,39 @@
         materialDesign:ElevationAssist.Elevation="Dp4"
         UniformCornerRadius="12">
 
+        <materialDesign:Card.Style>
+            <Style TargetType="materialDesign:Card">
+                <Style.Triggers>
+                    <EventTrigger RoutedEvent="Loaded">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation
+                                    FillBehavior="Stop"
+                                    Storyboard.TargetProperty="Opacity"
+                                    From="0"
+                                    To="1"
+                                    Duration="0:0:0.3" />
+                                <DoubleAnimation
+                                    FillBehavior="Stop"
+                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.Y)"
+                                    From="20"
+                                    To="0"
+                                    Duration="0:0:0.3" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Style.Triggers>
+
+                <Setter Property="RenderTransform">
+                    <Setter.Value>
+                        <TranslateTransform Y="0" />
+                    </Setter.Value>
+                </Setter>
+
+                <Setter Property="Opacity" Value="1" />
+            </Style>
+        </materialDesign:Card.Style>
+
         <Grid x:Name="_mainGrid">
             <Grid.RowDefinitions>
                 <RowDefinition Height="255" />

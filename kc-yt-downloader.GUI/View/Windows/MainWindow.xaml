@@ -7,6 +7,7 @@
     xmlns:local="clr-namespace:kc_yt_downloader.GUI"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:model="clr-namespace:kc_yt_downloader.GUI.Model"
     xmlns:viewmodel="clr-namespace:kc_yt_downloader.GUI.ViewModel"
     Title="Clipper"
     Width="1280"
@@ -45,7 +46,15 @@
             <DataTemplate DataType="{x:Type viewmodel:CutViewLoadingViewModel}">
                 <controls:LoadingView />
             </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewmodel:ErrorInformationViewModel}">
+                <controls:ErrorInformationView />
+            </DataTemplate>
         </Grid.Resources>
+
+        <ContentControl Content="{Binding CurrentViewModel}" />
+
+        <materialDesign:Snackbar MessageQueue="{x:Static model:GlobalSnackbarMessageQueue.Queue}" />
 
         <materialDesign:DialogHost
             DialogContentUniformCornerRadius="8"
@@ -58,7 +67,5 @@
                     Content="{Binding CurrentModalViewModel, Mode=OneWay}" />
             </materialDesign:DialogHost.DialogContent>
         </materialDesign:DialogHost>
-
-        <ContentControl Content="{Binding CurrentViewModel}" />
     </Grid>
 </Window>

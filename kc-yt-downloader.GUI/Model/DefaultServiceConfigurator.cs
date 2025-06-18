@@ -26,6 +26,7 @@ public class DefaultServiceConfigurator : IServicesConfigurator
         ytDlp.Open();
 
         services.AddSingleton(ytDlp);
+        services.AddSingleton<YtDlpProxy>(_ => new(ytDlp));
 
         services.AddSingleton<NavigationStore>();
         services.AddSingleton<ModalNavigationStore>();
@@ -44,6 +45,12 @@ public class DefaultServiceConfigurator : IServicesConfigurator
         (
             s.GetRequiredService<NavigationStore>(),
             () => s.GetRequiredService<UpdateViewModel>()
+        ));
+
+        services.AddTransient(s => new ParameterNavigationService<string, ErrorInformationViewModel>
+        (
+            s.GetRequiredService<ModalNavigationStore>(),
+            args => new(args)
         ));
 
         services.AddSingleton<MainWindowViewModel>();

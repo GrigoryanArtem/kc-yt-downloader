@@ -1,59 +1,56 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using kc_yt_downloader.GUI.Model;
 using kc_yt_downloader.GUI.Model.Messages;
-using kc_yt_downloader.Model;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace kc_yt_downloader.GUI.ViewModel
+namespace kc_yt_downloader.GUI.ViewModel;
+
+public class UrlAddingViewModel : ObservableObject
 {
-    public class UrlAddingViewModel : ObservableObject
+    public UrlAddingViewModel()
+        => AddUrlCommand = new RelayCommand(async () => await OnAddUrlAsync());
+
+
+    private string? _url;
+    public string? Url
     {
-        public UrlAddingViewModel()
-            => AddUrlCommand = new RelayCommand(async () => await OnAddUrlAsync());
-
-
-        private string? _url;
-        public string? Url
+        get => _url;
+        set
         {
-            get => _url;
-            set
-            {
-                SetProperty(ref _url, value);
-                OnPropertyChanged(nameof(IsAddButtonEnable));
-            }
+            SetProperty(ref _url, value);
+            OnPropertyChanged(nameof(IsAddButtonEnable));
         }
+    }
 
-        public bool IsAddButtonEnable => !IsProgress && !String.IsNullOrEmpty(Url);
+    public bool IsAddButtonEnable => !IsProgress && !String.IsNullOrEmpty(Url);
 
-        private bool _isProgress;
-        public bool IsProgress
+    private bool _isProgress;
+    public bool IsProgress
+    {
+        get => _isProgress;
+        set
         {
-            get => _isProgress;
-            set
-            {
-                SetProperty(ref _isProgress, value);
-                OnPropertyChanged(nameof(IsAddButtonEnable));
-            }
+            SetProperty(ref _isProgress, value);
+            OnPropertyChanged(nameof(IsAddButtonEnable));
         }
-        public RelayCommand AddUrlCommand { get; }
+    }
+    public RelayCommand AddUrlCommand { get; }
 
-        public Task OnAddUrlAsync()
-            => Task.Run(OnAddUrl);
+    public Task OnAddUrlAsync()
+        => Task.Run(OnAddUrl);
 
-        public void OnAddUrl()
-        {
-            IsProgress = true;
+    public void OnAddUrl()
+    {
+        IsProgress = true;
 
-            var url = Url;
-            Url = String.Empty;
+        var url = Url;
+        Url = String.Empty;
 
-            var ytDlp = App.Current.Services.GetRequiredService<YtDlp>();
-            ytDlp.GetVideoByUrl(url!);
+        var ytDlp = App.Current.Services.GetRequiredService<YtDlpProxy>();
+        ytDlp.AddUrl(url!);        
 
-            WeakReferenceMessenger.Default.Send(new VideosUpdatedMessage());
-
-            IsProgress = false;
-        }
+        IsProgress = false;
     }
 }

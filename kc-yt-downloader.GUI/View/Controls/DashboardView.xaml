@@ -120,7 +120,7 @@
                     Margin="12 8"
                     HorizontalAlignment="Center"
                     d:ItemsSource="{d:SampleData}"
-                    ItemsSource="{Binding Videos}">
+                    ItemsSource="{Binding DlpProxy.Videos}">
 
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -141,11 +141,11 @@
                                 <TextBlock
                                     Margin="8 12"
                                     Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-                                    Text="{Binding Key, StringFormat='{}{0:MMMM yyyy}'}" />
+                                    Text="{Binding Date, StringFormat='{}{0:MMMM yyyy}'}" />
 
                                 <ItemsControl
                                     Grid.Row="1"
-                                    ItemsSource="{Binding}">
+                                    ItemsSource="{Binding Items}">
 
                                     <ItemsControl.ItemsPanel>
                                         <ItemsPanelTemplate>
