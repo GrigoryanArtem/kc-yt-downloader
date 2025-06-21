@@ -7,22 +7,28 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
-		<AssemblyName>kc-yt-downloader</AssemblyName>
+		<AssemblyName>clipper</AssemblyName>
 		<ApplicationIcon>Resources\logo_small.ico</ApplicationIcon>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<Product>Clipper</Product>
 		<PackageIcon>logo_small.png</PackageIcon>
+		<Authors>Artem Grigoryan</Authors>
 	</PropertyGroup>
 
 	<ItemGroup>
 	  <None Remove="Resources\logo.png" />
+	  <None Remove="Resources\logo_small.png" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Include="Resources\logo.png">
+	  <Resource Include="Resources\logo.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
+	  </Resource>
 	  <Content Include="Resources\logo_small.ico" />
+	  <Content Include="Resources\logo_small.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </Content>
 	</ItemGroup>
 
 	<ItemGroup>
@@ -47,13 +53,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\kc-yt-downloader.Model\kc-yt-downloader.Model.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Update="Resources\logo_small.png">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
 	</ItemGroup>
 
 </Project>

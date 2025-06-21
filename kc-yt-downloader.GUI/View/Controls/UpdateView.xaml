@@ -41,7 +41,7 @@
                         Height="256"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        Source="/Resources/logo.png" />
+                        Source="pack://application:,,,../../Resources/logo.png" />
 
                     <TextBlock
                         Margin="0 0 35 0"
