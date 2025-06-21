@@ -49,7 +49,7 @@ public class UrlAddingViewModel : ObservableObject
         Url = String.Empty;
 
         var ytDlp = App.Current.Services.GetRequiredService<YtDlpProxy>();
-        ytDlp.AddUrl(url!);        
+        ytDlp.GetVideo(url!);        
 
         IsProgress = false;
     }

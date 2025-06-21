@@ -61,29 +61,29 @@ public partial class YtDlpProxy : ObservableObject
         }
     }
 
-    public void AddUrl(string url)
+    public Video? GetVideo(string url)
     {
         try
         {
-            _ytDlp.GetVideoByUrl(url);
+            var video = _ytDlp.GetVideoByUrl(url);
             Sync(SyncType.Videos);
 
             GlobalSnackbarMessageQueue.WriteInfo($"Added video from URL: {url}");
+
+            return video;
         }
         catch (Exception ex)
         {
             GlobalSnackbarMessageQueue.WriteError($"Failed to add video from URL: {url}", ex);
+            return null;
         }
     }
 
-    public void Sync(SyncType type)
+    public void Sync(SyncType type) => App.Current.Dispatcher.Invoke(() => 
     {
-        App.Current.Dispatcher.Invoke(() => {
-
-            if (type.HasFlag(SyncType.Videos))
-                UpdateVideos();
-        });
-    }
+        if (type.HasFlag(SyncType.Videos))
+            UpdateVideos();
+    });    
 
     #region Private methods
 

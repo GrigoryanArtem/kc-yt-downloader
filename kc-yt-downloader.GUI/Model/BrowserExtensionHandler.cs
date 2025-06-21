@@ -32,11 +32,11 @@ public class BrowserExtensionHandler
     private void Handle(CutTaskRequest request)
     {
         var services = App.Current.Services;
-        var ytDlp = services.GetRequiredService<YtDlp>();
+        var ytDlp = services.GetRequiredService<YtDlpProxy>();
 
         var cutViewLoadingViewModel = new CutViewLoadingViewModel(() => Task.Run(() =>
         {
-            var video = ytDlp.GetVideoByUrl(request.VideoId);
+            var video = ytDlp.GetVideo(request.VideoId);
 
             return new CutViewModelParameters()
             {
@@ -51,7 +51,6 @@ public class BrowserExtensionHandler
                 }
             };
         }));
-
 
         var store = services.GetRequiredService<NavigationStore>();
         var navigation = new NavigationService<CutViewLoadingViewModel>(store, () => cutViewLoadingViewModel);

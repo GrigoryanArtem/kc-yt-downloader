@@ -73,14 +73,10 @@ public partial class YTVideoViewModel : ObservableObject
 
     public void OnOpen()
     {
-        if (String.IsNullOrEmpty(Video?.Info?.OriginalUrl))
-            return;
+        var services = App.Current.Services;    
+        var navigation = services.GetRequiredService<ParameterNavigationService<VideoPreview, VideoInfoControlViewModel>>();
 
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = Video.Info.OriginalUrl,
-            UseShellExecute = true
-        });
+        navigation.Navigate(Video);
     }
 
     [RelayCommand]

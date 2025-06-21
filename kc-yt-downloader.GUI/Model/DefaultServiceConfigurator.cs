@@ -53,6 +53,12 @@ public class DefaultServiceConfigurator : IServicesConfigurator
             args => new(args)
         ));
 
+        services.AddTransient(s => new ParameterNavigationService<VideoPreview, VideoInfoControlViewModel>
+        (
+            s.GetRequiredService<ModalNavigationStore>(),
+            args => new(args)
+        ));
+
         services.AddSingleton<MainWindowViewModel>();
     }
 }

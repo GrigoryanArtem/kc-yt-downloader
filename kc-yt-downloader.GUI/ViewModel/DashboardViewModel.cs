@@ -55,7 +55,7 @@ public class DashboardViewModel : ObservableObject
 
     private void UpdateTasks()
         => Tasks = [.. _ytDlp.GetCachedTasks()
-            .Where(t => t.Status != VideoTaskStatus.Completed)
+            .Where(t => t.Status != VideoTaskStatus.Completed || t.Created < DateTime.Now.AddDays(-3))
             .Select(task => new CutTaskViewModel(task, _ytDlp))
             .OrderByDescending(video => video.Source.Created)];
 }
