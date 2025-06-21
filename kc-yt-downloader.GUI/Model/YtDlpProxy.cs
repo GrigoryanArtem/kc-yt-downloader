@@ -46,7 +46,6 @@ public partial class YtDlpProxy : ObservableObject
         if (url is null)
             return;
 
-
         try
         {
             _ytDlp.DeleteVideo(url);

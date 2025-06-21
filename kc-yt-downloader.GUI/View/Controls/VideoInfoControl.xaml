@@ -191,7 +191,7 @@
             <Button
                 Margin="4 0"
                 HorizontalAlignment="Left"
-                Command="{Binding SaveCommand}"
+                Command="{Binding DeleteVideoCommand}"
                 Content="Delete"
                 Style="{StaticResource MaterialDesignOutlinedSecondaryButton}" />
         </Grid>

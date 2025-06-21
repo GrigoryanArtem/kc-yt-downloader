@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using kc_yt_downloader.GUI.Model;
 using kc_yt_downloader.Model;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
@@ -50,5 +52,14 @@ public partial class VideoInfoControlViewModel : ObservableObject
             FileName = _video.Info.OriginalUrl,
             UseShellExecute = true
         });
+    }
+
+    [RelayCommand]
+    public void DeleteVideo()
+    {
+        NavigationCommands.CloseModal();
+
+        var proxy = App.Current.Services.GetRequiredService<YtDlpProxy>();
+        proxy.DeleteVideo(_video);
     }
 }

@@ -29,6 +29,32 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center">
 
+
+            <Border
+                Margin="25"
+                Background="{StaticResource MaterialDesign.Brush.Primary}"
+                CornerRadius="25">
+
+                <StackPanel Orientation="Horizontal">
+                    <Image
+                        Width="256"
+                        Height="256"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Source="/Resources/logo.png" />
+
+                    <TextBlock
+                        Margin="0 0 35 0"
+                        VerticalAlignment="Center"
+                        FontWeight="ExtraBlack"
+                        Foreground="{StaticResource MaterialDesign.Brush.Primary.Foreground}"
+                        Style="{StaticResource MaterialDesignHeadline1TextBlock}"
+                        Text="Clipper" />
+                </StackPanel>
+            </Border>
+
+
+
             <ProgressBar
                 Width="30"
                 Height="30"

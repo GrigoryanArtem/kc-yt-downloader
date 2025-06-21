@@ -8,12 +8,21 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
 		<AssemblyName>kc-yt-downloader</AssemblyName>
-		<ApplicationIcon>arrow.ico</ApplicationIcon>
+		<ApplicationIcon>Resources\logo_small.ico</ApplicationIcon>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<Product>Clipper</Product>
+		<PackageIcon>logo_small.png</PackageIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Include="arrow.ico" />
+	  <None Remove="Resources\logo.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Resources\logo.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	  <Content Include="Resources\logo_small.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -38,6 +47,13 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\kc-yt-downloader.Model\kc-yt-downloader.Model.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Resources\logo_small.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
 	</ItemGroup>
 
 </Project>

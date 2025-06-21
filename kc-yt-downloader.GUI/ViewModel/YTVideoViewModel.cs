@@ -77,12 +77,5 @@ public partial class YTVideoViewModel : ObservableObject
         var navigation = services.GetRequiredService<ParameterNavigationService<VideoPreview, VideoInfoControlViewModel>>();
 
         navigation.Navigate(Video);
-    }
-
-    [RelayCommand]
-    public void DeleteVideo()
-    {
-        var proxy = App.Current.Services.GetRequiredService<YtDlpProxy>();
-        proxy.DeleteVideo(Video);
-    }        
+    }         
 }
