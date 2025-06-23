@@ -81,14 +81,41 @@ function injectPanel() {
     const panel = document.createElement("div");
     panel.id = "yt-cut-panel";
     panel.innerHTML = `
-        <table id="yt-cut-table"></table>
-        <div id="yt-cut-panel-buttons">
-            <button id="yt-cut-send">Send</button>
-            <button id="yt-cut-delete">Delete</button>
-            <button id="yt-cut-toggle-select">Select All</button>
-        </div>
-    `;
+    <div id="yt-cut-panel-header">Segments</div>
+    <table id="yt-cut-table"></table>
+    <div id="yt-cut-panel-buttons">
+        <button id="yt-cut-send">Send</button>
+        <button id="yt-cut-delete">Delete</button>
+        <button id="yt-cut-toggle-select">Select All</button>
+    </div>
+`;
     document.body.appendChild(panel);
+    makePanelDraggable(panel, panel.querySelector("#yt-cut-panel-header"));
+}
+
+function makePanelDraggable(panel, handle) {
+    let offsetX = 0;
+    let offsetY = 0;
+    let isDragging = false;
+
+    handle.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        offsetX = e.clientX - panel.offsetLeft;
+        offsetY = e.clientY - panel.offsetTop;
+        document.body.style.userSelect = "none";
+    });
+
+    document.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+        panel.style.left = `${e.clientX - offsetX}px`;
+        panel.style.top = `${e.clientY - offsetY}px`;
+        panel.style.right = "auto"; 
+    });
+
+    document.addEventListener("mouseup", () => {
+        isDragging = false;
+        document.body.style.userSelect = "";
+    });
 }
 
 function addHighlightBar(startSec, endSec, id = "yt-cut-highlight") {
@@ -236,8 +263,9 @@ document.body.addEventListener("click", (e) => {
         rows.forEach((row) => {
             const cb = row.querySelector("input[type='checkbox']");
             if (cb && cb.checked) {
-                const times = row.cells[1].textContent.split(" - ");
-                document.getElementById(`highlight-${parseTime(times[0])}-${parseTime(times[1])}`)?.remove();
+                const text = row.cells[1].textContent.replace(/\(.*?\)/, "").trim();
+                const [from, to] = text.split(" - ");
+                document.getElementById(`highlight-${parseTime(from)}-${parseTime(to)}`)?.remove();
                 row.remove();
             }
         });
@@ -248,8 +276,12 @@ document.body.addEventListener("click", (e) => {
         const allSelected = [...rows].every(row => row.querySelector("input")?.checked);
         rows.forEach((row) => {
             const cb = row.querySelector("input");
-            if (cb) cb.checked = !allSelected;
+            if (cb) {
+                cb.checked = !allSelected;
+                cb.dispatchEvent(new Event("change"));
+            }
         });
+
         e.target.textContent = allSelected ? "Select All" : "Select None";
     }
 });
