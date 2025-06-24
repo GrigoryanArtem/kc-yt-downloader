@@ -28,9 +28,10 @@ public static class CutTaskListener
                 var request = context.Request;
                 var response = context.Response;
 
+                response.AddHeader("Access-Control-Allow-Origin", "*");
+
                 if (request.HttpMethod == "OPTIONS")
-                {
-                    response.AddHeader("Access-Control-Allow-Origin", "*");
+                {                    
                     response.AddHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
                     response.AddHeader("Access-Control-Allow-Headers", "Content-Type");
                     response.StatusCode = 204; 
@@ -44,6 +45,7 @@ public static class CutTaskListener
                 var body = new StreamReader(context.Request.InputStream).ReadToEnd();                
                 var requestModel = JsonSerializer.Deserialize<CutTaskRequest>(body, jsonSerializerOptions);
 
+                
                 response.StatusCode = 200;
                 response.Close();
 
