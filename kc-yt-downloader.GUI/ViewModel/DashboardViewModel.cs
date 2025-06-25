@@ -48,7 +48,8 @@ public class DashboardViewModel : ObservableObject
     private void UpdateTasks(object sender, AddTaskMessage message)
     {
         if (message is not null)
-            _ytDlp.AddTask(message.Task);
+            foreach(var task in message.Tasks)
+            _ytDlp.AddTask(task);
 
         UpdateTasks();
     }

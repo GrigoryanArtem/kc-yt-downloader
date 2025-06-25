@@ -1,24 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using kc_yt_downloader.GUI.Model;
 using kc_yt_downloader.Model;
+using System.Collections.ObjectModel;
 
 namespace kc_yt_downloader.GUI.ViewModel;
 
-public class TimeRangeViewModel : ObservableObject
+public class TimeRangeViewModel(TimeRange[]? segments, string durationString) : ObservableObject
 {
     private static SelectedSettings Settings => YtConfig.Global.SelectedSettings;
-
-    public TimeRangeViewModel(string from, string to)
-    {
-        From = from;
-        To = to;
-    }
-
-    public TimeRangeViewModel(string duration)
-    {
-        From = "0";
-        To = duration;
-    }
 
     public bool FullVideo
     {
@@ -30,22 +19,12 @@ public class TimeRangeViewModel : ObservableObject
         }
     }
 
+    public ObservableCollection<SegmentViewModel> Segments { get; } 
+        = segments is not null && segments.Length > 0
+            ? [..segments.Select(s => new SegmentViewModel(s))]
+            : [new(durationString)];
+
     public bool CanEdit => !FullVideo;
-
-    private string _from;
-    public string From
-    {
-        get => _from;
-        set => SetProperty(ref _from, value);
-    }
-
-    private string _to;
-    public string To
-    {
-        get => _to;
-        set => SetProperty(ref _to, value);
-    }
-
-    public TimeRange? GetTimeRange()
-        => FullVideo ? null : new() { From = From, To = To };
+    public TimeRange?[] GetTimeRanges()
+        => FullVideo ? [ null! ] : Segments.Select(s => new TimeRange() { From = s.From, To = s.To }).ToArray();
 }

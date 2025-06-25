@@ -40,15 +40,14 @@ public class CutViewModel : ObservableObject
             .Select(f => new VideoFormatViewModel(f))
             .ToArray(), af);
 
-        FileNameControl = String.IsNullOrEmpty(parameters.Source?.FilePath) 
+        FileNameControl = String.IsNullOrEmpty(parameters.Batch?.FilePath) 
             ? FileNameControlViewModel.CreateFromName(_info.Title)
-            : FileNameControlViewModel.CreateFromPath(parameters.Source.FilePath);
+            : FileNameControlViewModel.CreateFromPath(parameters.Batch.FilePath);
+        
+        TimeRange = new(parameters.Batch?.Segments, _info.DurationString);
 
-        var sourceTimeRange = parameters.Source?.TimeRange;
-        TimeRange = sourceTimeRange is not null ? new(sourceTimeRange.From, sourceTimeRange.To) : new(_info.DurationString);
-
-        if (parameters.Source is not null)
-            InitData(parameters.Source);
+        if (parameters.Batch is not null)
+            InitBatch(parameters.Batch);
 
         BackCommand = NavigationHistory.NavigateBackCommand;
         AddToQueueCommand = new RelayCommand(OnAddToQueueCommand);
@@ -68,40 +67,34 @@ public class CutViewModel : ObservableObject
 
     private void OnAddToQueueCommand()
     {
-        var task = new CutVideoTask()
+        var ranges = TimeRange.GetTimeRanges();
+        var tasks = ranges.Select((tr, i) => new CutVideoTask()
         {
             Name = _info.Title,
             Created = DateTime.Now,
 
             VideoId = _info.Id,
             URL = _info.WebPageUrl,
-            FilePath = FileNameControl.GetFullPath(),
+            FilePath = FileNameControl.GetFullPath() + (ranges.Length > 1 ? i.ToString() : String.Empty),
 
-            TimeRange = TimeRange.GetTimeRange(),
+            TimeRange = tr,
             Recode = Recode.GetRecode(),
 
             VideoFormatId = VideoFormatsSelector.SelectedFormat?.Id,
             AudioFormatId = AudioFormatsSelector.SelectedFormat?.Id,
 
             Status = VideoTaskStatus.Prepared
-        };
+        }).ToArray();
 
         YtConfig.Global.Save();
-        WeakReferenceMessenger.Default.Send(new AddTaskMessage() { Task = task });
+        WeakReferenceMessenger.Default.Send(new AddTaskMessage() { Tasks = tasks });
         NavigationHistory.Current.NavigateBack();
     }
 
-    private void InitData(CutVideoTask task)
+    private void InitBatch(CutVideoBatch task)
     {
         VideoFormatsSelector.SelectedFormat = VideoFormatsSelector.Formats?.FirstOrDefault(f => f.Id == task.VideoFormatId);
         AudioFormatsSelector.SelectedFormat = AudioFormatsSelector.Formats?.FirstOrDefault(f => f.Id == task.AudioFormatId);
-
-        TimeRange.FullVideo = !(task.TimeRange is not null);
-        if (!TimeRange.FullVideo)
-        {
-            TimeRange.From = task.TimeRange.From;
-            TimeRange.To = task.TimeRange.To;
-        }
 
         Recode.NeedRecode = task.Recode is not null;
         if (Recode.NeedRecode)

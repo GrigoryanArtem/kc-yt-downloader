@@ -1,60 +1,70 @@
-﻿<UserControl x:Class="kc_yt_downloader.GUI.View.Controls.TimeRangeControl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:kc_yt_downloader.GUI.View.Controls"
-             xmlns:viewmodel="clr-namespace:kc_yt_downloader.GUI.ViewModel" d:DataContext="{d:DesignInstance Type=viewmodel:TimeRangeViewModel}"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+﻿<UserControl
+    x:Class="kc_yt_downloader.GUI.View.Controls.TimeRangeControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:kc_yt_downloader.GUI.View.Controls"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodel="clr-namespace:kc_yt_downloader.GUI.ViewModel"
+    d:DataContext="{d:DesignInstance Type=viewmodel:TimeRangeViewModel}"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
     <StackPanel
-        d:Width="300"
-        d:HorizontalAlignment="Center" VerticalAlignment="Center">
+        VerticalAlignment="Center"
+        d:HorizontalAlignment="Center"
+        d:Width="300">
 
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <ToggleButton 
+            <ToggleButton
                 IsChecked="{Binding FullVideo, Mode=TwoWay}"
                 Style="{StaticResource MaterialDesignSwitchLightToggleButton}" />
 
-            <TextBlock 
+            <TextBlock
+                Grid.Column="1"
                 Margin="12 0"
                 VerticalAlignment="Center"
-                TextAlignment="Left"                
                 Style="{StaticResource MaterialDesignLabelLargeTextBlock}"
-                Grid.Column="1"
-                Text="Full video"/>
+                Text="Full video"
+                TextAlignment="Left" />
         </Grid>
-        
-        <Grid
-            Margin="0 12 0 0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
 
-            <TextBox 
-                Grid.Column="0"
-                Margin="0 0 4 0"
-                IsEnabled="{Binding CanEdit}"
-                materialDesign:HintAssist.Hint="From"
-                materialDesign:HintAssist.HelperText="Format: hh:mm:ss.ff"
-                Text="{Binding From}"
-                Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
+        <ItemsControl
+            Margin="0 12 0 0"
+            ItemsSource="{Binding Segments}"
+            Visibility="{Binding CanEdit, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="0 12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
 
-            <TextBox 
-                Grid.Column="1"
-                Margin="4 0 0 0"
-                IsEnabled="{Binding CanEdit}"
-                materialDesign:HintAssist.Hint="To"
-                materialDesign:HintAssist.HelperText="Format: hh:mm:ss.ff"
-                Text="{Binding To}"
-                Style="{StaticResource MaterialDesignOutlinedTextBox}"/>
-        </Grid>
+                        <TextBox
+                            Grid.Column="0"
+                            Margin="0 0 4 0"
+                            materialDesign:HintAssist.HelperText="Format: hh:mm:ss.ff"
+                            materialDesign:HintAssist.Hint="Start"
+                            Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                            Text="{Binding From}" />
+
+                        <TextBox
+                            Grid.Column="1"
+                            Margin="4 0 0 0"
+                            materialDesign:HintAssist.HelperText="Format: hh:mm:ss.ff"
+                            materialDesign:HintAssist.Hint="End"
+                            Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                            Text="{Binding To}" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </StackPanel>
 </UserControl>

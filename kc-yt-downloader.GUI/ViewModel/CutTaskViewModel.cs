@@ -54,7 +54,7 @@ public partial class CutTaskViewModel : ObservableObject
 
                 return new CutViewModelParameters()
                 {
-                    Source = task,
+                    Batch = new(task),
                     Video = video
                 };
             }

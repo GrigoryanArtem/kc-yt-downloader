@@ -38,19 +38,18 @@ public class BrowserExtensionHandler
 
         var cutViewLoadingViewModel = new CutViewLoadingViewModel(() => Task.Run(() =>
         {
-            var video = ytDlp.GetVideo(request.Id);
-            var part= request.Parts.FirstOrDefault();
+            var video = ytDlp.GetVideo(request.Id);            
 
             return new CutViewModelParameters()
             {
                 Video = video,
-                Source = new()
+                Batch = new()
                 {
-                    TimeRange = new()
+                    Segments = [.. request.Parts.Select(p => new TimeRange
                     {
-                        From = TimeSpan.FromSeconds(part.Start).ToString("hh\\:mm\\:ss"),
-                        To = TimeSpan.FromSeconds(part.End).ToString("hh\\:mm\\:ss")
-                    }
+                        From = TimeSpan.FromSeconds(p.Start).ToString("hh\\:mm\\:ss"),
+                        To = TimeSpan.FromSeconds(p.End).ToString("hh\\:mm\\:ss")
+                    })],
                 }
             };
         }));

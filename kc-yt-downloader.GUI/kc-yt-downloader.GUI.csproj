@@ -55,4 +55,8 @@
 		<ProjectReference Include="..\kc-yt-downloader.Model\kc-yt-downloader.Model.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Model\Enums\" />
+	</ItemGroup>
+
 </Project>
