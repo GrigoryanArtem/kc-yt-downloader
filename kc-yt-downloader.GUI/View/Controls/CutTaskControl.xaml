@@ -36,6 +36,16 @@
                     d:Text="Long long text"
                     RenderOptions.ClearTypeHint="Auto"
                     Style="{StaticResource MaterialDesignBodyLargeTextBlock}"
+                    Text="{Binding FileName}"
+                    TextOptions.TextFormattingMode="Ideal"
+                    TextOptions.TextRenderingMode="Auto"
+                    TextTrimming="CharacterEllipsis"
+                    ToolTip="{Binding FileName}" />
+
+                <TextBlock
+                    d:Text="Long long text"
+                    RenderOptions.ClearTypeHint="Auto"
+                    Style="{StaticResource MaterialDesignOverlineTextBlock}"
                     Text="{Binding Source.Name}"
                     TextOptions.TextFormattingMode="Ideal"
                     TextOptions.TextRenderingMode="Auto"

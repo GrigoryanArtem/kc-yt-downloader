@@ -46,7 +46,6 @@ public partial class CutTaskViewModel : ObservableObject
         RunCommand = new RelayCommand(async () => await OnRun(), () => !IsRunning);
         OpenDirectoryCommand = new RelayCommand(OnOpenDirectory);
 
-
         var cutViewLoadingViewModel = new CutViewLoadingViewModel(() => Task.Run(() =>
         {
             {
@@ -101,6 +100,8 @@ public partial class CutTaskViewModel : ObservableObject
         get => _taskStatus;
         set => SetProperty(ref _taskStatus, value);
     }
+
+    public string FileName => Path.GetFileName(Source.FilePath);
 
     private CutVideoTask _source;
     public CutVideoTask Source

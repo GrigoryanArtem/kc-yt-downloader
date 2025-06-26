@@ -13,6 +13,9 @@ public partial class SegmentViewModel : ObservableObject
     [ObservableProperty]
     private string _to;
 
+    [ObservableProperty]
+    private string _suffix;
+
     #endregion
 
     public SegmentViewModel(TimeRange range)

@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace kc_yt_downloader.GUI.ViewModel;
 
-public class CutViewModel : ObservableObject
+public partial class CutViewModel : ObservableObject
 {
     private const string HTTPS_PROTOCOL = "https";
     private const string NONE = "none";
@@ -40,10 +40,10 @@ public class CutViewModel : ObservableObject
             .Select(f => new VideoFormatViewModel(f))
             .ToArray(), af);
 
-        FileNameControl = String.IsNullOrEmpty(parameters.Batch?.FilePath) 
+        FileNameControl = String.IsNullOrEmpty(parameters.Batch?.FilePath)
             ? FileNameControlViewModel.CreateFromName(_info.Title)
             : FileNameControlViewModel.CreateFromPath(parameters.Batch.FilePath);
-        
+
         TimeRange = new(parameters.Batch?.Segments, _info.DurationString);
 
         if (parameters.Batch is not null)
@@ -67,17 +67,23 @@ public class CutViewModel : ObservableObject
 
     private void OnAddToQueueCommand()
     {
-        var ranges = TimeRange.GetTimeRanges();
-        var tasks = ranges.Select((tr, i) => new CutVideoTask()
+        var segments = TimeRange.Segments.ToArray();
+        var multipleSegments = segments.Length > 1;
+
+        var tasks = segments.Select((s, i) => new CutVideoTask()
         {
             Name = _info.Title,
             Created = DateTime.Now,
 
             VideoId = _info.Id,
             URL = _info.WebPageUrl,
-            FilePath = FileNameControl.GetFullPath() + (ranges.Length > 1 ? i.ToString() : String.Empty),
+            FilePath = FileNameControl.GetFullPath() + (!String.IsNullOrEmpty(s.Suffix) 
+                ? $"_{s.Suffix}" 
+                : (multipleSegments 
+                    ? $"_{i}" 
+                    : String.Empty)),
 
-            TimeRange = tr,
+            TimeRange = new() { From = s.From, To = s.To },
             Recode = Recode.GetRecode(),
 
             VideoFormatId = VideoFormatsSelector.SelectedFormat?.Id,

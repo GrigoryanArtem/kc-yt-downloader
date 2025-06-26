@@ -6,11 +6,17 @@
     xmlns:local="clr-namespace:kc_yt_downloader.GUI.View.Controls"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:viewmodel="clr-namespace:kc_yt_downloader.GUI.ViewModel"
     d:DataContext="{d:DesignInstance Type=viewmodel:CutViewModel}"
     d:DesignHeight="1080"
     d:DesignWidth="1920"
     mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <system:Double x:Key="InputWidth">450</system:Double>
+    </UserControl.Resources>
+
     <ScrollViewer>
         <StackPanel
             Grid.Row="0"
@@ -30,7 +36,7 @@
                 Text="Output" />
 
             <local:FileNameControl
-                Width="350"
+                Width="{StaticResource InputWidth}"
                 Margin="0 12 0 0"
                 HorizontalAlignment="Left"
                 DataContext="{Binding FileNameControl}" />
@@ -41,7 +47,7 @@
                 Text="Segments" />
 
             <local:TimeRangeControl
-                Width="350"
+                Width="{StaticResource InputWidth}"
                 Margin="0 12 0 0"
                 HorizontalAlignment="Left"
                 DataContext="{Binding TimeRange}" />
@@ -52,7 +58,7 @@
                 Text="Convert" />
 
             <local:RecodeControl
-                Width="350"
+                Width="{StaticResource InputWidth}"
                 Margin="0 12 0 0"
                 HorizontalAlignment="Left"
                 DataContext="{Binding Recode}" />

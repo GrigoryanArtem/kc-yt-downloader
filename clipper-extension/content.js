@@ -317,9 +317,7 @@ class VideoCutter {
             parts: parts,
         };
 
-        const json = JSON.stringify(payload);
-
-        alert(`Sending segments: ${json}`);
+        const json = JSON.stringify(payload);        
 
         fetch('http://localhost:5000/api/cut', {
             method: 'POST',

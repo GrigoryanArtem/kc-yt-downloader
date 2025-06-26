@@ -55,13 +55,8 @@ public class YtDlp
 
     public void DeleteVideo(VideoPreview video)
     {
-        _tasksCache = _tasksCache
-            .Where(t => t.VideoId != video.Id)
-            .ToList();
-
-        _videoCache = _videoCache
-            .Where(v => v.Id != video.Id)
-            .ToList();
+        _tasksCache = [.. _tasksCache.Where(t => t.VideoId != video.Id)];
+        _videoCache = [.. _videoCache.Where(v => v.Id != video.Id)];
 
         Save();
     }
@@ -91,7 +86,8 @@ public class YtDlp
                 throw new YtCacheException($"Cache has more than one copy of the video {info.Id}");
 
             var (video_short, idx) = similar.FirstOrDefault();
-            video = new Video(json, info, [.. video_short.AvailableURLs, url]);
+            string[] availableURLs = [.. video_short.AvailableURLs, url, info.WebPageUrl];
+            video = new Video(json, info, [..availableURLs.Distinct()]);
 
             _videoCache[idx] = video.ToIndexEntry();
         }
