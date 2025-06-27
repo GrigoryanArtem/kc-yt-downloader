@@ -87,9 +87,8 @@ class VideoCutter {
       <div id="yt-cut-panel-header">Segments</div>
       <table id="yt-cut-table"></table>
       <div id="yt-cut-panel-buttons">
+        <button id="yt-cut-toggle-select">All</button>
         <button id="yt-cut-send">Send</button>
-        <button id="yt-cut-delete">Delete</button>
-        <button id="yt-cut-toggle-select">Select All</button>
       </div>
     `;
         document.body.appendChild(panel);
@@ -123,7 +122,7 @@ class VideoCutter {
         handle.addEventListener('mousedown', handleMouseDown);
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('mouseup', handleMouseUp);
-        
+
         panel.addEventListener('unload', () => {
             handle.removeEventListener('mousedown', handleMouseDown);
             document.removeEventListener('mousemove', handleMouseMove);
@@ -261,8 +260,28 @@ class VideoCutter {
         const duration = this.formatDuration(end - start);
         textCell.textContent = `${this.formatTime(start)} - ${this.formatTime(end)} (${duration})`;
 
+        const deleteCell = document.createElement('td');
+        deleteCell.innerHTML = '&times;';
+        Object.assign(deleteCell.style, {
+            cursor: 'pointer',
+            color: '#f33',
+            fontWeight: 'bold',
+            fontSize: '18px',
+            textAlign: 'center',
+            width: '16px',
+            userSelect: 'none'
+        });
+        deleteCell.title = 'Remove segment';
+
+        deleteCell.addEventListener('click', () => {
+            this.removeElementById(`highlight-${start}-${end}`);
+            row.remove();
+            this.segments = this.segments.filter(seg => seg.start !== start || seg.end !== end);
+        });
+
         row.appendChild(checkboxCell);
         row.appendChild(textCell);
+        row.appendChild(deleteCell);
         table.appendChild(row);
 
         this.segments.push({ start, end, videoId, rowId });
@@ -285,9 +304,6 @@ class VideoCutter {
         switch (e.target.id) {
             case 'yt-cut-send':
                 this.handleSendSegments();
-                break;
-            case 'yt-cut-delete':
-                this.handleDeleteSegments();
                 break;
             case 'yt-cut-toggle-select':
                 this.handleToggleSelect();
@@ -317,7 +333,7 @@ class VideoCutter {
             parts: parts,
         };
 
-        const json = JSON.stringify(payload);        
+        const json = JSON.stringify(payload);
 
         fetch('http://localhost:5000/api/cut', {
             method: 'POST',
@@ -328,23 +344,6 @@ class VideoCutter {
                 console.error('Error:', error);
                 alert('Failed to send segments. Try to restart desktop app.');
             });
-    }
-
-    handleDeleteSegments() {
-        const rows = document.querySelectorAll('#yt-cut-table tr');
-        rows.forEach((row) => {
-            const cb = row.querySelector('input[type="checkbox"]');
-            if (cb?.checked) {
-                const text = row.cells[1].textContent.replace(/\(.*?\)/, '').trim();
-                const [from, to] = text.split(' - ');
-                this.removeElementById(`highlight-${this.parseTime(from)}-${this.parseTime(to)}`);
-                row.remove();
-
-                this.segments = this.segments.filter(seg =>
-                    seg.start !== this.parseTime(from) || seg.end !== this.parseTime(to)
-                );
-            }
-        });
     }
 
     handleToggleSelect() {
@@ -360,7 +359,7 @@ class VideoCutter {
         });
 
         const toggleBtn = document.getElementById('yt-cut-toggle-select');
-        toggleBtn.textContent = allSelected ? 'Select All' : 'Select None';
+        toggleBtn.textContent = allSelected ? 'All' : 'None';
     }
 
     formatDuration(seconds) {

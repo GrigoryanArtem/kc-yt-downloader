@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "chrome-extension", "chrome-
 	ProjectSection(SolutionItems) = preProject
 		clipper-extension\content.js = clipper-extension\content.js
 		clipper-extension\manifest.json = clipper-extension\manifest.json
+		clipper-extension\popup.html = clipper-extension\popup.html
+		clipper-extension\popup.js = clipper-extension\popup.js
 		clipper-extension\style.css = clipper-extension\style.css
 	EndProjectSection
 EndProject
