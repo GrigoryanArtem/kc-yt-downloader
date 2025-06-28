@@ -5,10 +5,15 @@ class VideoCutter {
         this.segments = [];
         this.isInitialized = false;
 
-        this.init();
+        chrome.storage.local.get(["ytc_enabled"], (result) => {
+            this.enabled = result.ytc_enabled ?? true;
+            this.init();
+        });
     }
 
     init() {
+        if (!this.enabled) return;
+
         if (this.isInitialized) return;
 
         this.injectStylesheet();
@@ -131,6 +136,8 @@ class VideoCutter {
     }
 
     handleStartCut() {
+        if (!this.enabled) return;
+
         this.removeHighlightBar();
         const video = this.getVideoElement();
         this.startTime = Math.floor(video.currentTime);
@@ -138,6 +145,8 @@ class VideoCutter {
     }
 
     handleEndCut() {
+        if (!this.enabled) return;
+
         const marker = document.getElementById('yt-cut-start-flag');
         if (marker) marker.remove();
 
