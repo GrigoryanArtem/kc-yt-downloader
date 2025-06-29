@@ -258,6 +258,16 @@ class VideoCutter {
         row.dataset.start = start;
         row.dataset.end = end;
 
+        row.addEventListener('mouseenter', () => {
+            const el = document.getElementById(`highlight-${start}-${end}`);
+            if (el) el.classList.add('yt-cut-highlight-hover');
+        });
+
+        row.addEventListener('mouseleave', () => {
+            const el = document.getElementById(`highlight-${start}-${end}`);
+            if (el) el.classList.remove('yt-cut-highlight-hover');
+        });
+
         const checkboxCell = document.createElement('td');
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';

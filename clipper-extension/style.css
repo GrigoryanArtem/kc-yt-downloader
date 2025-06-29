@@ -113,3 +113,9 @@
     background-color: #FF4081;
     border-radius: 1px;
 }
+
+.yt-cut-highlight-hover {
+    box-shadow: 0 0 5px 2px rgba(204, 195, 231, 0.9) !important;
+    opacity: 1 !important;
+    z-index: 9999 !important;
+}
