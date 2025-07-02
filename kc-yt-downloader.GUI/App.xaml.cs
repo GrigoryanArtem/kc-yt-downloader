@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NavigationMVVM.Services;
 using NLog.Extensions.Hosting;
+using System.Globalization;
 using System.Windows;
 
 namespace kc_yt_downloader.GUI;
@@ -30,6 +31,11 @@ public partial class App : Application
 
     private void OnStartup(object sender, StartupEventArgs e)
     {
+        var cultureInfo = new CultureInfo("en-us");
+
+        Thread.CurrentThread.CurrentCulture = cultureInfo;
+        Thread.CurrentThread.CurrentUICulture = cultureInfo;
+
         var initialNavigationService = Services.GetRequiredService<NavigationService<UpdateViewModel>>();
         initialNavigationService.Navigate();
 

@@ -177,11 +177,27 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <controls:UrlAddingControl
-                Grid.Row="0"
-                MaxWidth="800"
-                Margin="24"
-                DataContext="{Binding UrlAddingViewModel}" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="100" />
+                </Grid.ColumnDefinitions>
+
+                <controls:UrlAddingControl
+                    Grid.Column="1"
+                    MaxWidth="800"
+                    Margin="24"
+                    DataContext="{Binding UrlAddingViewModel}" />
+
+                <Button
+                    Grid.Column="2"
+                    Margin="4 0 0 0"
+                    HorizontalAlignment="Right"
+                    Background="{DynamicResource MaterialDesignTextFieldBoxBackground}"
+                    Content="{materialDesign:PackIcon Kind=SettingsOutline}"
+                    Style="{StaticResource MaterialDesignIconForegroundButton}" />
+            </Grid>
 
             <Rectangle
                 Grid.Row="1"

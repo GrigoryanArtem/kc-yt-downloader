@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 
 namespace kc_yt_downloader.GUI.Model
@@ -36,7 +37,7 @@ namespace kc_yt_downloader.GUI.Model
         private readonly CancellationTokenSource _source = new();
         private readonly CancellationToken _token;
 
-        private readonly string _path;
+        private readonly string _path;        
 
         public LogPersister(string path)
         {
@@ -98,5 +99,48 @@ namespace kc_yt_downloader.GUI.Model
                 await Task.Delay(100);
             }
         }
+
+        public static LogPersister? FromDirectory(string dir, int id)
+        {
+            var lastLog = Directory.GetFiles(dir, $"{id}.*.log", SearchOption.TopDirectoryOnly)
+                .OrderByDescending(f => f)
+                .FirstOrDefault();
+
+            if(lastLog is null)
+                return null;
+
+            var persister = new LogPersister(lastLog);
+            persister.Stop();
+
+            foreach(var line in File.ReadAllLines(lastLog).Reverse())
+            {
+                var tokens = line.Split('|', 5);
+
+                if (!DateTime.TryParse(tokens[0].Trim(), out var time))
+                    continue;
+
+                if (!TimeSpan.TryParse(tokens[1].Trim(), CultureInfo.CurrentCulture, out var delta))
+                    continue;
+
+                persister.Messages.Add(new LogMessage
+                {
+                    Time = time,
+                    Delta = delta,
+                    Level = ParseLevel(tokens[2].Trim()),
+                    Context = tokens[3].Trim(),
+                    Message = tokens.Length > 4 ? tokens[4].Trim() : String.Empty
+                });
+            }
+
+            return persister;
+        }
+
+        private static LogLevel ParseLevel(string level) => level switch
+        {
+            "STD" => LogLevel.Standard,
+            "ERR" => LogLevel.Error,
+
+            _ => throw new NotSupportedException()
+        };
     }
 }

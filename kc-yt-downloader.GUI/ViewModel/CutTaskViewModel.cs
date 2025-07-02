@@ -8,6 +8,7 @@ using NavigationMVVM.Stores;
 using System.IO;
 using System.Windows.Input;
 using static kc_yt_downloader.GUI.ViewModel.LogViewModel;
+using NavigationCommands = kc_yt_downloader.GUI.Model.NavigationCommands;
 
 namespace kc_yt_downloader.GUI.ViewModel;
 
@@ -43,6 +44,7 @@ public partial class CutTaskViewModel : ObservableObject
         DonePercent = task.Status == VideoTaskStatus.Completed ? 100 : 0;
 
         Status = new SimpleStatusViewModel(task.Status);
+        
 
         RunCommand = new RelayCommand(async () => await OnRun(), () => !IsRunning);
         OpenDirectoryCommand = new RelayCommand(OnOpenDirectory);
@@ -63,7 +65,7 @@ public partial class CutTaskViewModel : ObservableObject
         var store = services.GetRequiredService<NavigationStore>();
         var navigation = new NavigationService<CutViewLoadingViewModel>(store, () => cutViewLoadingViewModel);
 
-        var logNavigation = new ParameterNavigationService<LogViewModelParameters, LogViewModel>(store, p => new LogViewModel(p));
+        var logNavigation = NavigationCommands.CreateModalNavigation<LogViewModelParameters, LogViewModel>(p => new LogViewModel(p));        
 
         EditTaskCommand = new RelayCommand(navigation.Navigate);
         OpenLogCommand = new RelayCommand
@@ -74,6 +76,8 @@ public partial class CutTaskViewModel : ObservableObject
             }),
             canExecute: () => _persister is not null
         );
+
+        Persister = LogPersister.FromDirectory(_logsDirectory, task.Id)!;
     }
 
     private bool _isRunning = false;
