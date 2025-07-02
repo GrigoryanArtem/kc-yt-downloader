@@ -1,8 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using kc_yt_downloader.GUI.Model;
-using kc_yt_downloader.GUI.Model.Messages;
 using kc_yt_downloader.Model;
 using Microsoft.Extensions.DependencyInjection;
 using NavigationMVVM.Services;
@@ -182,7 +180,11 @@ public partial class CutTaskViewModel : ObservableObject
 
     [RelayCommand]
     private void DeleteTask()
-        => WeakReferenceMessenger.Default.Send(new DeleteTaskMessage() { Task = Source });
+    {
+        var services = App.Current.Services;
+        var ytDlp = services.GetRequiredService<YtDlpProxy>();
+        ytDlp.DeleteTask(Source);
+    }        
 
     private async Task OnUpdate()
     {

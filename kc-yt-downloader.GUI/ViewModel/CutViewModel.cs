@@ -2,7 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using kc_yt_downloader.GUI.Model;
-using kc_yt_downloader.GUI.Model.Messages;
 using kc_yt_downloader.Model;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows.Input;
@@ -67,8 +66,11 @@ public partial class CutViewModel : ObservableObject
 
     private void OnAddToQueueCommand()
     {
+        var services = App.Current.Services;
         var segments = TimeRange.Segments.ToArray();
         var multipleSegments = segments.Length > 1;
+
+        var ytDlp = services.GetRequiredService<YtDlpProxy>();
 
         var tasks = segments.Select((s, i) => new CutVideoTask()
         {
@@ -93,7 +95,7 @@ public partial class CutViewModel : ObservableObject
         }).ToArray();
 
         YtConfig.Global.Save();
-        WeakReferenceMessenger.Default.Send(new AddTaskMessage() { Tasks = tasks });
+        ytDlp.AddTasks(tasks);        
         NavigationHistory.Current.NavigateBack();
     }
 

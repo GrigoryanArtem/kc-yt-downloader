@@ -67,7 +67,7 @@
                     <ItemsControl
                         HorizontalAlignment="Center"
                         d:ItemsSource="{d:SampleData}"
-                        ItemsSource="{Binding Tasks}">
+                        ItemsSource="{Binding DlpProxy.Tasks}">
 
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -79,9 +79,41 @@
 
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <controls:CutTaskControl
-                                    Margin="0 2"
-                                    DataContext="{Binding}" />
+
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="auto" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock
+                                        Margin="8 12"
+                                        Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                        Text="{Binding Status}" />
+
+                                    <ItemsControl
+                                        Grid.Row="1"
+                                        HorizontalAlignment="Center"
+                                        d:ItemsSource="{d:SampleData}"
+                                        ItemsSource="{Binding Items}">
+
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel
+                                                    Background="{DynamicResource MaterialDesignPaper}"
+                                                    Orientation="Vertical" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <controls:CutTaskControl
+                                                    Margin="0 2"
+                                                    DataContext="{Binding}" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

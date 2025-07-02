@@ -1,8 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using kc_yt_downloader.GUI.Model;
-using kc_yt_downloader.GUI.Model.Messages;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace kc_yt_downloader.GUI.ViewModel;
