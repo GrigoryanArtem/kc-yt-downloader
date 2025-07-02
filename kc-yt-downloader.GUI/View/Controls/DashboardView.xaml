@@ -49,16 +49,42 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <TextBlock
+                <Grid
                     Grid.Row="0"
-                    Margin="0"
-                    Padding="8 12 8 8"
-                    Background="{StaticResource MaterialDesign.Brush.Primary.Dark}"
-                    FontWeight="Bold"
-                    Foreground="{StaticResource MaterialDesign.Brush.Primary.Dark.Foreground}"
-                    Style="{StaticResource MaterialDesignHeadline5TextBlock}"
-                    Text="QUEUE"
-                    TextAlignment="Center" />
+                    Background="{StaticResource MaterialDesign.Brush.Primary.Dark}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Margin="12 0"
+                        Padding="8 12 8 8"
+                        FontWeight="Bold"
+                        Foreground="{StaticResource MaterialDesign.Brush.Primary.Dark.Foreground}"
+                        Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                        Text="QUEUE"
+                        TextAlignment="Left" />
+
+                    <Button
+                        Grid.Column="1"
+                        Margin="4 0"
+                        Padding="8"
+                        Content="{materialDesign:PackIcon PlayBoxMultiple}"
+                        Foreground="{StaticResource MaterialDesign.Brush.Primary.Dark.Foreground}"
+                        Style="{StaticResource MaterialDesignFlatSecondaryButton}"
+                        ToolTip="Run" />
+
+                    <Button
+                        Grid.Column="2"
+                        Margin="4 0 12 0"
+                        Padding="8"
+                        Content="{materialDesign:PackIcon PlayBox}"
+                        Foreground="{StaticResource MaterialDesign.Brush.Primary.Dark.Foreground}"
+                        Style="{StaticResource MaterialDesignFlatSecondaryButton}"
+                        ToolTip="Run" />
+                </Grid>
 
                 <ScrollViewer
                     Grid.Row="1"
@@ -86,10 +112,32 @@
                                         <RowDefinition Height="*" />
                                     </Grid.RowDefinitions>
 
-                                    <TextBlock
-                                        Margin="8 12"
-                                        Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-                                        Text="{Binding Status}" />
+                                    <Grid Margin="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Border
+                                            Grid.Column="0"
+                                            Width="16"
+                                            Height="1"
+                                            BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
+                                            BorderThickness="1" />
+
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            Margin="12 0"
+                                            Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                            Text="{Binding Status}" />
+
+                                        <Border
+                                            Grid.Column="2"
+                                            Height="1"
+                                            BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
+                                            BorderThickness="1" />
+                                    </Grid>
 
                                     <ItemsControl
                                         Grid.Row="1"

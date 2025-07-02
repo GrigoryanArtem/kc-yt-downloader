@@ -15,7 +15,8 @@ public partial class CutTaskViewModel : ObservableObject
 {
     private const string LOGS_DIRECTORY = "logs";
 
-    private YtDlp _ytDlp;
+    private readonly YtDlpProxy _ytDlpProxy;
+    private readonly YtDlp _ytDlp;
     private readonly VideoPreview _video;
     private readonly TimeSpan _totalDuration;
 
@@ -24,10 +25,12 @@ public partial class CutTaskViewModel : ObservableObject
 
     private bool _canShowStatus = false;
 
-    public CutTaskViewModel(CutVideoTask task,
-        YtDlp ytDlp)
+    public CutTaskViewModel(CutVideoTask task, YtDlpProxy proxy)
     {
-        _ytDlp = ytDlp;
+        var services = App.Current.Services;
+        _ytDlpProxy = proxy;
+        _ytDlp = services.GetRequiredService<YtDlp>();
+
         Source = task;
 
         _ytDlpStatus = new();
@@ -56,8 +59,7 @@ public partial class CutTaskViewModel : ObservableObject
                 };
             }
         }));
-
-        var services = App.Current.Services;
+        
         var store = services.GetRequiredService<NavigationStore>();
         var navigation = new NavigationService<CutViewLoadingViewModel>(store, () => cutViewLoadingViewModel);
 
@@ -143,7 +145,7 @@ public partial class CutTaskViewModel : ObservableObject
 
         Persister?.Dispose();
         Persister = new LogPersister(Path.Combine(_logsDirectory, $"{Source.Id}.{DateTime.Now:yyyyMMdd_HHmmss}.log"));
-
+        
         await OnUpdate();
 
         Persister.Stop();
@@ -196,6 +198,14 @@ public partial class CutTaskViewModel : ObservableObject
             Status = new LoadingViewModel();
             proc.Start();
 
+            Source = Source with
+            {
+                Status = VideoTaskStatus.Processing,
+            };
+
+            _ytDlp.UpdateTask(Source);
+            _ytDlpProxy.Sync(YtDlpProxy.SyncType.Tasks);            
+
             proc.ErrorDataReceived += (sender, args) => UpdateStatus(args.Data);
             proc.BeginErrorReadLine();
 
@@ -206,6 +216,7 @@ public partial class CutTaskViewModel : ObservableObject
         }
         catch (Exception exp)
         {
+            GlobalSnackbarMessageQueue.WriteError("Error while running task", exp);
             Console.WriteLine(exp.Message);
         }
         finally
@@ -229,6 +240,8 @@ public partial class CutTaskViewModel : ObservableObject
         };
 
         _ytDlp.UpdateTask(Source);
+        _ytDlpProxy.Sync(YtDlpProxy.SyncType.Tasks);
+
         Status = new SimpleStatusViewModel(status);
     }
 

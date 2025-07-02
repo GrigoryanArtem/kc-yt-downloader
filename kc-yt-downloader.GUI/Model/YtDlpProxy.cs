@@ -21,6 +21,7 @@ public partial class YtDlpProxy : ObservableObject
     #region Members
 
     private readonly YtDlp _ytDlp;
+    private readonly Dictionary<int, CutTaskViewModel> _taskCache = [];
 
     #endregion
 
@@ -47,8 +48,8 @@ public partial class YtDlpProxy : ObservableObject
 
         try
         {
-            foreach (var task in tasks.Where(t => t is not null))                            
-                _ytDlp.AddTask(task);            
+            foreach (var task in tasks.Where(t => t is not null))
+                _ytDlp.AddTask(task);
 
             Sync(SyncType.Tasks);
             GlobalSnackbarMessageQueue.WriteInfo($"Added {tasks.Length} tasks.");
@@ -123,6 +124,11 @@ public partial class YtDlpProxy : ObservableObject
             UpdateTasks();
     });
 
+    public CutTaskViewModel[] GetCachedTasks() 
+        => [.. _ytDlp.GetCachedTasks()
+            .Select(t => new CutTaskViewModel(t, this))
+            .OrderByDescending(t => t.Source.Created)];
+
     #region Private methods
 
     private void UpdateVideos()
@@ -168,7 +174,8 @@ public partial class YtDlpProxy : ObservableObject
     {
         var newTasks = _ytDlp.GetCachedTasks()
             .Where(t => t.Status != VideoTaskStatus.Completed || t.Created > DateTime.Now.AddDays(-3))
-            .Select(t => new CutTaskViewModel(t, _ytDlp))
+            .Select(GetViewModel)
+            .OrderByDescending(t => t.Source.Created)
             .GroupBy(vm => vm.Source.Status)
             .ToArray();
 
@@ -188,7 +195,7 @@ public partial class YtDlpProxy : ObservableObject
                 foreach (var task in group)
                     newGroup.Items.Add(task);
 
-                int insertAt = Tasks.TakeWhile(g => g.Status > group.Key).Count();
+                int insertAt = Tasks.TakeWhile(g => GetOrder(g.Status) < GetOrder(group.Key)).Count();
                 Tasks.Insert(insertAt, newGroup);
             }
             else
@@ -197,6 +204,18 @@ public partial class YtDlpProxy : ObservableObject
             }
         }
     }
+
+    public CutTaskViewModel GetViewModel(CutVideoTask task)
+        => _taskCache.GetOrAdd(task.Id, () => new CutTaskViewModel(task, this));
+
+    private static int GetOrder(VideoTaskStatus status) => status switch
+    {
+        VideoTaskStatus.Processing => 0,
+        VideoTaskStatus.Prepared => 10,
+        VideoTaskStatus.Error => 100,
+        VideoTaskStatus.Completed => 10000,
+        _ => 1000
+    };
 
     #endregion
 }

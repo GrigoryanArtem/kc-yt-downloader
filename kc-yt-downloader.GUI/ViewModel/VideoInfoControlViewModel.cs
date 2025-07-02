@@ -13,14 +13,13 @@ public partial class VideoInfoControlViewModel : ObservableObject
 
     public VideoInfoControlViewModel(VideoPreview video)
     {
-        var services = App.Current.Services;
-        var ytDlp = services.GetRequiredService<YtDlp>();
-
+        var services = App.Current.Services;        
+        var ytDlpProxy = services.GetRequiredService<YtDlpProxy>();
+        
         _video = video;
 
-        Tasks = [.. ytDlp.GetCachedTasks()
-            .Where(t => t.VideoId == video.Id)            
-            .Select(task => new CutTaskViewModel(task, ytDlp))];
+        Tasks = [.. ytDlpProxy.GetCachedTasks()
+            .Where(t => t.Source.VideoId == video.Id)];
 
         ThumbnailUrl = _video.Info.Thumbnails
             .OrderByDescending(t => t.Width.HasValue ? 1d - (600d / t.Width) : double.NegativeInfinity)
