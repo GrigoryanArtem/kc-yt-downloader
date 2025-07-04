@@ -117,6 +117,8 @@
                                             <ColumnDefinition Width="auto" />
                                             <ColumnDefinition Width="auto" />
                                             <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="auto" />
                                         </Grid.ColumnDefinitions>
 
                                         <Border
@@ -134,6 +136,19 @@
 
                                         <Border
                                             Grid.Column="2"
+                                            Height="1"
+                                            BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
+                                            BorderThickness="1" />
+
+                                        <TextBlock
+                                            Grid.Column="3"
+                                            Margin="12 0"
+                                            Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                                            Text="{Binding Items.Count}" />
+
+                                        <Border
+                                            Grid.Column="4"
+                                            Width="16"
                                             Height="1"
                                             BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
                                             BorderThickness="1" />
@@ -195,6 +210,7 @@
                     Margin="4 0 0 0"
                     HorizontalAlignment="Right"
                     Background="{DynamicResource MaterialDesignTextFieldBoxBackground}"
+                    Command="{Binding OpenSettingsCommand}"
                     Content="{materialDesign:PackIcon Kind=SettingsOutline}"
                     Style="{StaticResource MaterialDesignIconForegroundButton}" />
             </Grid>

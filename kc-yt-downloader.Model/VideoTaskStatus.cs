@@ -3,7 +3,7 @@ using Newtonsoft.Json.Converters;
 
 namespace kc_yt_downloader.Model;
 
-//[JsonConverter(typeof(StringEnumConverter))]
+[JsonConverter(typeof(StringEnumConverter))]
 public enum VideoTaskStatus
 {
     Prepared,

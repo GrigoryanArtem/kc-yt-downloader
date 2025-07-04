@@ -11,6 +11,7 @@ public static class NavigationCommands
 {
     private readonly static CloseModalNavigationService _closeModal;
     private static IServiceProvider Services => App.Current.Services;
+
     static NavigationCommands()
     {        
         _closeModal = Services.GetRequiredService<CloseModalNavigationService>();
@@ -33,10 +34,18 @@ public static class NavigationCommands
         var store = Services.GetService<NavigationStore>();
         return new ParameterNavigationService<TParameter, TViewModel>(store!, p => viewModelBuilder(p));
     }
+
     public static IParameterNavigationService<TParameter> CreateModalNavigation<TParameter, TViewModel>(Func<TParameter, TViewModel> viewModelBuilder)
         where TViewModel : ObservableObject
     {
         var store = Services.GetService<ModalNavigationStore>();
         return new ParameterNavigationService<TParameter, TViewModel>(store!, p => viewModelBuilder(p));
+    }
+
+    public static INavigationService CreateModalNavigation<TViewModel>(TViewModel viewModel)
+        where TViewModel : ObservableObject
+    {
+        var store = Services.GetService<ModalNavigationStore>();
+        return new NavigationService<TViewModel>(store!, () => viewModel);
     }
 }

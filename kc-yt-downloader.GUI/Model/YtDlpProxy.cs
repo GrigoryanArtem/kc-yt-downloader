@@ -172,8 +172,12 @@ public partial class YtDlpProxy : ObservableObject
 
     private void UpdateTasks()
     {
+        var config = YtConfig.Global;
+        var expirationTimes = config.ExpirationTimes;
+
+
         var newTasks = _ytDlp.GetCachedTasks()
-            .Where(t => t.Status != VideoTaskStatus.Completed || t.Created > DateTime.Now.AddDays(-3))
+            .Where(t => !expirationTimes.TryGetValue(t.Status, out var time) || t.Created > DateTime.Now.AddDays(-time))
             .Select(GetViewModel)
             .OrderByDescending(t => t.Source.Created)
             .GroupBy(vm => vm.Source.Status)

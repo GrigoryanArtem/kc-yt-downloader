@@ -1,20 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using kc_yt_downloader.GUI.Model;
-using kc_yt_downloader.Model;
 using Microsoft.Extensions.DependencyInjection;
-using NavigationMVVM.Stores;
 
 namespace kc_yt_downloader.GUI.ViewModel;
 
-public class DashboardViewModel : ObservableObject
+public partial class DashboardViewModel : ObservableObject
 {
-    private readonly YtDlp _ytDlp;
-
-    public DashboardViewModel(NavigationStore store, YtDlp ytDlp)
+    public DashboardViewModel()
     {
         var services = App.Current.Services;
-
-        _ytDlp = ytDlp;
         DlpProxy = services.GetRequiredService<YtDlpProxy>();
     }
     
@@ -29,4 +24,11 @@ public class DashboardViewModel : ObservableObject
     }
 
     public UrlAddingViewModel UrlAddingViewModel { get; } = new();
+
+    [RelayCommand]
+    public void OpenSettings()
+    {
+        var navigationCommand = NavigationCommands.CreateModalNavigation(new SettingsViewModel());
+        navigationCommand.Navigate();
+    }
 }

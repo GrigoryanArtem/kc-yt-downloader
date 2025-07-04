@@ -7,6 +7,7 @@
     xmlns:local="clr-namespace:kc_yt_downloader.GUI"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:modals="clr-namespace:kc_yt_downloader.GUI.View.Controls.Modals"
     xmlns:model="clr-namespace:kc_yt_downloader.GUI.Model"
     xmlns:viewmodel="clr-namespace:kc_yt_downloader.GUI.ViewModel"
     Title="Clipper"
@@ -53,6 +54,10 @@
 
             <DataTemplate DataType="{x:Type viewmodel:VideoInfoControlViewModel}">
                 <controls:VideoInfoControl />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type viewmodel:SettingsViewModel}">
+                <modals:SettingsView />
             </DataTemplate>
         </Grid.Resources>
 
