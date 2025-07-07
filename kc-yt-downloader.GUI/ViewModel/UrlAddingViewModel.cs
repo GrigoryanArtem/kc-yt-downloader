@@ -39,7 +39,7 @@ public class UrlAddingViewModel : ObservableObject
     public Task OnAddUrlAsync()
         => Task.Run(OnAddUrl);
 
-    public void OnAddUrl()
+    public async Task OnAddUrl()
     {
         IsProgress = true;
 
@@ -47,7 +47,7 @@ public class UrlAddingViewModel : ObservableObject
         Url = String.Empty;
 
         var ytDlp = App.Current.Services.GetRequiredService<YtDlpProxy>();
-        ytDlp.GetVideo(url!);        
+        await ytDlp.GetVideo(url!, CancellationToken.None);
 
         IsProgress = false;
     }

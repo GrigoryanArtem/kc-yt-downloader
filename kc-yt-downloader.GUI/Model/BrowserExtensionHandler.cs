@@ -13,11 +13,6 @@ public class BrowserExtensionHandler
     private Task _apiTask;
     private readonly CancellationTokenSource _cancellationTokenSource = new();
 
-    public BrowserExtensionHandler()
-    {
-        
-    }
-
     public void Run()
     {        
         _apiTask = Task.Run(() => CutTaskListener.Listen(PREFIX, Handle, _cancellationTokenSource.Token));
@@ -38,7 +33,10 @@ public class BrowserExtensionHandler
 
         var cutViewLoadingViewModel = new CutViewLoadingViewModel(() => Task.Run(() =>
         {
-            var video = ytDlp.GetVideo(request.Id);            
+            var videoTask = ytDlp.GetVideo(request.Id, _cancellationTokenSource.Token);
+            videoTask.Wait();
+
+            var video = videoTask.Result;
 
             return new CutViewModelParameters()
             {

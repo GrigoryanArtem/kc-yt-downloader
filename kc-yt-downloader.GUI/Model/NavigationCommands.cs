@@ -28,6 +28,13 @@ public static class NavigationCommands
     public static void NavigateBack()
         => NavigationHistory.Current.NavigateBack();
 
+    public static INavigationService CreateNavigation<TViewModel>()
+        where TViewModel : ObservableObject
+    {
+        var store = Services.GetService<NavigationStore>();
+        return new NavigationService<TViewModel>(store!, Services.GetRequiredService<TViewModel>);
+    }
+
     public static IParameterNavigationService<TParameter> CreateNavigation<TParameter, TViewModel>(Func<TParameter, TViewModel> viewModelBuilder)
         where TViewModel : ObservableObject
     {

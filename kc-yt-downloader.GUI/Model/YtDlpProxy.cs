@@ -97,11 +97,11 @@ public partial class YtDlpProxy : ObservableObject
         }
     }
 
-    public Video? GetVideo(string url)
+    public async Task<Video> GetVideo(string url, CancellationToken cancellationToken)
     {
         try
         {
-            var video = _ytDlp.GetVideoByUrl(url);
+            var video = await _ytDlp.GetVideoByUrl(url, cancellationToken);
             Sync(SyncType.Videos);
 
             GlobalSnackbarMessageQueue.WriteInfo($"Added video from URL: {url}");

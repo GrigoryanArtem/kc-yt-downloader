@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using kc_yt_downloader.Model.Enums;
+using kc_yt_downloader.Model.Processing;
+using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Text;
 
@@ -66,9 +68,18 @@ public class YtDlp
 
     public VideoPreview? GetPreviewVideoByUrl(string url)
         => _videoCache.SingleOrDefault(v => v.AvailableURLs.Contains(url));
-    public Video? GetVideoByUrl(string url)
+
+    public async Task<Video> GetVideoByUrl(string url, CancellationToken cancellationToken)
     {
-        var json = DownloadInfo(url);
+        var jsonDump = DumpJsonCommand(url);
+
+        await jsonDump.Run(cancellationToken);
+
+        if(jsonDump.ExitCode != ProcessExitCode.Success)
+            throw new Exception($"Failed to get video info for {url}. Exit code: {jsonDump.ExitCode}\r\nOutput:\r\n{jsonDump.Error}");
+
+        var json = jsonDump.Output;
+
 
         if (String.IsNullOrEmpty(json))
             return null;
@@ -87,7 +98,7 @@ public class YtDlp
 
             var (video_short, idx) = similar.FirstOrDefault();
             string[] availableURLs = [.. video_short.AvailableURLs, url, info.WebPageUrl];
-            video = new Video(json, info, [..availableURLs.Distinct()]);
+            video = new Video(json, info, [.. availableURLs.Distinct()]);
 
             _videoCache[idx] = video.ToIndexEntry();
         }
@@ -156,44 +167,8 @@ public class YtDlp
         return new Process { StartInfo = startInfo };
     }
 
-    private static string? DownloadInfo(string url)
-    {
-        var startInfo = new ProcessStartInfo
-        {
-            FileName = YT_DLP,
-            Arguments = $"--dump-json {url}",
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            CreateNoWindow = false,
-            WindowStyle = ProcessWindowStyle.Hidden,
-        };
-
-        var proc = new Process { StartInfo = startInfo };
-
-        try
-        {
-            var sb = new StringBuilder();
-            proc.Start();
-
-            while (!proc.StandardOutput.EndOfStream && proc.Responding && !proc.HasExited)
-            {
-                var data = proc.StandardOutput.ReadToEnd();
-                sb.AppendLine(data);
-            }
-
-            return sb.ToString();
-        }
-        catch (Exception exp)
-        {
-            Console.WriteLine(exp.Message);
-        }
-        finally
-        {
-            proc.Kill();
-        }
-
-        return null;
-    }
+    private static Command DumpJsonCommand(string url)
+        => new($"--dump-json {url}");
 
     public async Task<bool> UpdateYtDlpAsync(YtDlpUpdateChannel updateChannel = YtDlpUpdateChannel.Stable, IProgress<string>? progress = null)
     {

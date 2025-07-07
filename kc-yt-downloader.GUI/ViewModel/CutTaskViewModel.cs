@@ -49,10 +49,10 @@ public partial class CutTaskViewModel : ObservableObject
         RunCommand = new RelayCommand(async () => await OnRun(), () => !IsRunning);
         OpenDirectoryCommand = new RelayCommand(OnOpenDirectory);
 
-        var cutViewLoadingViewModel = new CutViewLoadingViewModel(() => Task.Run(() =>
+        var cutViewLoadingViewModel = new CutViewLoadingViewModel(async () =>
         {
             {
-                var video = _ytDlp.GetVideoByUrl(_video.Info.OriginalUrl);
+                var video = await _ytDlp.GetVideoByUrl(_video.Info.OriginalUrl, CancellationToken.None);
 
                 return new CutViewModelParameters()
                 {
@@ -60,7 +60,7 @@ public partial class CutTaskViewModel : ObservableObject
                     Video = video
                 };
             }
-        }));
+        });
         
         var store = services.GetRequiredService<NavigationStore>();
         var navigation = new NavigationService<CutViewLoadingViewModel>(store, () => cutViewLoadingViewModel);

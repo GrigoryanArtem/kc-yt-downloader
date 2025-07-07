@@ -52,6 +52,10 @@
                 <controls:ErrorInformationView />
             </DataTemplate>
 
+            <DataTemplate DataType="{x:Type viewmodel:GlobalErrorViewModel}">
+                <controls:GlobalErrorView />
+            </DataTemplate>
+
             <DataTemplate DataType="{x:Type viewmodel:VideoInfoControlViewModel}">
                 <controls:VideoInfoControl />
             </DataTemplate>
