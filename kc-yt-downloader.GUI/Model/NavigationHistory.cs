@@ -31,8 +31,8 @@ public class NavigationHistory : ObservableObject
     {
         var services = App.Current.Services;
 
-        _viewModels.Pop();
-        var viewModel = _viewModels.Pop();
+        var alt = _viewModels.Pop();
+        var viewModel = _viewModels.Count > 0 ? _viewModels.Pop() : alt;
         var navigation = new NavigationService<ObservableObject>(services.GetRequiredService<NavigationStore>(), () => viewModel);
 
         navigation.Navigate();

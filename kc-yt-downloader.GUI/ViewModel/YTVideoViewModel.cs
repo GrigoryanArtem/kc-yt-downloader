@@ -19,6 +19,7 @@ public partial class YTVideoViewModel : ObservableObject
         YtDlp ytDlp,
         VideoPreview video)
     {
+        var services = App.Current.Services;
         _ytDlp = ytDlp;
 
 
@@ -34,19 +35,9 @@ public partial class YTVideoViewModel : ObservableObject
         if (videoInfo?.UploadDate is not null)
             UploadDate = DateTime.ParseExact(videoInfo?.UploadDate, "yyyyMMdd", CultureInfo.InvariantCulture);
 
-        var cutViewLoadingViewModel = new CutViewLoadingViewModel(async () => 
-        {
-            {
-                var video = await _ytDlp.GetVideoByUrl(Video.Info.OriginalUrl, CancellationToken.None);
+        var tasks = services.GetRequiredService<TasksFactory>();
+        var cutViewLoadingViewModel = tasks.CreateCutViewLoadingViewModel(Video!.Info.OriginalUrl);
 
-                return new CutViewModelParameters()
-                {
-                    Video = video
-                };
-            }
-        });
-
-        var services = App.Current.Services;
         var store = services.GetRequiredService<NavigationStore>();
         var navigation = new NavigationService<CutViewLoadingViewModel>(store, () => cutViewLoadingViewModel);        
 

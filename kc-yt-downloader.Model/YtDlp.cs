@@ -1,4 +1,5 @@
 ﻿using kc_yt_downloader.Model.Enums;
+using kc_yt_downloader.Model.Exceptions;
 using kc_yt_downloader.Model.Processing;
 using Newtonsoft.Json;
 using System.Diagnostics;
@@ -69,18 +70,16 @@ public class YtDlp
     public VideoPreview? GetPreviewVideoByUrl(string url)
         => _videoCache.SingleOrDefault(v => v.AvailableURLs.Contains(url));
 
-    public async Task<Video> GetVideoByUrl(string url, CancellationToken cancellationToken)
+    public async Task<Video?> GetVideoByUrl(string url, CancellationToken cancellationToken)
     {
         var jsonDump = DumpJsonCommand(url);
 
         await jsonDump.Run(cancellationToken);
 
         if(jsonDump.ExitCode != ProcessExitCode.Success)
-            throw new Exception($"Failed to get video info for {url}. Exit code: {jsonDump.ExitCode}\r\nOutput:\r\n{jsonDump.Error}");
+            throw new YtCommandException($"Failed to get video info for {url}.", jsonDump);
 
         var json = jsonDump.Output;
-
-
         if (String.IsNullOrEmpty(json))
             return null;
 

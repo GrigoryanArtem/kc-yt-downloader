@@ -1,36 +1,44 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using kc_yt_downloader.GUI.Model;
 using NavigationMVVM.Services;
 
 namespace kc_yt_downloader.GUI.ViewModel;
 
-public partial class LoadingNextViewViewModel<TParameter> : ObservableObject
-{
-    protected Func<Task<TParameter>> _loadingTask;
-    protected IParameterNavigationService<TParameter> _navigationService;
-
+public abstract partial class LoadingNextViewViewModel<TParameter> : ObservableObject
+{    
     [ObservableProperty]
     private bool _isProgress = true;
 
     public LoadingNextViewViewModel() { }
-
+   
     public LoadingNextViewViewModel(
         string title,
-        Func<Task<TParameter>> loadingTask,
+        Func<Task<LoadingResult<TParameter>>> loadingTask,
         IParameterNavigationService<TParameter> navigationService) : this()
     {
-        _loadingTask = loadingTask;
-        _navigationService = navigationService;
+        LoadingTask = loadingTask;
+        NavigationService = navigationService;
         Title = title;
     }
+
+    protected Func<Task<LoadingResult<TParameter>>> LoadingTask { get; set; }
+    protected IParameterNavigationService<TParameter> NavigationService { get; set; }
 
     public string Title { get; protected set; }
 
     [RelayCommand]
     public async Task Load()
     {
-        var parameter = await _loadingTask();
+        var parameter = await LoadingTask();
 
-        _navigationService.Navigate(parameter);
+        if (parameter.Success)
+        {
+            NavigationService.Navigate(parameter.Result);
+        }
+        else
+        {
+            NavigationCommands.NavigateBack();
+        }
     }
 }

@@ -4,11 +4,11 @@ namespace kc_yt_downloader.GUI.ViewModel;
 
 public class CutViewLoadingViewModel : LoadingNextViewViewModel<CutViewModelParameters>
 {
-    public CutViewLoadingViewModel(Func<Task<CutViewModelParameters>> loadingTask)
+    public CutViewLoadingViewModel(Func<Task<LoadingResult<CutViewModelParameters>>> loadingTask)
     {
         Title = "Loading video metadata...";
 
-        _loadingTask = loadingTask;
-        _navigationService = NavigationCommands.CreateNavigation<CutViewModelParameters, CutViewModel>(cvp => new CutViewModel(cvp));
+        LoadingTask = loadingTask;
+        NavigationService = NavigationCommands.CreateNavigation<CutViewModelParameters, CutViewModel>(cvp => new CutViewModel(cvp));
     }
 }

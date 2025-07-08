@@ -10,7 +10,9 @@ public partial class DashboardViewModel : ObservableObject
     public DashboardViewModel()
     {
         var services = App.Current.Services;
+
         DlpProxy = services.GetRequiredService<YtDlpProxy>();
+        DlpProxy.Sync(YtDlpProxy.SyncType.All);
     }
     
     public YtDlpProxy DlpProxy { get; set; }

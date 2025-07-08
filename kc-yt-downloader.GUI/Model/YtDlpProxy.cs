@@ -7,7 +7,7 @@ using System.Collections.ObjectModel;
 
 namespace kc_yt_downloader.GUI.Model;
 
-public partial class YtDlpProxy : ObservableObject
+public partial class YtDlpProxy(YtDlp ytDlp) : ObservableObject
 {
     [Flags]
     public enum SyncType
@@ -19,8 +19,6 @@ public partial class YtDlpProxy : ObservableObject
     }
 
     #region Members
-
-    private readonly YtDlp _ytDlp;
     private readonly Dictionary<int, CutTaskViewModel> _taskCache = [];
 
     #endregion
@@ -35,12 +33,6 @@ public partial class YtDlpProxy : ObservableObject
 
     #endregion
 
-    public YtDlpProxy(YtDlp ytDlp)
-    {
-        _ytDlp = ytDlp;
-        Sync(SyncType.All);
-    }
-
     public void AddTasks(params CutVideoTask[] tasks)
     {
         if (tasks is null)
@@ -49,7 +41,7 @@ public partial class YtDlpProxy : ObservableObject
         try
         {
             foreach (var task in tasks.Where(t => t is not null))
-                _ytDlp.AddTask(task);
+                ytDlp.AddTask(task);
 
             Sync(SyncType.Tasks);
             GlobalSnackbarMessageQueue.WriteInfo($"Added {tasks.Length} tasks.");
@@ -67,7 +59,7 @@ public partial class YtDlpProxy : ObservableObject
             return;
         try
         {
-            _ytDlp.DeleteTask(task);
+            ytDlp.DeleteTask(task);
             Sync(SyncType.Tasks);
             GlobalSnackbarMessageQueue.WriteInfo($"Deleted task: {task.Name}");
         }
@@ -85,7 +77,7 @@ public partial class YtDlpProxy : ObservableObject
 
         try
         {
-            _ytDlp.DeleteVideo(url);
+            ytDlp.DeleteVideo(url);
             Sync(SyncType.Videos);
 
             GlobalSnackbarMessageQueue.WriteInfo($"Deleted video: {url.Info.OriginalUrl}");
@@ -97,11 +89,11 @@ public partial class YtDlpProxy : ObservableObject
         }
     }
 
-    public async Task<Video> GetVideo(string url, CancellationToken cancellationToken)
+    public async Task<Video?> GetVideo(string url, CancellationToken cancellationToken)
     {
         try
         {
-            var video = await _ytDlp.GetVideoByUrl(url, cancellationToken);
+            var video = await ytDlp.GetVideoByUrl(url, cancellationToken);
             Sync(SyncType.Videos);
 
             GlobalSnackbarMessageQueue.WriteInfo($"Added video from URL: {url}");
@@ -111,7 +103,7 @@ public partial class YtDlpProxy : ObservableObject
         catch (Exception ex)
         {
             GlobalSnackbarMessageQueue.WriteError($"Failed to add video from URL: {url}", ex);
-            return null;
+            return null!;
         }
     }
 
@@ -125,7 +117,7 @@ public partial class YtDlpProxy : ObservableObject
     });
 
     public CutTaskViewModel[] GetCachedTasks() 
-        => [.. _ytDlp.GetCachedTasks()
+        => [.. ytDlp.GetCachedTasks()
             .Select(t => new CutTaskViewModel(t, this))
             .OrderByDescending(t => t.Source.Created)];
 
@@ -133,9 +125,9 @@ public partial class YtDlpProxy : ObservableObject
 
     private void UpdateVideos()
     {
-        var newVideos = _ytDlp.GetCachedData()
+        var newVideos = ytDlp.GetCachedData()
             .OrderByDescending(v => v.ParseDate)
-            .Select(v => new YTVideoViewModel(_ytDlp, v))
+            .Select(v => new YTVideoViewModel(ytDlp, v))
             .GroupBy(vm => new DateTime
             (
                 year: vm.Video.ParseDate.Year,
@@ -176,7 +168,7 @@ public partial class YtDlpProxy : ObservableObject
         var expirationTimes = config.ExpirationTimes;
 
 
-        var newTasks = _ytDlp.GetCachedTasks()
+        var newTasks = ytDlp.GetCachedTasks()
             .Where(t => !expirationTimes.TryGetValue(t.Status, out var time) || t.Created > DateTime.Now.AddDays(-time))
             .Select(GetViewModel)
             .OrderByDescending(t => t.Source.Created)

@@ -44,38 +44,32 @@ public partial class CutTaskViewModel : ObservableObject
         DonePercent = task.Status == VideoTaskStatus.Completed ? 100 : 0;
 
         Status = new SimpleStatusViewModel(task.Status);
-        
+
 
         RunCommand = new RelayCommand(async () => await OnRun(), () => !IsRunning);
         OpenDirectoryCommand = new RelayCommand(OnOpenDirectory);
 
-        var cutViewLoadingViewModel = new CutViewLoadingViewModel(async () =>
+        if (_video is not null)
         {
-            {
-                var video = await _ytDlp.GetVideoByUrl(_video.Info.OriginalUrl, CancellationToken.None);
+            var tasks = services.GetRequiredService<TasksFactory>();
+            var cutViewLoadingViewModel = tasks.CreateCutViewLoadingViewModel(_video!.Info.OriginalUrl, new(task));
 
-                return new CutViewModelParameters()
-                {
-                    Batch = new(task),
-                    Video = video
-                };
-            }
-        });
-        
-        var store = services.GetRequiredService<NavigationStore>();
-        var navigation = new NavigationService<CutViewLoadingViewModel>(store, () => cutViewLoadingViewModel);
 
-        var logNavigation = NavigationCommands.CreateModalNavigation<LogViewModelParameters, LogViewModel>(p => new LogViewModel(p));        
+            var store = services.GetRequiredService<NavigationStore>();
+            var navigation = new NavigationService<CutViewLoadingViewModel>(store, () => cutViewLoadingViewModel);
 
-        EditTaskCommand = new RelayCommand(navigation.Navigate);
+            EditTaskCommand = new RelayCommand(navigation.Navigate);
+        }
+
+        var logNavigation = NavigationCommands.CreateModalNavigation<LogViewModelParameters, LogViewModel>(p => new LogViewModel(p));
         OpenLogCommand = new RelayCommand
-        (
-            execute: () => logNavigation.Navigate(new()
-            {
-                Persister = _persister
-            }),
-            canExecute: () => _persister is not null
-        );
+           (
+               execute: () => logNavigation.Navigate(new()
+               {
+                   Persister = _persister
+               }),
+               canExecute: () => _persister is not null
+           );
 
         Persister = LogPersister.FromDirectory(_logsDirectory, task.Id)!;
     }
@@ -149,7 +143,7 @@ public partial class CutTaskViewModel : ObservableObject
 
         Persister?.Dispose();
         Persister = new LogPersister(Path.Combine(_logsDirectory, $"{Source.Id}.{DateTime.Now:yyyyMMdd_HHmmss}.log"));
-        
+
         await OnUpdate();
 
         Persister.Stop();
@@ -190,7 +184,7 @@ public partial class CutTaskViewModel : ObservableObject
         var services = App.Current.Services;
         var ytDlp = services.GetRequiredService<YtDlpProxy>();
         ytDlp.DeleteTask(Source);
-    }        
+    }
 
     private async Task OnUpdate()
     {
@@ -208,7 +202,7 @@ public partial class CutTaskViewModel : ObservableObject
             };
 
             _ytDlp.UpdateTask(Source);
-            _ytDlpProxy.Sync(YtDlpProxy.SyncType.Tasks);            
+            _ytDlpProxy.Sync(YtDlpProxy.SyncType.Tasks);
 
             proc.ErrorDataReceived += (sender, args) => UpdateStatus(args.Data);
             proc.BeginErrorReadLine();
@@ -231,7 +225,7 @@ public partial class CutTaskViewModel : ObservableObject
         var status = proc.ExitCode switch
         {
             0 or 100 => VideoTaskStatus.Completed,
-            1 or 2 => VideoTaskStatus.Error, 
+            1 or 2 => VideoTaskStatus.Error,
             101 => VideoTaskStatus.Cancelled,
 
             _ => VideoTaskStatus.Unknown

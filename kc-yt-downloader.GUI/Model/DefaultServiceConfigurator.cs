@@ -27,6 +27,7 @@ public class DefaultServiceConfigurator : IServicesConfigurator
 
         services.AddSingleton(ytDlp);
         services.AddSingleton<YtDlpProxy>(_ => new(ytDlp));
+        services.AddSingleton<TasksFactory>();
 
         services.AddSingleton<NavigationStore>();
         services.AddSingleton<ModalNavigationStore>();
