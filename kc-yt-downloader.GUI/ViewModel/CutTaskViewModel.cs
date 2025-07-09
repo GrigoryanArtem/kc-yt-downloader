@@ -130,6 +130,8 @@ public partial class CutTaskViewModel : ObservableObject
         private set => SetProperty(ref _status, value);
     }
 
+    public bool HasEditMode => EditTaskCommand is not null;
+
     public RelayCommand RunCommand { get; }
     public ICommand EditTaskCommand { get; }
     public ICommand OpenDirectoryCommand { get; }

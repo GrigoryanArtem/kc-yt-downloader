@@ -4,8 +4,7 @@ using System.Text;
 namespace kc_yt_downloader.Model.Exceptions;
 
 public class YtCommandException : Exception
-{
-    public Command Command { get; }
+{    
     public YtCommandException(string message, Command command)
         : base(CreateRichMessage(message, command))
     {
@@ -17,6 +16,8 @@ public class YtCommandException : Exception
     {
         Command = command;
     }
+
+    public Command Command { get; }
 
     private static string CreateRichMessage(string message, Command command)
     {

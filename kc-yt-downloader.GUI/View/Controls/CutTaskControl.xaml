@@ -129,7 +129,8 @@
                     <Button
                         Command="{Binding EditTaskCommand}"
                         Content="{materialDesign:PackIcon Edit}"
-                        ToolTip="Edit" />
+                        ToolTip="Edit"
+                        Visibility="{Binding HasEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                     <Button
                         Command="{Binding OpenDirectoryCommand}"
