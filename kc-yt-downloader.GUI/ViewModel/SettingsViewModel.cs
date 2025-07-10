@@ -32,6 +32,7 @@ public partial class SettingsViewModel : ObservableValidator
     {
         var config = YtConfig.Global;
 
+        BatchSize = config.BatchSize;
         ExpirationTimes = [.. Enum.GetValues<VideoTaskStatus>()
             .Where(s => !EXCLUDED_STATUSES.Contains(s))
             .Select(status => new TaskExpirationTimeViewModel
@@ -41,6 +42,10 @@ public partial class SettingsViewModel : ObservableValidator
             )];
     }
 
+    [ObservableProperty]
+    private int _batchSize;
+
+    public int[] SupportedSize { get; } = [.. Enumerable.Range(2, 4)];    
     public TaskExpirationTimeViewModel[] ExpirationTimes { get; }
 
     [RelayCommand]
@@ -63,6 +68,8 @@ public partial class SettingsViewModel : ObservableValidator
                     config.ExpirationTimes[expirationTime.Status] = expirationTime.ExpirationTimeDays;
                 }
             }
+
+            config.BatchSize = BatchSize;
 
             config.Save();
             ytDlpProxy.Sync(YtDlpProxy.SyncType.All);

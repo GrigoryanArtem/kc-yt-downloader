@@ -15,6 +15,7 @@ public class YtConfig
     public string CacheDirectory { get; set; } = "data";
 
     public Dictionary<VideoTaskStatus, int> ExpirationTimes { get; set; } = [];
+    public int BatchSize { get; set; } = 2;
 
     public SelectedSettings SelectedSettings { get; set; } = new();
 

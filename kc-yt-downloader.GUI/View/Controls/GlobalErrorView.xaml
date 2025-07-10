@@ -33,7 +33,8 @@
                 BorderThickness="0"
                 IsReadOnly="True"
                 Style="{x:Null}"
-                Text="{Binding Details, Mode=OneWay}" />
+                Text="{Binding Details, Mode=OneWay}"
+                TextWrapping="Wrap" />
         </ScrollViewer>
 
         <StackPanel

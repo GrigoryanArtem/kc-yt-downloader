@@ -96,6 +96,39 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
+        <Grid Margin="0 12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border
+                Width="16"
+                Height="1"
+                BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
+                BorderThickness="1" />
+
+            <TextBlock
+                Grid.Column="1"
+                Margin="12 0"
+                Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                Text="Auto processing" />
+
+            <Border
+                Grid.Column="2"
+                Height="1"
+                BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
+                BorderThickness="1" />
+        </Grid>
+
+        <ComboBox
+            Width="150"
+            HorizontalAlignment="Left"
+            materialDesign:HintAssist.Hint="Batch size:"
+            ItemsSource="{Binding SupportedSize}"
+            SelectedItem="{Binding BatchSize}"
+            Style="{StaticResource MaterialDesignOutlinedComboBox}" />
 
         <StackPanel
             Margin="0 24 0 0"

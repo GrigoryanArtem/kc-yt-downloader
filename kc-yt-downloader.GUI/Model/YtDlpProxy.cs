@@ -26,12 +26,16 @@ public partial class YtDlpProxy(YtDlp ytDlp) : ObservableObject
     #region Properties
 
     [ObservableProperty]
+    private bool _isAutoProcessingPossible;
+
+    [ObservableProperty]
     private ObservableCollection<VideoGroupViewModel> _videos = [];
 
     [ObservableProperty]
     private ObservableCollection<TaskGroupViewModel> _tasks = [];
 
-    #endregion
+    #endregion    
+
 
     public void AddTasks(params CutVideoTask[] tasks)
     {
@@ -199,6 +203,8 @@ public partial class YtDlpProxy(YtDlp ytDlp) : ObservableObject
                 existing.Items.SyncItems(group, (a, b) => a.Source.Id == b.Source.Id);
             }
         }
+
+        IsAutoProcessingPossible = Tasks.Any(g => g.Status == VideoTaskStatus.Prepared);
     }
 
     public CutTaskViewModel GetViewModel(CutVideoTask task)

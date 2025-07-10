@@ -13,17 +13,13 @@ public partial class DashboardViewModel : ObservableObject
 
         DlpProxy = services.GetRequiredService<YtDlpProxy>();
         DlpProxy.Sync(YtDlpProxy.SyncType.All);
+
+        TaskRunner = new (DlpProxy);
     }
-    
+        
     public YtDlpProxy DlpProxy { get; set; }
     
-
-    private CutTaskViewModel[] _tasks;
-    public CutTaskViewModel[] Tasks
-    {
-        get => _tasks;
-        set => SetProperty(ref _tasks, value);
-    }
+    public AutoTaskRunner TaskRunner { get; }
 
     public UrlAddingViewModel UrlAddingViewModel { get; } = new();
 
@@ -32,5 +28,24 @@ public partial class DashboardViewModel : ObservableObject
     {
         var navigationCommand = NavigationCommands.CreateModalNavigation(new SettingsViewModel());
         navigationCommand.Navigate();
+    }
+
+    [RelayCommand]
+    public void RunSingle()
+    {
+        TaskRunner.Activate(AutoTaskRunner.RunType.Single);
+        
+    }
+
+    [RelayCommand]
+    public void RunBatch()
+    {
+        TaskRunner.Activate(AutoTaskRunner.RunType.Batch);
+    }
+
+    [RelayCommand]
+    public void Stop()
+    {
+        TaskRunner.Stop();
     }
 }

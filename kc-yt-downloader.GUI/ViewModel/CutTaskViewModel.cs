@@ -46,7 +46,7 @@ public partial class CutTaskViewModel : ObservableObject
         Status = new SimpleStatusViewModel(task.Status);
 
 
-        RunCommand = new RelayCommand(async () => await OnRun(), () => !IsRunning);
+        RunCommand = new RelayCommand(async () => await RunTask(), () => !IsRunning);
         OpenDirectoryCommand = new RelayCommand(OnOpenDirectory);
 
         if (_video is not null)
@@ -137,20 +137,22 @@ public partial class CutTaskViewModel : ObservableObject
     public ICommand OpenDirectoryCommand { get; }
     public RelayCommand OpenLogCommand { get; }
 
-    private async Task OnRun()
+    public async Task RunTask()
     {
-        IsRunning = true;
+        App.Current.Dispatcher.Invoke(() =>
+        {
+            IsRunning = true;
 
-        Directory.CreateDirectory(_logsDirectory);
+            Directory.CreateDirectory(_logsDirectory);
 
-        Persister?.Dispose();
-        Persister = new LogPersister(Path.Combine(_logsDirectory, $"{Source.Id}.{DateTime.Now:yyyyMMdd_HHmmss}.log"));
+            Persister?.Dispose();
+            Persister = new LogPersister(Path.Combine(_logsDirectory, $"{Source.Id}.{DateTime.Now:yyyyMMdd_HHmmss}.log"));
+        });
 
         await OnUpdate();
 
         Persister.Stop();
-
-        IsRunning = false;
+        App.Current.Dispatcher.Invoke(() => IsRunning = false);
     }
 
     private void UpdateStatus(string str)

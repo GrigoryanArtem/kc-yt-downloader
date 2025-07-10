@@ -82,7 +82,7 @@ public partial class CutViewModel : ObservableObject
             FilePath = FileNameControl.GetFullPath() + (!String.IsNullOrEmpty(s.Suffix) 
                 ? $"_{s.Suffix}" 
                 : (multipleSegments 
-                    ? $"_{i}" 
+                    ? $"_{i + 1}" 
                     : String.Empty)),
 
             TimeRange = new() { From = s.From, To = s.To },

@@ -34,7 +34,7 @@
 
                     <Style.Triggers>
                         <DataTrigger
-                            Binding="{Binding Tasks.Length}"
+                            Binding="{Binding DlpProxy.Tasks.Count}"
                             Value="0">
 
                             <Setter Property="Visibility" Value="Collapsed" />
@@ -55,7 +55,6 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
 
                     <TextBlock
@@ -67,23 +66,41 @@
                         Text="QUEUE"
                         TextAlignment="Left" />
 
-                    <Button
+                    <StackPanel
                         Grid.Column="1"
-                        Margin="4 0"
-                        Padding="8"
-                        Content="{materialDesign:PackIcon PlayBoxMultiple}"
-                        Foreground="{StaticResource MaterialDesign.Brush.Primary.Dark.Foreground}"
-                        Style="{StaticResource MaterialDesignFlatSecondaryButton}"
-                        ToolTip="Run" />
+                        Margin="12 0"
+                        Orientation="Horizontal"
+                        Visibility="{Binding DlpProxy.IsAutoProcessingPossible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Button
+                            Margin="4 0"
+                            Padding="8"
+                            Command="{Binding StopCommand}"
+                            Content="{materialDesign:PackIcon Stop}"
+                            Foreground="{StaticResource MaterialDesign.Brush.Primary.Dark.Foreground}"
+                            Style="{StaticResource MaterialDesignFlatSecondaryButton}"
+                            ToolTip="Stop"
+                            Visibility="{Binding TaskRunner.Active, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                    <Button
-                        Grid.Column="2"
-                        Margin="4 0 12 0"
-                        Padding="8"
-                        Content="{materialDesign:PackIcon PlayBox}"
-                        Foreground="{StaticResource MaterialDesign.Brush.Primary.Dark.Foreground}"
-                        Style="{StaticResource MaterialDesignFlatSecondaryButton}"
-                        ToolTip="Run" />
+                        <Button
+                            Margin="4 0"
+                            Padding="8"
+                            Command="{Binding RunBatchCommand}"
+                            Content="{materialDesign:PackIcon PlayBoxMultiple}"
+                            Foreground="{StaticResource MaterialDesign.Brush.Primary.Dark.Foreground}"
+                            Style="{StaticResource MaterialDesignFlatSecondaryButton}"
+                            ToolTip="Run"
+                            Visibility="{Binding TaskRunner.Active, Converter={StaticResource InvertBooleanToVisibilityConverter}}" />
+
+                        <Button
+                            Margin="4 0"
+                            Padding="8"
+                            Command="{Binding RunSingleCommand}"
+                            Content="{materialDesign:PackIcon PlayBox}"
+                            Foreground="{StaticResource MaterialDesign.Brush.Primary.Dark.Foreground}"
+                            Style="{StaticResource MaterialDesignFlatSecondaryButton}"
+                            ToolTip="Run"
+                            Visibility="{Binding TaskRunner.Active, Converter={StaticResource InvertBooleanToVisibilityConverter}}" />
+                    </StackPanel>
                 </Grid>
 
                 <ScrollViewer
