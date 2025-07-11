@@ -3,23 +3,23 @@ using System.Text;
 
 namespace kc_yt_downloader.Model.Exceptions;
 
-public class YtCommandException : Exception
+public class CommandException : Exception
 {    
-    public YtCommandException(string message, Command command)
+    public CommandException(string message, CommandBase command)
         : base(CreateRichMessage(message, command))
     {
         Command = command;
     }
 
-    public YtCommandException(string message, Command command, Exception innerException)
+    public CommandException(string message, CommandBase command, Exception innerException)
         : base(CreateRichMessage(message, command), innerException)
     {
         Command = command;
     }
 
-    public Command Command { get; }
+    public CommandBase Command { get; }
 
-    private static string CreateRichMessage(string message, Command command)
+    private static string CreateRichMessage(string message, CommandBase command)
     {
         var builder = new StringBuilder();
 

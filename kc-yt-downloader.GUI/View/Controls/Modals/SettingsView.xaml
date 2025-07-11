@@ -39,7 +39,7 @@
                 Grid.Column="1"
                 Margin="12 0"
                 Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-                Text="Expiration times" />
+                Text="Expiration time" />
 
             <Border
                 Grid.Column="2"
@@ -129,6 +129,90 @@
             ItemsSource="{Binding SupportedSize}"
             SelectedItem="{Binding BatchSize}"
             Style="{StaticResource MaterialDesignOutlinedComboBox}" />
+
+
+        <Grid Margin="0 12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border
+                Width="16"
+                Height="1"
+                BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
+                BorderThickness="1" />
+
+            <TextBlock
+                Grid.Column="1"
+                Margin="12 0"
+                Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                Text="Version" />
+
+            <Border
+                Grid.Column="2"
+                Height="1"
+                BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
+                BorderThickness="1" />
+        </Grid>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock
+                Grid.Row="0"
+                Grid.Column="0"
+                Margin="0 8"
+                Style="{StaticResource MaterialDesignBodyLargeTextBlock}"
+                Text="yt-dlp" />
+
+            <TextBlock
+                Grid.Row="0"
+                Grid.Column="1"
+                Margin="12 8 0 8"
+                Style="{StaticResource MaterialDesignBodyLargeTextBlock}"
+                Text="{Binding YtDlpVersion}" />
+
+
+            <TextBlock
+                Grid.Row="1"
+                Grid.Column="0"
+                Margin="0 8"
+                Style="{StaticResource MaterialDesignBodyLargeTextBlock}"
+                Text="ffmpeg" />
+
+            <TextBlock
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="12 8 0 8"
+                Style="{StaticResource MaterialDesignBodyLargeTextBlock}"
+                Text="{Binding FfmpegVersion}" />
+
+            <TextBlock
+                Grid.Row="2"
+                Grid.Column="0"
+                Margin="0 8"
+                Style="{StaticResource MaterialDesignBodyLargeTextBlock}"
+                Text="build" />
+
+            <TextBlock
+                Grid.Row="2"
+                Grid.Column="1"
+                Margin="12 8 0 8"
+                Style="{StaticResource MaterialDesignBodyLargeTextBlock}"
+                Text="{Binding AppVersion}" />
+        </Grid>
+
 
         <StackPanel
             Margin="0 24 0 0"

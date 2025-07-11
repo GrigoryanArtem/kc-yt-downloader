@@ -4,6 +4,7 @@ using kc_yt_downloader.GUI.Model;
 using kc_yt_downloader.Model;
 using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 
 namespace kc_yt_downloader.GUI.ViewModel;
 
@@ -28,6 +29,15 @@ public partial class SettingsViewModel : ObservableValidator
         VideoTaskStatus.Cancelled
     ];
 
+    [ObservableProperty]
+    private int _batchSize;
+    [ObservableProperty]
+    private string _ytDlpVersion;
+    [ObservableProperty]
+    private string _ffmpegVersion;
+    [ObservableProperty]
+    private string _appVersion;
+
     public SettingsViewModel()
     {
         var config = YtConfig.Global;
@@ -40,13 +50,27 @@ public partial class SettingsViewModel : ObservableValidator
                 status: status,
                 expirationTimeDays: config.ExpirationTimes.TryGetValue(status, out var days) ? days : null)
             )];
+
+        
+        Task.Run(LoadVersions);
+        
     }
 
-    [ObservableProperty]
-    private int _batchSize;
+    public async Task LoadVersions()
+    {
+        var services = App.Current.Services;
+
+        var ytDlp = services.GetRequiredService<YtDlp>();
+        var ffmpeg = services.GetRequiredService<FFmpeg>();
+
+        YtDlpVersion = await ytDlp.YtDlpVersion(CancellationToken.None);
+        FfmpegVersion = await ffmpeg.FFmpegVersion(CancellationToken.None);
+        AppVersion = Assembly.GetExecutingAssembly()?.GetName()?.Version?.ToString()?? String.Empty;
+    }
+
 
     public int[] SupportedSize { get; } = [.. Enumerable.Range(2, 4)];    
-    public TaskExpirationTimeViewModel[] ExpirationTimes { get; }
+    public TaskExpirationTimeViewModel[] ExpirationTimes { get; }    
 
     [RelayCommand]
     public void Save()

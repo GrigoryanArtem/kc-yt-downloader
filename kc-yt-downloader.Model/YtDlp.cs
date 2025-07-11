@@ -70,14 +70,26 @@ public class YtDlp
     public VideoPreview? GetPreviewVideoByUrl(string url)
         => _videoCache.SingleOrDefault(v => v.AvailableURLs.Contains(url));
 
+    public async Task<string> YtDlpVersion(CancellationToken cancellationToken)
+    {
+        var version = YtDlpCommands.Version();
+
+        await version.Run(cancellationToken);
+
+        if (version.ExitCode != ProcessExitCode.Success)
+            throw new CommandException($"Failed to get yt-dlp version", version);
+
+        return version.Output.Trim();
+    }
+
     public async Task<Video?> GetVideoByUrl(string url, CancellationToken cancellationToken)
     {
-        var jsonDump = DumpJsonCommand(url);
+        var jsonDump = YtDlpCommands.DumpJson(url);
 
         await jsonDump.Run(cancellationToken);
 
         if(jsonDump.ExitCode != ProcessExitCode.Success)
-            throw new YtCommandException($"Failed to get video info for {url}.", jsonDump);
+            throw new CommandException($"Failed to get video info for {url}.", jsonDump);
 
         var json = jsonDump.Output;
         if (String.IsNullOrEmpty(json))
@@ -166,7 +178,7 @@ public class YtDlp
         return new Process { StartInfo = startInfo };
     }
 
-    private static Command DumpJsonCommand(string url)
+    private static YtDlpCommand VersionCommand(string url)
         => new($"--dump-json {url}");
 
     public async Task<bool> UpdateYtDlpAsync(YtDlpUpdateChannel updateChannel = YtDlpUpdateChannel.Stable, IProgress<string>? progress = null)

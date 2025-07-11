@@ -25,6 +25,7 @@ public class DefaultServiceConfigurator : IServicesConfigurator
         var ytDlp = new YtDlp(YtConfig.Global.CacheDirectory);
         ytDlp.Open();
 
+        services.AddSingleton<FFmpeg>();
         services.AddSingleton(ytDlp);
         services.AddSingleton<YtDlpProxy>(_ => new(ytDlp));
         services.AddSingleton<TasksFactory>();

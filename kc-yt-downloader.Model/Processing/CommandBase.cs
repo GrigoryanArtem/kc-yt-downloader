@@ -3,11 +3,8 @@ using System.Diagnostics;
 using System.Text;
 
 namespace kc_yt_downloader.Model.Processing;
-
-public class Command(string arguments)
-{
-    private const string YT_DLP = "yt-dlp";
-
+public abstract class CommandBase(string commandBase, string arguments)
+{    
     #region Members
 
     private bool _isStarted = false;
@@ -18,7 +15,7 @@ public class Command(string arguments)
 
     #endregion
 
-    public string ProcessCommand => $"{YT_DLP} {arguments}";
+    public string ProcessCommand => $"{commandBase} {arguments}";
 
     public ProcessExitCode ExitCode { get; private set; } = ProcessExitCode.Unknown;
     public Exception Exception { get; private set; } = null!;
@@ -28,7 +25,7 @@ public class Command(string arguments)
 
     public async Task Run(CancellationToken cancellationToken)
     {
-        lock (_lock) 
+        lock (_lock)
         {
             if (_isStarted)
             {
@@ -40,7 +37,7 @@ public class Command(string arguments)
 
         var startInfo = new ProcessStartInfo
         {
-            FileName = YT_DLP,
+            FileName = commandBase,
             Arguments = arguments,
             UseShellExecute = false,
 
@@ -54,9 +51,9 @@ public class Command(string arguments)
             WindowStyle = ProcessWindowStyle.Hidden,
         };
 
-        var proc = new Process 
+        var proc = new Process
         {
-            StartInfo = startInfo 
+            StartInfo = startInfo
         };
 
         try
@@ -68,7 +65,7 @@ public class Command(string arguments)
             proc.BeginErrorReadLine();
 
             proc.OutputDataReceived += OnOutputDataReceived;
-            proc.BeginOutputReadLine();            
+            proc.BeginOutputReadLine();
 
             await proc.WaitForExitAsync(cancellationToken);
         }
@@ -80,25 +77,20 @@ public class Command(string arguments)
         finally
         {
             proc.Kill();
-        }        
+        }
 
-        ExitCode = proc.ExitCode switch
-        {
-            0 => ProcessExitCode.Success,
-            1 or 2 => ProcessExitCode.Error,
-            101 => ProcessExitCode.Cancelled,
-
-            _ => ProcessExitCode.Unknown
-        };
+        ExitCode = MapExitCode(proc.ExitCode);
     }
+
+    protected abstract ProcessExitCode MapExitCode(int exitCode);
 
     #region Private methods
 
     private void OnOutputDataReceived(object sender, DataReceivedEventArgs e)
         => WriteData(e, _outputBuilder);
 
-    private void OnErrorDataReceived(object sender, DataReceivedEventArgs e) 
-        => WriteData(e, _errorBuilder);     
+    private void OnErrorDataReceived(object sender, DataReceivedEventArgs e)
+        => WriteData(e, _errorBuilder);
 
     private static void WriteData(DataReceivedEventArgs args, StringBuilder stringBuilder)
     {
@@ -107,5 +99,4 @@ public class Command(string arguments)
     }
 
     #endregion
-
 }
