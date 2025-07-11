@@ -9,5 +9,5 @@ public record TimeRange
         => (int)(TimeParser.ParseTime(To) - TimeParser.ParseTime(From)).TotalSeconds;
 
     public string ToArgs()
-        => $" --external-downloader ffmpeg --external-downloader-args \"ffmpeg_i:-loglevel verbose -progress pipe:2 -nostats -ss {From} -to {To}\"";
+        => $" --download-sections *{From}-{To}";
 }
