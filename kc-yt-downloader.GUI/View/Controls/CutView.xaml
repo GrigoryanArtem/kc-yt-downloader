@@ -107,8 +107,11 @@
 
                     <Button
                         Padding="24 4"
+                        materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsAddingToQueue}"
+                        materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding IsAddingToQueue}"
                         Command="{Binding AddToQueueCommand}"
                         Content="ADD TASK TO QUEUE"
+                        IsEnabled="{Binding IsAddingToQueue, Converter={StaticResource InvertBooleanConverter}}"
                         Style="{StaticResource MaterialDesignOutlinedButton}" />
                 </StackPanel>
             </Grid>

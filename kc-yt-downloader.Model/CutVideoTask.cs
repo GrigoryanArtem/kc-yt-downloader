@@ -1,4 +1,6 @@
-﻿namespace kc_yt_downloader.Model;
+﻿using kc_yt_downloader.Model.Utility;
+
+namespace kc_yt_downloader.Model;
 
 public record CutVideoTask
 {
@@ -15,18 +17,21 @@ public record CutVideoTask
     public TimeRange? TimeRange { get; init; }
     public Recode? Recode { get; init; }
 
-    public string FilePath { get; init; }        
+    public string FilePath { get; init; }
+    public string? PredictedExtension { get; init; }
+    public string? PredictedFilePath => 
+        PredictedExtension is not null ? String.Join('.', FilePath, PredictedExtension) : null;
 
     public string? VideoFormatId { get; init; }
     public string? AudioFormatId { get; init; }
 
-    
+    public string FormatString => VideoFormatCombiner.Combine(VideoFormatId, AudioFormatId);
+
     public string ToArgs()
     {
         var timeRange = TimeRange?.ToArgs() ?? String.Empty;
         var recode = Recode?.ToArgs() ?? String.Empty;
 
-        return $"-vU --verbose -f \"{VideoFormatId ?? "bv"}+{AudioFormatId ?? "ba"}\"{timeRange}{recode} \"{URL}\" -o \"{FilePath}\"";
+        return $"""-vU --verbose -f "{FormatString}"{timeRange}{recode} "{URL}" -o "{FilePath}.%(ext)s" """;
     }
-
 }

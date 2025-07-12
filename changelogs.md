@@ -1,4 +1,7 @@
 ## Version 1.3.*
+* Add versions of libraries to the settings modal.
+* Update download command
+* Update processing status view
 
 ## Version 1.2.*
 

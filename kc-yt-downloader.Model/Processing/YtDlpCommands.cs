@@ -7,4 +7,7 @@ public static class YtDlpCommands
 
     public static YtDlpCommand Version()
         => new($"--version");
+
+    public static YtDlpCommand PredictExtension(string url, string formatString)
+        => new($"""--skip-download --print ext -f "{formatString}" "{url}" """);
 }

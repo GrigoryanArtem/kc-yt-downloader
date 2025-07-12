@@ -48,7 +48,6 @@ public partial class YtDlpStatusViewModel : ObservableObject
             { "total_size", s => (TotalSize, TotalSizeSuffix) = SizeConverter.FormatSize(Convert.ToInt64(s)) },
             { "speed", s => Speed = s.EndsWith("x") ? s[..^1] : s },
             { "bitrate", s => BitRate = s.EndsWith("kbits/s") ? s[..^7] : s },
-
             { "fps", s => Fps = ParseDouble(s) },
             { "frame", s => Frame = ParseInt(s) },
             { "size", s =>  (Size, SizeSuffix) = SizeConverter.ReformatString(s.Trim()) },

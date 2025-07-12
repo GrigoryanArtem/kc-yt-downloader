@@ -99,7 +99,7 @@ public partial class CutTaskViewModel : ObservableObject
         set => SetProperty(ref _taskStatus, value);
     }
 
-    public string FileName => Path.GetFileName(Source.FilePath);
+    public string FileName => Path.GetFileName(Source.PredictedFilePath ?? Source.FilePath);
 
     private CutVideoTask _source;
     public CutVideoTask Source

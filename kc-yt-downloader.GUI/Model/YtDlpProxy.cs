@@ -36,7 +36,6 @@ public partial class YtDlpProxy(YtDlp ytDlp) : ObservableObject
 
     #endregion    
 
-
     public void AddTasks(params CutVideoTask[] tasks)
     {
         if (tasks is null)
@@ -120,7 +119,7 @@ public partial class YtDlpProxy(YtDlp ytDlp) : ObservableObject
             UpdateTasks();
     });
 
-    public CutTaskViewModel[] GetCachedTasks() 
+    public CutTaskViewModel[] GetCachedTasks()
         => [.. ytDlp.GetCachedTasks()
             .Select(t => new CutTaskViewModel(t, this))
             .OrderByDescending(t => t.Source.Created)];

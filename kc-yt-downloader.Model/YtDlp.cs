@@ -7,7 +7,7 @@ using System.Text;
 
 namespace kc_yt_downloader.Model;
 
-public class YtDlp
+public class YtDlp(string cacheDirectory)
 {
     private const string YT_DLP = "yt-dlp";
     private const string VIDEOS_INDEX_FILEPATH = "index.json";
@@ -16,17 +16,13 @@ public class YtDlp
     private List<VideoPreview> _videoCache = [];
     private List<CutVideoTask> _tasksCache = [];
 
-    private readonly string _videoIndexPath;
-    private readonly string _tasksCachePath;
+    private readonly string _videoIndexPath = String.IsNullOrEmpty(cacheDirectory) 
+        ? VIDEOS_INDEX_FILEPATH
+        : Path.Combine(cacheDirectory, VIDEOS_INDEX_FILEPATH);
 
-    public YtDlp(string cacheDirectory)
-    {
-        _videoIndexPath = String.IsNullOrEmpty(cacheDirectory) ? VIDEOS_INDEX_FILEPATH
-            : Path.Combine(cacheDirectory, VIDEOS_INDEX_FILEPATH);
-
-        _tasksCachePath = String.IsNullOrEmpty(cacheDirectory) ? TASKS_CACHE_FILEPATH
-            : Path.Combine(cacheDirectory, TASKS_CACHE_FILEPATH);
-    }
+    private readonly string _tasksCachePath = String.IsNullOrEmpty(cacheDirectory) 
+        ? TASKS_CACHE_FILEPATH
+        : Path.Combine(cacheDirectory, TASKS_CACHE_FILEPATH);
 
     public void Open()
     {
@@ -70,6 +66,20 @@ public class YtDlp
     public VideoPreview? GetPreviewVideoByUrl(string url)
         => _videoCache.SingleOrDefault(v => v.AvailableURLs.Contains(url));
 
+    #region Commands
+
+    public async Task<string> PredictFileExtension(string videoId, string formatString, CancellationToken cancellationToken)
+    {
+        var command = YtDlpCommands.PredictExtension(videoId, formatString);
+
+        await command.Run(cancellationToken);
+
+        if (command.ExitCode != ProcessExitCode.Success)
+            throw new CommandException($"Failed to predict file extension for video {videoId}.", command);
+
+        return command.Output.Trim();
+    }
+
     public async Task<string> YtDlpVersion(CancellationToken cancellationToken)
     {
         var version = YtDlpCommands.Version();
@@ -88,7 +98,7 @@ public class YtDlp
 
         await jsonDump.Run(cancellationToken);
 
-        if(jsonDump.ExitCode != ProcessExitCode.Success)
+        if (jsonDump.ExitCode != ProcessExitCode.Success)
             throw new CommandException($"Failed to get video info for {url}.", jsonDump);
 
         var json = jsonDump.Output;
@@ -123,6 +133,10 @@ public class YtDlp
 
         return video;
     }
+
+    #endregion
+
+
 
     public void DeleteTask(CutVideoTask task)
     {
@@ -176,10 +190,7 @@ public class YtDlp
         };
 
         return new Process { StartInfo = startInfo };
-    }
-
-    private static YtDlpCommand VersionCommand(string url)
-        => new($"--dump-json {url}");
+    }    
 
     public async Task<bool> UpdateYtDlpAsync(YtDlpUpdateChannel updateChannel = YtDlpUpdateChannel.Stable, IProgress<string>? progress = null)
     {

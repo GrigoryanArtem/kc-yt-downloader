@@ -1,8 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using kc_yt_downloader.GUI.Model;
 using kc_yt_downloader.Model;
+using kc_yt_downloader.Model.Utility;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows.Input;
 
@@ -10,11 +10,23 @@ namespace kc_yt_downloader.GUI.ViewModel;
 
 public partial class CutViewModel : ObservableObject
 {
+    #region Constants
+
     private const string HTTPS_PROTOCOL = "https";
     private const string NONE = "none";
 
+    #endregion
+
     private readonly VideoInfo _info;
     private readonly CutViewModelParameters _parameters;
+
+    #region Properties
+
+    [ObservableProperty]
+    private bool _isAddingToQueue = false;
+
+    #endregion
+
 
     public CutViewModel(CutViewModelParameters parameters)
     {
@@ -49,7 +61,7 @@ public partial class CutViewModel : ObservableObject
             InitBatch(parameters.Batch);
 
         BackCommand = NavigationHistory.NavigateBackCommand;
-        AddToQueueCommand = new RelayCommand(OnAddToQueueCommand);
+        AddToQueueCommand = new AsyncRelayCommand(OnAddToQueueCommand);
     }
 
     public string Title => _info.Title;
@@ -64,13 +76,28 @@ public partial class CutViewModel : ObservableObject
     public ICommand BackCommand { get; }
     public ICommand AddToQueueCommand { get; }
 
-    private void OnAddToQueueCommand()
+    private async Task OnAddToQueueCommand()
     {
+        IsAddingToQueue = true;
+
         var services = App.Current.Services;
         var segments = TimeRange.Segments.ToArray();
         var multipleSegments = segments.Length > 1;
 
-        var ytDlp = services.GetRequiredService<YtDlpProxy>();
+        var ytDlpProxy = services.GetRequiredService<YtDlpProxy>();
+        var ytDlp = services.GetRequiredService<YtDlp>();
+
+        var recode = Recode.GetRecode();
+        var extension = recode?.Format;
+
+        if (extension is null)
+        {
+            var formatString = VideoFormatCombiner.Combine(
+                VideoFormatsSelector.SelectedFormat?.Id,
+                AudioFormatsSelector.SelectedFormat?.Id);
+
+            extension = await ytDlp.PredictFileExtension(_info.WebPageUrl, formatString, CancellationToken.None);
+        }
 
         var tasks = segments.Select((s, i) => new CutVideoTask()
         {
@@ -79,14 +106,17 @@ public partial class CutViewModel : ObservableObject
 
             VideoId = _info.Id,
             URL = _info.WebPageUrl,
-            FilePath = FileNameControl.GetFullPath() + (!String.IsNullOrEmpty(s.Suffix) 
-                ? $"_{s.Suffix}" 
-                : (multipleSegments 
-                    ? $"_{i + 1}" 
+
+            FilePath = FileNameControl.GetFullPath() + (!String.IsNullOrEmpty(s.Suffix)
+                ? $"_{s.Suffix}"
+                : (multipleSegments
+                    ? $"_{i + 1}"
                     : String.Empty)),
 
+            PredictedExtension = extension,
+
             TimeRange = new() { From = s.From, To = s.To },
-            Recode = Recode.GetRecode(),
+            Recode = recode,
 
             VideoFormatId = VideoFormatsSelector.SelectedFormat?.Id,
             AudioFormatId = AudioFormatsSelector.SelectedFormat?.Id,
@@ -94,8 +124,9 @@ public partial class CutViewModel : ObservableObject
             Status = VideoTaskStatus.Prepared
         }).ToArray();
 
+
         YtConfig.Global.Save();
-        ytDlp.AddTasks(tasks);        
+        ytDlpProxy.AddTasks(tasks);
         NavigationHistory.Current.NavigateBack();
     }
 
