@@ -21,22 +21,17 @@
                     BasedOn="{StaticResource MaterialDesignOutlinedTextBox}"
                     TargetType="TextBox">
 
-                    <Setter Property="Width" Value="75" />
-
-                    <Setter Property="materialDesign:HintAssist.FloatingHintHorizontalAlignment" Value="Center" />
+                    <Setter Property="materialDesign:HintAssist.FloatingHintHorizontalAlignment" Value="Left" />
+                    <Setter Property="materialDesign:HintAssist.Background" Value="Transparent" />
 
                     <Setter Property="Padding" Value="8 10" />
-
-                    <Setter Property="Margin" Value="4" />
+                    <Setter Property="Margin" Value="2 4" />
 
                     <Setter Property="TextAlignment" Value="Center" />
-
                     <Setter Property="VerticalAlignment" Value="Center" />
 
-                    <Setter Property="materialDesign:HintAssist.Background" Value="White" />
-
+                    <Setter Property="Width" Value="80" />
                     <Setter Property="IsReadOnly" Value="True" />
-
                     <Setter Property="Visibility" Value="Visible" />
 
                     <Style.Triggers>
@@ -51,48 +46,50 @@
 
         <TextBox
             d:Text="123"
-            materialDesign:HintAssist.Background="White"
             materialDesign:HintAssist.Hint="Frame"
             Text="{Binding Frame}" />
 
         <TextBox
             d:Text="00:01:46"
-            materialDesign:HintAssist.Background="White"
             materialDesign:HintAssist.Hint="Time"
             Text="{Binding Time, StringFormat=hh\\:mm\\:ss}" />
 
         <TextBox
             d:Text="64"
-            materialDesign:HintAssist.Background="White"
             materialDesign:HintAssist.Hint="FPS"
-            Text="{Binding FPS, StringFormat=f1}" />
+            Text="{Binding Fps, StringFormat=f1}" />
 
         <TextBox
             d:Text="16127"
-            materialDesign:HintAssist.Background="White"
             materialDesign:HintAssist.Hint="Size"
             materialDesign:TextFieldAssist.SuffixText="{Binding TotalSizeSuffix}"
-            Text="{Binding TotalSize, StringFormat=f1}"
-            TextAlignment="Center" />
+            Text="{Binding TotalSize, StringFormat=f1}" />
 
         <TextBox
             d:Text="16127"
-            materialDesign:HintAssist.Background="White"
             materialDesign:HintAssist.Hint="Size"
             materialDesign:TextFieldAssist.SuffixText="{Binding SizeSuffix}"
-            Text="{Binding Size, StringFormat=f1}"
-            TextAlignment="Center" />
+            Text="{Binding Size, StringFormat=f1}" />
 
         <TextBox
             d:Text="2.34"
-            materialDesign:HintAssist.Background="White"
             materialDesign:HintAssist.Hint="Speed"
             Text="{Binding Speed}" />
 
         <TextBox
             d:Text="1246.4"
-            materialDesign:HintAssist.Background="White"
             materialDesign:HintAssist.Hint="Bitrate"
             Text="{Binding BitRate}" />
+
+        <TextBox
+            d:Text="00:00:12"
+            materialDesign:HintAssist.Hint="Remaining"
+            Text="{Binding Remaining, StringFormat=hh\\:mm\\:ss}" />
+
+        <TextBox
+            d:Text="42%"
+            materialDesign:HintAssist.Hint="Done"
+            Text="{Binding DonePercent, StringFormat={}{0:f1}%}" />
+
     </WrapPanel>
 </UserControl>

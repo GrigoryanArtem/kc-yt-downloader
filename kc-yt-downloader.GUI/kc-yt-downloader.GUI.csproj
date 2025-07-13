@@ -15,6 +15,7 @@
 		<Authors>Artem Grigoryan</Authors>
 		<AssemblyVersion>1.2.$([System.DateTime]::Now.ToString(yyMM)).$([System.DateTime]::Now.ToString(dd))</AssemblyVersion>
 		<FileVersion>1.2.$([System.DateTime]::Now.ToString(yyMM)).$([System.DateTime]::Now.ToString(dd))</FileVersion>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup>

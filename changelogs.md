@@ -1,7 +1,15 @@
 ## Version 1.3.*
-* Add versions of libraries to the settings modal.
-* Update download command
-* Update processing status view
+**Features**
+* Library Versions in Settings – added display of library versions in the settings modal.
+* "Done" Tracker – added a progress indicator showing completed percent on the cut card.
+* "Remaining" Tracker – added a counter for remaining time on the cut card.
+
+**Improvements**
+* Download Command – updated the download command for improved compatibility and functionality.
+* Processing Status View – refined the display of task processing statuses for better clarity.
+
+**Bug Fixes**
+* Open Directory – fixed an issue where the "Open Directory" button didn't work as expected.
 
 ## Version 1.2.*
 

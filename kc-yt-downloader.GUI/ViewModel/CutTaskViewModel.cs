@@ -5,6 +5,7 @@ using kc_yt_downloader.Model;
 using Microsoft.Extensions.DependencyInjection;
 using NavigationMVVM.Services;
 using NavigationMVVM.Stores;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Input;
 using static kc_yt_downloader.GUI.ViewModel.LogViewModel;
@@ -34,11 +35,11 @@ public partial class CutTaskViewModel : ObservableObject
 
         Source = task;
 
-        _ytDlpStatus = new();
+        _totalDuration = TimeSpan.FromSeconds(task.TimeRange?.GetDuration() ?? _video.Info.Duration);
+        _ytDlpStatus = new(_totalDuration);
 
         _video = _ytDlp.GetPreviewVideoByUrl(task.URL);
 
-        _totalDuration = TimeSpan.FromSeconds(task.TimeRange?.GetDuration() ?? _video.Info.Duration);
         _logsDirectory = Path.Combine(YtConfig.Global.CacheDirectory, LOGS_DIRECTORY);
 
         DonePercent = task.Status == VideoTaskStatus.Completed ? 100 : 0;
@@ -175,11 +176,18 @@ public partial class CutTaskViewModel : ObservableObject
 
     private void OnOpenDirectory()
     {
-        var dir = Path.GetDirectoryName(Path.GetFullPath(Source.FilePath));
-        var ext = Source.Recode is not null ? $".{Source.Recode.Format}" : String.Empty;
-        var fileName = Path.GetFileName(Source.FilePath) + ext;
+        var filePath = Source.PredictedFilePath ?? Source.FilePath;
+        var dir = Path.GetDirectoryName(Path.GetFullPath(filePath));        
+        var fileName = Path.GetFileName(filePath);
 
-        ExplorerHelper.OpenFolderAndSelectItem(dir, fileName);
+        if (File.Exists(filePath))
+        {
+            ExplorerHelper.OpenFolderAndSelectItem(dir, fileName);
+        }
+        else
+        {
+            ExplorerHelper.OpenFolder(dir);
+        }
     }
 
     [RelayCommand]
