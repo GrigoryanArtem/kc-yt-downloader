@@ -34,7 +34,12 @@ public partial class YtDlpProxy(YtDlp ytDlp) : ObservableObject
     [ObservableProperty]
     private ObservableCollection<TaskGroupViewModel> _tasks = [];
 
-    #endregion    
+    public Dictionary<string, float> _avgFormatSpeed = [];
+    
+    #endregion
+
+    public float? GetAvgFormatSpeed(string formatString)
+        => _avgFormatSpeed.TryGetValue(formatString, out var speed) ? speed : null;
 
     public void AddTasks(params CutVideoTask[] tasks)
     {
@@ -169,9 +174,9 @@ public partial class YtDlpProxy(YtDlp ytDlp) : ObservableObject
     {
         var config = YtConfig.Global;
         var expirationTimes = config.ExpirationTimes;
+        var cachedTasks = ytDlp.GetCachedTasks();
 
-
-        var newTasks = ytDlp.GetCachedTasks()
+        var newTasks = cachedTasks
             .Where(t => !expirationTimes.TryGetValue(t.Status, out var time) || t.Created > DateTime.Now.AddDays(-time))
             .Select(GetViewModel)
             .OrderByDescending(t => t.Source.Created)
@@ -202,6 +207,11 @@ public partial class YtDlpProxy(YtDlp ytDlp) : ObservableObject
                 existing.Items.SyncItems(group, (a, b) => a.Source.Id == b.Source.Id);
             }
         }
+
+        _avgFormatSpeed = cachedTasks
+            .Where(t => t.SpeedMedian.HasValue)
+            .GroupBy(t => t.FormatString)
+            .ToDictionary(g => g.Key, g => g.Average(t => t.SpeedMedian!.Value));
 
         IsAutoProcessingPossible = Tasks.Any(g => g.Status == VideoTaskStatus.Prepared);
     }

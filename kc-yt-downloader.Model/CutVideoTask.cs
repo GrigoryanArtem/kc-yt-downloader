@@ -8,6 +8,8 @@ public record CutVideoTask
     public string Name { get; init; }
 
     public DateTime Created { get; init; }
+
+    public float? SpeedMedian { get; init; }
     public DateTime? Completed { get; init; }
 
     public VideoTaskStatus Status { get; init; }

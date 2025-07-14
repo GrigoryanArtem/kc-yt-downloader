@@ -168,9 +168,7 @@ public partial class CutTaskViewModel : ObservableObject
         }
 
         Persister.Write(LogPersister.LogLevel.Error, str);
-
-        DonePercent = _ytDlpStatus.Time.HasValue ?
-            (_ytDlpStatus.Time.Value.TotalSeconds / _totalDuration.TotalSeconds) * 100.0 : 0;
+        DonePercent = _ytDlpStatus.DonePercent;
     }
 
 
@@ -246,7 +244,8 @@ public partial class CutTaskViewModel : ObservableObject
         Source = Source with
         {
             Status = status,
-            Completed = DateTime.Now
+            Completed = DateTime.Now,
+            SpeedMedian = _ytDlpStatus.GetSpeedMedian(),
         };
 
         _ytDlp.UpdateTask(Source);

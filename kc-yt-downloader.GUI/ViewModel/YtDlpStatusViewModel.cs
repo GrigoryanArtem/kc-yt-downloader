@@ -6,10 +6,9 @@ namespace kc_yt_downloader.GUI.ViewModel;
 
 public partial class YtDlpStatusViewModel : ObservableObject
 {
-    private readonly  Dictionary<string, Action<string>> _updateFunctions;
+    private readonly Dictionary<string, Action<string>> _updateFunctions;
 
     #region Properties
-
 
     [ObservableProperty]
     private int? _frame;
@@ -21,22 +20,22 @@ public partial class YtDlpStatusViewModel : ObservableObject
     private double? _fps;
 
     [ObservableProperty]
-    private string _totalSizeSuffix;
+    private string? _totalSizeSuffix;
 
     [ObservableProperty]
     private decimal? _totalSize;
 
     [ObservableProperty]
-    private double _speed;
+    private float _speed;
 
     [ObservableProperty]
-    private string _bitRate;
+    private string? _bitRate;
 
     [ObservableProperty]
     private decimal? _size;
 
     [ObservableProperty]
-    private string _sizeSuffix;
+    private string? _sizeSuffix;
 
     [ObservableProperty]
     private TimeSpan? _remaining;
@@ -45,8 +44,9 @@ public partial class YtDlpStatusViewModel : ObservableObject
     private double _donePercent;
 
     private readonly TimeSpan _totalDuration;
+    private readonly List<float> _speedValues = [];
 
-    #endregion
+    #endregion    
 
     public YtDlpStatusViewModel(TimeSpan totalDuration)
     {
@@ -59,13 +59,26 @@ public partial class YtDlpStatusViewModel : ObservableObject
             { "size", s =>  (Size, SizeSuffix) = SizeConverter.ReformatString(s.Trim()) }, // yt-dlp
             { "total_size", s => (TotalSize, TotalSizeSuffix) = SizeConverter.FormatSize(Convert.ToInt64(s)) }, // ffmpeg
 
-            { "speed", s => Speed = Double.TryParse(s.EndsWith("x") ? s[..^1] : s, out var val) ? val: .0 },
+            { "speed", s => { Speed = ParseSpeed(s); _speedValues.Add(Speed); } },
             { "bitrate", s => BitRate = s.EndsWith("kbits/s") ? s[..^7] : s },
             { "fps", s => Fps = ParseDouble(s) },
             { "frame", s => Frame = ParseInt(s) },
         };
     }
 
+
+    public float GetSpeedMedian()
+    {
+        if(_speedValues.Count == 0)
+            return 0f;
+
+        _speedValues.Sort();
+        int mid = _speedValues.Count / 2;
+
+        return _speedValues.Count % 2 == 0 
+            ? (_speedValues[mid - 1] + _speedValues[mid]) / 2 
+            : _speedValues[mid];
+    }
 
     public bool TryUpdate(string propertyString)
     {
@@ -92,7 +105,7 @@ public partial class YtDlpStatusViewModel : ObservableObject
     {
         DonePercent = Time.HasValue ? (Time.Value.TotalSeconds / _totalDuration.TotalSeconds) * 100.0 : .0;
 
-        if(Speed > 0)
+        if (Speed > 0)
             Remaining = Time.HasValue ? (_totalDuration - Time.Value) / Speed : null;
     }
 
@@ -103,6 +116,9 @@ public partial class YtDlpStatusViewModel : ObservableObject
 
     private static int? ParseInt(string str)
         => Int32.TryParse(str, out var d) ? d : null;
+
+    private static float ParseSpeed(string speedString)
+        => Single.TryParse(speedString.EndsWith('x') ? speedString[..^1] : speedString, out var val) ? val : 0f;
 
     [GeneratedRegex(@"(?<name>\S+)=\s*(?<value>\S+)")]
     private static partial Regex LogRegex();
