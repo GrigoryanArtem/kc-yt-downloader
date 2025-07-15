@@ -5,7 +5,6 @@ using kc_yt_downloader.Model;
 using Microsoft.Extensions.DependencyInjection;
 using NavigationMVVM.Services;
 using NavigationMVVM.Stores;
-using System.Diagnostics;
 using System.IO;
 using System.Windows.Input;
 using static kc_yt_downloader.GUI.ViewModel.LogViewModel;
@@ -73,7 +72,12 @@ public partial class CutTaskViewModel : ObservableObject
            );
 
         Persister = LogPersister.FromDirectory(_logsDirectory, task.Id)!;
+
+        if (_ytDlpProxy.TryGetAvgFormatSpeed(task.FormatString, out var speed))
+            EstimatedTime = FormatTimeSpan(_totalDuration / speed);
     }
+
+    public string? EstimatedTime { get; init; }
 
     private bool _isRunning = false;
     private bool IsRunning
@@ -122,7 +126,7 @@ public partial class CutTaskViewModel : ObservableObject
     }
 
     public string? TimeRangeString
-        => FormatTimeSpan(TimeSpan.FromSeconds(Source?.TimeRange?.GetDuration() ?? 0));
+        => $"{Source.TimeRange.From:hh\\:mm\\:ss} - {Source.TimeRange.To:hh\\:mm\\:ss}";
 
     private ObservableObject _status;
     public ObservableObject Status
@@ -175,7 +179,7 @@ public partial class CutTaskViewModel : ObservableObject
     private void OnOpenDirectory()
     {
         var filePath = Source.PredictedFilePath ?? Source.FilePath;
-        var dir = Path.GetDirectoryName(Path.GetFullPath(filePath));        
+        var dir = Path.GetDirectoryName(Path.GetFullPath(filePath));
         var fileName = Path.GetFileName(filePath);
 
         if (File.Exists(filePath))

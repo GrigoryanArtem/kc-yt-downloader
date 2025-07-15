@@ -64,25 +64,32 @@
 
                     <TextBlock
                         Style="{StaticResource MaterialDesignOverlineTextBlock}"
-                        Text="{Binding Source.TimeRange.From, StringFormat=hh//:mm//:ss}" />
+                        Text="{Binding TimeRangeString}"
+                        ToolTip="Range" />
 
                     <Rectangle
                         Width="1"
                         Margin="4 2"
-                        Fill="{StaticResource MaterialDesignDarkSeparatorBackground}" />
+                        Fill="{StaticResource MaterialDesignDarkSeparatorBackground}"
+                        Visibility="{Binding Source.Recode, Converter={StaticResource StringIsEmptyVisibilityConverter}}" />
 
                     <TextBlock
                         Style="{StaticResource MaterialDesignOverlineTextBlock}"
-                        Text="{Binding TimeRangeString}" />
+                        Text="{Binding Source.Recode.Format}"
+                        ToolTip="Recode format"
+                        Visibility="{Binding Source.Recode, Converter={StaticResource StringIsEmptyVisibilityConverter}}" />
 
                     <Rectangle
                         Width="1"
                         Margin="4 2"
-                        Fill="{StaticResource MaterialDesignDarkSeparatorBackground}" />
+                        Fill="{StaticResource MaterialDesignDarkSeparatorBackground}"
+                        Visibility="{Binding EstimatedTime, Converter={StaticResource NullableToVisibilityConverter}}" />
 
                     <TextBlock
                         Style="{StaticResource MaterialDesignOverlineTextBlock}"
-                        Text="{Binding Source.Recode.Format}" />
+                        Text="{Binding EstimatedTime, StringFormat={}~{0}}"
+                        ToolTip="Estimated time"
+                        Visibility="{Binding EstimatedTime, Converter={StaticResource NullableToVisibilityConverter}}" />
                 </StackPanel>
             </StackPanel>
 
