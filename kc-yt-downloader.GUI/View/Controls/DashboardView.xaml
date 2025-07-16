@@ -188,7 +188,7 @@
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <controls:CutTaskControl
-                                                    Margin="0 2"
+                                                    Margin="0 4"
                                                     DataContext="{Binding}" />
                                             </DataTemplate>
                                         </ItemsControl.ItemTemplate>

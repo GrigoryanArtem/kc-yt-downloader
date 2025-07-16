@@ -133,21 +133,30 @@
                         </Style>
                     </StackPanel.Resources>
 
-                    <Button
-                        Command="{Binding EditTaskCommand}"
-                        Content="{materialDesign:PackIcon Edit}"
-                        ToolTip="Edit"
-                        Visibility="{Binding HasEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <materialDesign:PopupBox StaysOpen="True">
 
-                    <Button
-                        Command="{Binding OpenDirectoryCommand}"
-                        Content="{materialDesign:PackIcon FolderOpenOutline}"
-                        ToolTip="Open Directory" />
+                        <materialDesign:PopupBox.ToggleContent>
+                            <materialDesign:PackIcon Kind="DotsVertical" />
+                        </materialDesign:PopupBox.ToggleContent>
 
-                    <Button
-                        Command="{Binding OpenLogCommand}"
-                        Content="{materialDesign:PackIcon TextBoxMultipleOutline}"
-                        ToolTip="Edit" />
+                        <StackPanel Orientation="Horizontal">
+                            <Button
+                                Command="{Binding EditTaskCommand}"
+                                Content="{materialDesign:PackIcon Edit}"
+                                ToolTip="Edit"
+                                Visibility="{Binding HasEditMode, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                            <Button
+                                Command="{Binding OpenDirectoryCommand}"
+                                Content="{materialDesign:PackIcon FolderOpenOutline}"
+                                ToolTip="Open Directory" />
+
+                            <Button
+                                Command="{Binding OpenLogCommand}"
+                                Content="{materialDesign:PackIcon TextBoxMultipleOutline}"
+                                ToolTip="Edit" />
+                        </StackPanel>
+                    </materialDesign:PopupBox>
 
                     <Button
                         Margin="4"
@@ -177,7 +186,23 @@
 
             <ProgressBar
                 Grid.Row="3"
-                Value="{Binding DonePercent}" />
+                Value="{Binding DonePercent}">
+                <ProgressBar.Style>
+                    <Style
+                        BasedOn="{StaticResource MaterialDesignLinearProgressBar}"
+                        TargetType="ProgressBar">
+                        <Setter Property="Visibility" Value="Hidden" />
+                        <Style.Triggers>
+                            <DataTrigger
+                                Binding="{Binding Source.Status}"
+                                Value="Processing">
+
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ProgressBar.Style>
+            </ProgressBar>
         </Grid>
     </Border>
 </UserControl>
