@@ -69,8 +69,7 @@
                     <StackPanel
                         Grid.Column="1"
                         Margin="12 0"
-                        Orientation="Horizontal"
-                        Visibility="{Binding DlpProxy.IsAutoProcessingPossible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        Orientation="Horizontal">
                         <Button
                             Margin="4 0"
                             Padding="8"
@@ -81,25 +80,30 @@
                             ToolTip="Stop"
                             Visibility="{Binding TaskRunner.Active, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                        <Button
-                            Margin="4 0"
-                            Padding="8"
-                            Command="{Binding RunBatchCommand}"
-                            Content="{materialDesign:PackIcon PlayBoxMultiple}"
-                            Foreground="{StaticResource MaterialDesign.Brush.Primary.Dark.Foreground}"
-                            Style="{StaticResource MaterialDesignFlatSecondaryButton}"
-                            ToolTip="Run"
-                            Visibility="{Binding TaskRunner.Active, Converter={StaticResource InvertBooleanToVisibilityConverter}}" />
+                        <StackPanel
+                            Orientation="Horizontal"
+                            Visibility="{Binding DlpProxy.IsAutoProcessingPossible, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-                        <Button
-                            Margin="4 0"
-                            Padding="8"
-                            Command="{Binding RunSingleCommand}"
-                            Content="{materialDesign:PackIcon PlayBox}"
-                            Foreground="{StaticResource MaterialDesign.Brush.Primary.Dark.Foreground}"
-                            Style="{StaticResource MaterialDesignFlatSecondaryButton}"
-                            ToolTip="Run"
-                            Visibility="{Binding TaskRunner.Active, Converter={StaticResource InvertBooleanToVisibilityConverter}}" />
+                            <Button
+                                Margin="4 0"
+                                Padding="8"
+                                Command="{Binding RunBatchCommand}"
+                                Content="{materialDesign:PackIcon PlayBoxMultiple}"
+                                Foreground="{StaticResource MaterialDesign.Brush.Primary.Dark.Foreground}"
+                                Style="{StaticResource MaterialDesignFlatSecondaryButton}"
+                                ToolTip="Run Batch"
+                                Visibility="{Binding TaskRunner.Active, Converter={StaticResource InvertBooleanToVisibilityConverter}}" />
+
+                            <Button
+                                Margin="4 0"
+                                Padding="8"
+                                Command="{Binding RunSingleCommand}"
+                                Content="{materialDesign:PackIcon PlayBox}"
+                                Foreground="{StaticResource MaterialDesign.Brush.Primary.Dark.Foreground}"
+                                Style="{StaticResource MaterialDesignFlatSecondaryButton}"
+                                ToolTip="Run One by One"
+                                Visibility="{Binding TaskRunner.Active, Converter={StaticResource InvertBooleanToVisibilityConverter}}" />
+                        </StackPanel>
                     </StackPanel>
                 </Grid>
 

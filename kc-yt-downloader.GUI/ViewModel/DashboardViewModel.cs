@@ -17,10 +17,8 @@ public partial class DashboardViewModel : ObservableObject
         TaskRunner = new (DlpProxy);
     }
         
-    public YtDlpProxy DlpProxy { get; set; }
-    
+    public YtDlpProxy DlpProxy { get; set; }    
     public AutoTaskRunner TaskRunner { get; }
-
     public UrlAddingViewModel UrlAddingViewModel { get; } = new();
 
     [RelayCommand]

@@ -131,7 +131,7 @@ public partial class YtDlpProxy(YtDlp ytDlp) : ObservableObject
 
     public CutTaskViewModel[] GetCachedTasks()
         => [.. ytDlp.GetCachedTasks()
-            .Select(t => new CutTaskViewModel(t, this))
+            .Select(GetViewModel)
             .OrderByDescending(t => t.Source.Created)];
 
     #region Private methods
@@ -189,7 +189,7 @@ public partial class YtDlpProxy(YtDlp ytDlp) : ObservableObject
         var newTasks = cachedTasks
             .Where(t => !expirationTimes.TryGetValue(t.Status, out var time) || t.Created > DateTime.Now.AddDays(-time))
             .Select(GetViewModel)
-            .OrderByDescending(t => t.Source.Created)
+            .OrderByDescending(t => t.Source.Completed ?? t.Source.Created)
             .GroupBy(vm => vm.Source.Status)
             .ToArray();
 

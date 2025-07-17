@@ -3,13 +3,17 @@
 * Library Versions in Settings – added display of library versions in the settings modal.
 * "Done" Tracker – added a progress indicator showing completed percent on the cut card.
 * "Remaining" Tracker – added a counter for remaining time on the cut card.
+* Estimated Time Display – added estimated processing time to the cut task card for better time management.
 
 **Improvements**
 * Download Command – updated the download command for improved compatibility and functionality.
 * Processing Status View – refined the display of task processing statuses for better clarity.
+* Auto-Processing Button Tooltips – corrected tooltip texts for clarity and accuracy.
 
 **Bug Fixes**
 * Open Directory – fixed an issue where the "Open Directory" button didn't work as expected.
+* Video Info Access During Processing – fixed a bug that prevented opening video details while a task was being processed.
+
 
 ## Version 1.2.*
 

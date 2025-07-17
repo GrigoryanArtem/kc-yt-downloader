@@ -34,7 +34,6 @@
 
                 <TextBlock
                     d:Text="Long long text"
-                    RenderOptions.ClearTypeHint="Auto"
                     Style="{StaticResource MaterialDesignBodyLargeTextBlock}"
                     Text="{Binding FileName}"
                     TextOptions.TextFormattingMode="Ideal"
