@@ -4,196 +4,254 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:kc_yt_downloader.GUI.View.Controls"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:model="clr-namespace:kc_yt_downloader.GUI.Model"
     xmlns:viewmodel="clr-namespace:kc_yt_downloader.GUI.ViewModel"
+    x:Name="this"
     d:DataContext="{d:DesignInstance Type=viewmodel:VideoInfoControlViewModel}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <StackPanel
-        Width="800"
-        Margin="20">
-
+    <StackPanel Width="800">
 
         <Image
             Grid.Row="0"
+            Margin="0 20 0 0"
             Source="{Binding ThumbnailUrl}" />
 
-        <TextBlock
-            Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-            Text="{Binding Title}" />
+        <StackPanel Margin="20 0 20 20">
+            <TextBlock
+                Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                Text="{Binding Title}" />
+
+            <Grid Margin="0 12">
+                <Grid.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Margin" Value="0 2" />
+                    </Style>
+                </Grid.Resources>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Text="Last update time:" />
+
+                <TextBlock
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Text="{Binding LastUpdatedTime, StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" />
+
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Text="Upload time:" />
+
+                <TextBlock
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Text="{Binding UploadDate}" />
+
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Text="Duration:" />
+
+                <TextBlock
+                    Grid.Row="2"
+                    Grid.Column="2"
+                    Text="{Binding Duration, StringFormat={}{0} sec.}" />
+
+                <TextBlock
+                    Grid.Row="3"
+                    Grid.Column="0"
+                    Text="Original URL:" />
+
+                <TextBlock
+                    Grid.Row="3"
+                    Grid.Column="2"
+                    Text="{Binding OriginalUrl}" />
+            </Grid>
+
+            <TextBlock Text="Used URLs:" />
+
+            <ItemsControl
+                Margin="8 2"
+                ItemsSource="{Binding UsedUrls}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock
+                            Margin="0 2"
+                            Text="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <ScrollViewer
+                MaxHeight="250"
+                Margin="0 8">
+                <StackPanel Grid.IsSharedSizeScope="True">
+                    <Grid Margin="8 2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition SharedSizeGroup="CheckBox" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition SharedSizeGroup="Created" />
+                            <ColumnDefinition SharedSizeGroup="Completed" />
+                            <ColumnDefinition SharedSizeGroup="TimeRange" />
+                            <ColumnDefinition SharedSizeGroup="Status" />
+                            <ColumnDefinition SharedSizeGroup="Delete" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.Resources>
+                            <Style
+                                BasedOn="{StaticResource MaterialDesignBody2TextBlock}"
+                                TargetType="TextBlock">
+                                <Setter Property="TextAlignment" Value="Left" />
+                                <Setter Property="Margin" Value="8 0" />
+                                <Setter Property="FontWeight" Value="Bold" />
+                            </Style>
+                        </Grid.Resources>
+
+                        <TextBlock
+                            Grid.Column="0"
+                            Text="" />
+
+                        <TextBlock
+                            Grid.Column="1"
+                            Margin="0"
+                            Text="Name"
+                            TextAlignment="Left" />
+
+                        <TextBlock
+                            Grid.Column="2"
+                            Text="Created" />
+
+                        <TextBlock
+                            Grid.Column="3"
+                            Text="Completed" />
+
+                        <TextBlock
+                            Grid.Column="4"
+                            Text="Range" />
+
+                        <TextBlock
+                            Grid.Column="5"
+                            Text="Status" />
+                    </Grid>
+
+                    <ItemsControl
+                        Margin="8 2"
+                        ItemsSource="{Binding Tasks}">
+
+                        <ItemsControl.Resources>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Margin" Value="4 0" />
+                            </Style>
+                        </ItemsControl.Resources>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0 2">
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="auto" SharedSizeGroup="CheckBox" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="auto" SharedSizeGroup="Created" />
+                                        <ColumnDefinition Width="auto" SharedSizeGroup="Completed" />
+                                        <ColumnDefinition Width="auto" SharedSizeGroup="TimeRange" />
+                                        <ColumnDefinition Width="auto" SharedSizeGroup="Status" />
+                                        <ColumnDefinition Width="auto" SharedSizeGroup="Delete" />
+                                    </Grid.ColumnDefinitions>
 
 
-        <TextBlock
-            Margin="0 12 0 2"
-            Text="{Binding LastUpdatedTime, StringFormat={}Update time: {0:yyyy-MM-dd HH:mm:ss}}" />
-
-        <TextBlock
-            Margin="0 2"
-            Text="{Binding UploadDate, StringFormat={}Upload date: {0}}" />
-
-        <TextBlock
-            Margin="0 2"
-            Text="{Binding Duration, StringFormat={}Duration: {0} sec.}" />
-
-        <TextBlock
-            Margin="0 2"
-            Text="{Binding OriginalUrl, StringFormat={}Original Url: {0}}" />
-
-        <TextBlock
-            Margin="0 2"
-            Text="Used URLs:" />
-
-        <ItemsControl
-            Margin="8 2"
-            ItemsSource="{Binding UsedUrls}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel />
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock
-                        Margin="0 2"
-                        Text="{Binding}" />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-
-        <TextBlock
-            Margin="0 2"
-            Text="Tasks:" />
-
-        <ScrollViewer MaxHeight="250">
-            <StackPanel Grid.IsSharedSizeScope="True">
-                <Grid Margin="8 2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition SharedSizeGroup="CheckBox" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition SharedSizeGroup="Created" />
-                        <ColumnDefinition SharedSizeGroup="Completed" />
-                        <ColumnDefinition SharedSizeGroup="TimeRange" />
-                        <ColumnDefinition SharedSizeGroup="Status" />
-                    </Grid.ColumnDefinitions>
-
-                    <Grid.Resources>
-                        <Style
-                            BasedOn="{StaticResource MaterialDesignBody2TextBlock}"
-                            TargetType="TextBlock">
-                            <Setter Property="TextAlignment" Value="Right" />
-                            <Setter Property="Margin" Value="4 0" />
-                            <Setter Property="FontWeight" Value="Bold" />
-                        </Style>
-                    </Grid.Resources>
-
-                    <TextBlock
-                        Grid.Column="0"
-                        Text="" />
-
-                    <TextBlock
-                        Grid.Column="1"
-                        Text="Name"
-                        TextAlignment="Left" />
-
-                    <TextBlock
-                        Grid.Column="2"
-                        Text="Created" />
-
-                    <TextBlock
-                        Grid.Column="3"
-                        Text="Completed" />
-
-                    <TextBlock
-                        Grid.Column="4"
-                        Text="Duration" />
-
-                    <TextBlock
-                        Grid.Column="5"
-                        Text="Status" />
-                </Grid>
-
-                <ItemsControl
-                    Margin="8 2"
-                    ItemsSource="{Binding Tasks}">
-
-                    <ItemsControl.Resources>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Margin" Value="4 0" />
-                        </Style>
-                    </ItemsControl.Resources>
-
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Margin="0 2">
-
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto" SharedSizeGroup="CheckBox" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="auto" SharedSizeGroup="Created" />
-                                    <ColumnDefinition Width="auto" SharedSizeGroup="Completed" />
-                                    <ColumnDefinition Width="auto" SharedSizeGroup="TimeRange" />
-                                    <ColumnDefinition Width="auto" SharedSizeGroup="Status" />
-                                </Grid.ColumnDefinitions>
+                                    <Grid.Resources>
+                                        <Style
+                                            BasedOn="{StaticResource MaterialDesignBody2TextBlock}"
+                                            TargetType="TextBlock">
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                            <Setter Property="Margin" Value="8 0" />
+                                        </Style>
+                                    </Grid.Resources>
 
 
-                                <Grid.Resources>
-                                    <Style
-                                        BasedOn="{StaticResource MaterialDesignBody2TextBlock}"
-                                        TargetType="TextBlock">
-                                        <Setter Property="Margin" Value="4 0" />
-                                    </Style>
-                                </Grid.Resources>
 
-                                <CheckBox Margin="0 0 8 0" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        Margin="0"
+                                        Text="{Binding Source.FilePath}"
+                                        TextTrimming="CharacterEllipsis" />
 
-                                <TextBlock
-                                    Grid.Column="1"
-                                    Text="{Binding Source.FilePath}"
-                                    TextTrimming="CharacterEllipsis" />
+                                    <TextBlock
+                                        Grid.Column="2"
+                                        Text="{Binding Source.Created, StringFormat={}{0:yyyy-MM-dd}}" />
 
-                                <TextBlock
-                                    Grid.Column="2"
-                                    Text="{Binding Source.Created, StringFormat={}{0:yyyy-MM-dd}}" />
+                                    <TextBlock
+                                        Grid.Column="3"
+                                        Text="{Binding Source.Completed, StringFormat={}{0:yyyy-MM-dd}}" />
 
-                                <TextBlock
-                                    Grid.Column="3"
-                                    Text="{Binding Source.Completed, StringFormat={}{0:yyyy-MM-dd}}" />
+                                    <TextBlock
+                                        Grid.Column="4"
+                                        Text="{Binding TimeRangeString}"
+                                        TextAlignment="Right" />
 
-                                <TextBlock
-                                    Grid.Column="4"
-                                    Text="{Binding TimeRangeString}"
-                                    TextAlignment="Right" />
+                                    <TextBlock
+                                        Grid.Column="5"
+                                        Text="{Binding Source.Status}"
+                                        TextAlignment="Right" />
 
-                                <TextBlock
-                                    Grid.Column="5"
-                                    Text="{Binding Source.Status}"
-                                    TextAlignment="Right" />
+                                    <Button
+                                        Grid.Column="6"
+                                        Margin="0"
+                                        Padding="12 0"
+                                        Command="{Binding DataContext.DeleteTaskCommand, ElementName=this}"
+                                        CommandParameter="{Binding}"
+                                        Style="{StaticResource MaterialDesignToolButton}">
 
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
-        </ScrollViewer>
+                                        <materialDesign:PackIcon Kind="CloseBold" />
+                                    </Button>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ScrollViewer>
 
-        <Grid Margin="0 12 0 0">
+            <Grid Margin="0 12 0 0">
 
-            <Button
-                Margin="4 0"
-                HorizontalAlignment="Right"
-                Command="{x:Static model:NavigationCommands.CloseModalCommand}"
-                Content="Close"
-                Style="{StaticResource MaterialDesignOutlinedButton}" />
+                <Button
+                    Margin="4 0"
+                    HorizontalAlignment="Right"
+                    Command="{x:Static model:NavigationCommands.CloseModalCommand}"
+                    Content="Close"
+                    Style="{StaticResource MaterialDesignOutlinedButton}" />
 
-            <Button
-                Margin="4 0"
-                HorizontalAlignment="Left"
-                Command="{Binding DeleteVideoCommand}"
-                Content="Delete"
-                Style="{StaticResource MaterialDesignOutlinedSecondaryButton}" />
-        </Grid>
+                <Button
+                    Margin="4 0"
+                    HorizontalAlignment="Left"
+                    Command="{Binding DeleteVideoCommand}"
+                    Content="Delete"
+                    Style="{StaticResource MaterialDesignOutlinedSecondaryButton}" />
+            </Grid>
+        </StackPanel>
     </StackPanel>
 </UserControl>

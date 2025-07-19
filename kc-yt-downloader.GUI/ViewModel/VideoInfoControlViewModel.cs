@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using kc_yt_downloader.GUI.Model;
 using kc_yt_downloader.Model;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 
 namespace kc_yt_downloader.GUI.ViewModel;
@@ -31,7 +32,7 @@ public partial class VideoInfoControlViewModel : ObservableObject
     
     public string Title => _video.Info.Title ?? "Unknown Title";
 
-    public CutTaskViewModel[] Tasks { get; private set; }
+    public ObservableCollection<CutTaskViewModel> Tasks { get; private set; }
     public string? ThumbnailUrl { get; private set; }
 
     public DateTime LastUpdatedTime => _video.ParseDate;
@@ -60,5 +61,14 @@ public partial class VideoInfoControlViewModel : ObservableObject
 
         var proxy = App.Current.Services.GetRequiredService<YtDlpProxy>();
         proxy.DeleteVideo(_video);
+    }
+
+    [RelayCommand]
+    public void DeleteTask(CutTaskViewModel cutTask)
+    { 
+        var proxy = App.Current.Services.GetRequiredService<YtDlpProxy>();
+        proxy.DeleteTask(cutTask.Source);
+
+        Tasks.Remove(cutTask);
     }
 }

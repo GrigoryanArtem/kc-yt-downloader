@@ -1,4 +1,5 @@
 ﻿namespace kc_yt_downloader.Model;
+
 public record VideoPreviewInfo
 {
     public string Title { get; init; }
