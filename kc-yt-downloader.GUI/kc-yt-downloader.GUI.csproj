@@ -13,8 +13,8 @@
 		<Product>Clipper</Product>
 		<PackageIcon>logo_small.png</PackageIcon>
 		<Authors>Artem Grigoryan</Authors>
-		<AssemblyVersion>1.2.$([System.DateTime]::Now.ToString(yyMM)).$([System.DateTime]::Now.ToString(dd))</AssemblyVersion>
-		<FileVersion>1.2.$([System.DateTime]::Now.ToString(yyMM)).$([System.DateTime]::Now.ToString(dd))</FileVersion>
+		<AssemblyVersion>1.3.$([System.DateTime]::Now.ToString(yyMM)).$([System.DateTime]::Now.ToString(dd))</AssemblyVersion>
+		<FileVersion>1.3.$([System.DateTime]::Now.ToString(yyMM)).$([System.DateTime]::Now.ToString(dd))</FileVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
