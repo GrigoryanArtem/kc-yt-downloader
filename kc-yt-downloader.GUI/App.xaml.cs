@@ -6,10 +6,10 @@ using Microsoft.Extensions.Hosting;
 using NavigationMVVM.Services;
 using NLog.Extensions.Hosting;
 using System.Globalization;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows;
-using System.Windows.Threading;
 
 namespace kc_yt_downloader.GUI;
 
@@ -40,7 +40,14 @@ public partial class App : Application
         Thread.CurrentThread.CurrentCulture = cultureInfo;
         Thread.CurrentThread.CurrentUICulture = cultureInfo;
 
-        Application.Current.DispatcherUnhandledException += new DispatcherUnhandledExceptionEventHandler(AppDispatcherUnhandledException);
+        Application.Current.DispatcherUnhandledException += (s, args) =>
+        {
+            ShowUnhandledException(args.Exception);
+            args.Handled = true;
+        };
+
+        AppDomain.CurrentDomain.UnhandledException += OnAppUnhandledException;
+        TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 
         var initialNavigationService = Services.GetRequiredService<NavigationService<UpdateViewModel>>();
         initialNavigationService.Navigate();
@@ -50,6 +57,11 @@ public partial class App : Application
         _browserExtensionHandler.Run();
 
         mainWindow!.Show();
+    }
+
+    private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
+    {
+        ShowUnhandledException(e.Exception);
     }
 
     protected async override void OnExit(ExitEventArgs e)
@@ -63,33 +75,45 @@ public partial class App : Application
         base.OnExit(e);
     }
 
-    private void AppDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+    private void OnAppUnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
 #if DEBUG && false
         e.Handled = false;
 #else
-        ShowUnhandledException(e);    
+        ShowUnhandledException(e.ExceptionObject as Exception);
 #endif
     }
 
-    private void ShowUnhandledException(DispatcherUnhandledExceptionEventArgs e)
+    private void ShowUnhandledException(Exception? exception)
     {
-        e.Handled = true;
+        var dir = Directory.CreateDirectory("reports");
+        var reportName = $"report_{DateTime.Now:yyyy-MM-dd_HH-mm-ss-fff}";
+        var path = Path.Combine(dir.FullName, reportName);
 
-        var exception = e.Exception;
+
+        if (exception is null)
+        {            
+            File.WriteAllText(path, "An unhandled exception occurred, but the exception object is null.");
+            return;
+        }
+
         var navigation = NavigationCommands.CreateNavigation<string, GlobalErrorViewModel>(s => new(s));
 
         var messageBuilder = new StringBuilder();
+        var assembly = Assembly.GetExecutingAssembly();
+        var version = assembly.GetName().Version;
 
         messageBuilder.AppendLine("UNHANDLED ERROR OCCURRED");
         messageBuilder.AppendLine($"Timestamp: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+        messageBuilder.AppendLine($"Application Version: {version}");
         messageBuilder.AppendLine($"Exception Type: {exception.GetType().FullName}");
+        messageBuilder.AppendLine($"----------------------");
         messageBuilder.AppendLine($"Message: {exception.Message}");
-        messageBuilder.AppendLine($"Source: {exception.Source}");
-        messageBuilder.AppendLine($"Target Site: {exception.TargetSite}");
-        messageBuilder.AppendLine($"HResult: {exception.HResult}");        
+        messageBuilder.AppendLine($"Source:  {exception.Source}");
+        messageBuilder.AppendLine($"Target:  {exception.TargetSite}");
+        messageBuilder.AppendLine($"HResult: {exception.HResult}");
 
-        foreach(var inner in exception.GetInnerExceptions())
+        foreach (var inner in exception.GetInnerExceptions())
         {
             messageBuilder.AppendLine();
             FormatException(messageBuilder, inner);
@@ -99,12 +123,13 @@ public partial class App : Application
         messageBuilder.AppendLine("STACK TRACE:");
         messageBuilder.AppendLine(exception.StackTrace);
 
-        var assembly = Assembly.GetExecutingAssembly();
-        var version = assembly.GetName().Version;
         messageBuilder.AppendLine();
-        messageBuilder.AppendLine($"Application Version: {version}");
 
-        navigation.Navigate(messageBuilder.ToString());
+        var report = messageBuilder.ToString();
+        File.WriteAllText(path, report);
+
+        NavigationCommands.CloseModal();
+        navigation.Navigate(report);
     }
 
     private void FormatException(StringBuilder builder, Exception exception)
