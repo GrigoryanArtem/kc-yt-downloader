@@ -2,18 +2,19 @@
 
 public static class SizeConverter
 {
+    private static readonly string[] FFMPEG_SIZE_SUFFIXES = ["B", "KIB"];
     private static readonly string[] SIZE_SUFFIXES = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
 
     public static (decimal size, string suffix) ReformatString(string sizeString, int decimalPlaces = 1)
-        => FormatSize(ParseSizeString(sizeString), decimalPlaces);
+        => FormatSize(ParseFromFFmpegSizeString(sizeString), decimalPlaces);
 
-    public static long ParseSizeString(string sizeString)
+    public static long ParseFromFFmpegSizeString(string sizeString)
     {
         var trimmedSizeString = sizeString.ToUpper().Trim();
-        var suffix = SIZE_SUFFIXES.Reverse()
+        var suffix = FFMPEG_SIZE_SUFFIXES.Reverse()
             .FirstOrDefault(trimmedSizeString.EndsWith);
 
-        int? index = suffix is not null ? Array.IndexOf(SIZE_SUFFIXES, suffix) : null;
+        int? index = suffix is not null ? Array.IndexOf(FFMPEG_SIZE_SUFFIXES, suffix) : null;
         return index.HasValue 
             ? Convert.ToInt64(sizeString[..^suffix!.Length]) * (long)Math.Pow(1024, index.Value) 
             : Convert.ToInt64(sizeString);
