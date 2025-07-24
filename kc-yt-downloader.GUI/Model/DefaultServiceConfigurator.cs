@@ -17,7 +17,8 @@ public class DefaultServiceConfigurator : IServicesConfigurator
             DataContext = s.GetRequiredService<MainWindowViewModel>()
         });
 
-        services.AddSingleton<BrowserExtensionHandler>(_ => new());
+        services.AddSingleton<BrowserExtensionHandler>();
+        services.AddSingleton<GlobalErrorHandler>();
     }
 
     private static void ConfigureViewModels(IServiceCollection services)

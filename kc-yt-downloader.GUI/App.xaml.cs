@@ -1,14 +1,12 @@
 ﻿using kc_yt_downloader.GUI.Model;
-using kc_yt_downloader.GUI.Model.Extensions;
 using kc_yt_downloader.GUI.ViewModel;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using NavigationMVVM.Services;
-using NLog.Extensions.Hosting;
+using NLog;
+using NLog.Extensions.Logging;
 using System.Globalization;
-using System.IO;
-using System.Reflection;
-using System.Text;
 using System.Windows;
 
 namespace kc_yt_downloader.GUI;
@@ -16,18 +14,36 @@ namespace kc_yt_downloader.GUI;
 public partial class App : Application
 {
     private readonly IHost _host;
-    private BrowserExtensionHandler _browserExtensionHandler;
+    private readonly BrowserExtensionHandler _browserExtensionHandler;
+    private readonly GlobalErrorHandler _globalErrorHandler;
+    private readonly ILogger<App> _logger;
 
     public App()
     {
         var services = new ServiceCollection();
         var configurator = new DefaultServiceConfigurator();
-
         var builder = Host.CreateDefaultBuilder();
+
         _host = builder
-            .UseNLog()
+             .ConfigureLogging(logging =>
+             {
+                 logging.ClearProviders();
+                 logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+                 logging.AddNLog(new NLogProviderOptions
+                 {
+                     CaptureMessageTemplates = true,
+                     CaptureMessageProperties = true
+                 });
+             })
             .ConfigureServices(configurator.ConfigureServices)
             .Build();
+
+        _globalErrorHandler = _host.Services.GetRequiredService<GlobalErrorHandler>();
+        _browserExtensionHandler = Services.GetRequiredService<BrowserExtensionHandler>();
+        _logger = Services.GetRequiredService<ILogger<App>>();
+
+        SetupCulture("en-us");
+        _logger.LogInformation("Host created...");
     }
 
     public new static App Current => (App)Application.Current;
@@ -35,109 +51,42 @@ public partial class App : Application
 
     private void OnStartup(object sender, StartupEventArgs e)
     {
-        var cultureInfo = new CultureInfo("en-us");
+        _logger.LogInformation("Application starting...");
 
-        Thread.CurrentThread.CurrentCulture = cultureInfo;
-        Thread.CurrentThread.CurrentUICulture = cultureInfo;
-
-        Application.Current.DispatcherUnhandledException += (s, args) =>
-        {
-            ShowUnhandledException(args.Exception);
-            args.Handled = true;
-        };
-
-        AppDomain.CurrentDomain.UnhandledException += OnAppUnhandledException;
-        TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
-
+        var mainWindow = Services.GetRequiredService<MainWindow>();
         var initialNavigationService = Services.GetRequiredService<NavigationService<UpdateViewModel>>();
         initialNavigationService.Navigate();
 
-        var mainWindow = Services.GetRequiredService<MainWindow>();
-        _browserExtensionHandler = Services.GetRequiredService<BrowserExtensionHandler>();
         _browserExtensionHandler.Run();
-
         mainWindow!.Show();
-    }
 
-    private void TaskScheduler_UnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
-    {
-        ShowUnhandledException(e.Exception);
+        _logger.LogInformation("Application started successfully.");
     }
 
     protected async override void OnExit(ExitEventArgs e)
     {
+        _logger.LogInformation("Application exiting...");
+
         using (_host)
         {
             await _host.StopAsync();
         }
 
         await _browserExtensionHandler.Stop();
+
+        LogManager.Shutdown();
+        _globalErrorHandler.Dispose();
+
         base.OnExit(e);
     }
 
-    private void OnAppUnhandledException(object sender, UnhandledExceptionEventArgs e)
+    private void SetupCulture(string name)
     {
-#if DEBUG && false
-        e.Handled = false;
-#else
-        ShowUnhandledException(e.ExceptionObject as Exception);
-#endif
-    }
+        var cultureInfo = new CultureInfo(name);
 
-    private void ShowUnhandledException(Exception? exception)
-    {
-        var dir = Directory.CreateDirectory("reports");
-        var reportName = $"report_{DateTime.Now:yyyy-MM-dd_HH-mm-ss-fff}";
-        var path = Path.Combine(dir.FullName, reportName);
+        Thread.CurrentThread.CurrentCulture = cultureInfo;
+        Thread.CurrentThread.CurrentUICulture = cultureInfo;
 
-
-        if (exception is null)
-        {            
-            File.WriteAllText(path, "An unhandled exception occurred, but the exception object is null.");
-            return;
-        }
-
-        var navigation = NavigationCommands.CreateNavigation<string, GlobalErrorViewModel>(s => new(s));
-
-        var messageBuilder = new StringBuilder();
-        var assembly = Assembly.GetExecutingAssembly();
-        var version = assembly.GetName().Version;
-
-        messageBuilder.AppendLine("UNHANDLED ERROR OCCURRED");
-        messageBuilder.AppendLine($"Timestamp: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
-        messageBuilder.AppendLine($"Application Version: {version}");
-        messageBuilder.AppendLine($"Exception Type: {exception.GetType().FullName}");
-        messageBuilder.AppendLine($"----------------------");
-        messageBuilder.AppendLine($"Message: {exception.Message}");
-        messageBuilder.AppendLine($"Source:  {exception.Source}");
-        messageBuilder.AppendLine($"Target:  {exception.TargetSite}");
-        messageBuilder.AppendLine($"HResult: {exception.HResult}");
-
-        foreach (var inner in exception.GetInnerExceptions())
-        {
-            messageBuilder.AppendLine();
-            FormatException(messageBuilder, inner);
-        }
-
-        messageBuilder.AppendLine();
-        messageBuilder.AppendLine("STACK TRACE:");
-        messageBuilder.AppendLine(exception.StackTrace);
-
-        messageBuilder.AppendLine();
-
-        var report = messageBuilder.ToString();
-        File.WriteAllText(path, report);
-
-        NavigationCommands.CloseModal();
-        navigation.Navigate(report);
-    }
-
-    private void FormatException(StringBuilder builder, Exception exception)
-    {
-        builder.AppendLine($"---> {exception.GetType().FullName}: {exception.Message}");
-        builder.AppendLine($"Source: {exception.Source}");
-        builder.AppendLine($"Target Site: {exception.TargetSite}");
-        builder.AppendLine($"Stack trace:");
-        builder.AppendLine(exception.StackTrace);
+        _logger.LogInformation("Culture set to {cultureName} ({cultureEnglishName})", cultureInfo.Name, cultureInfo.EnglishName);
     }
 }
