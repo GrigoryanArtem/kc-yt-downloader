@@ -18,6 +18,14 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<DefineConstants>ENABLE_GLOBAL_EXCEPTION_LOGGING</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<DefineConstants>ENABLE_GLOBAL_EXCEPTION_LOGGING</DefineConstants>
+	</PropertyGroup>
+
 	<ItemGroup>
 	  <None Remove="NLog.config" />
 	  <None Remove="Resources\logo.png" />
@@ -64,6 +72,12 @@
 
 	<ItemGroup>
 	  <Folder Include="Model\Enums\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="config.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>

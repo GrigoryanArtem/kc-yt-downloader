@@ -39,7 +39,7 @@ public partial class CutTaskViewModel : ObservableObject
 
         _video = _ytDlp.GetPreviewVideoByUrl(task.URL);
 
-        _logsDirectory = Path.Combine(YtConfig.Global.CacheDirectory, LOGS_DIRECTORY);
+        _logsDirectory = Path.Combine(YtConfig.Global.DataDirectory, LOGS_DIRECTORY);
 
         DonePercent = task.Status == VideoTaskStatus.Completed ? 100 : 0;
 

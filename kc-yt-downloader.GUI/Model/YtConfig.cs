@@ -7,17 +7,24 @@ namespace kc_yt_downloader.GUI.Model;
 public class YtConfig
 {
     private const string CONFIG_PATH = "config.json";
+
+    #region Singleton
+
     private static readonly Lazy<YtConfig> _lazy = new(Load);
 
     private YtConfig() { }
     public static YtConfig Global => _lazy.Value;
 
-    public string CacheDirectory { get; set; } = "data";
+    #endregion
 
+    #region Properties
+
+    public string DataDirectory { get; set; } = "data";
     public Dictionary<VideoTaskStatus, int> ExpirationTimes { get; set; } = [];
     public int BatchSize { get; set; } = 2;
-
     public SelectedSettings SelectedSettings { get; set; } = new();
+
+    #endregion
 
     public void Save()
     {

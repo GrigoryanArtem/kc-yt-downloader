@@ -23,7 +23,7 @@ public class DefaultServiceConfigurator : IServicesConfigurator
 
     private static void ConfigureViewModels(IServiceCollection services)
     {
-        var ytDlp = new YtDlp(YtConfig.Global.CacheDirectory);
+        var ytDlp = new YtDlp(YtConfig.Global.DataDirectory);
         ytDlp.Open();
 
         services.AddSingleton<FFmpeg>();
