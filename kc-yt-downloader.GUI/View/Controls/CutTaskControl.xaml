@@ -212,7 +212,7 @@
 
                     <Button
                         Margin="4"
-                        Command="{Binding RunCommand}"
+                        Command="{Binding ExecuteCommand}"
                         ToolTip="Run"
                         Visibility="{Binding IsRunning, Converter={StaticResource InvertBooleanToVisibilityConverter}}">
 

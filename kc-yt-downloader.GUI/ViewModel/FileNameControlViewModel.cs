@@ -13,7 +13,6 @@ public partial class FileNameControlViewModel : ObservableObject
     private FileNameControlViewModel()
     {
         CalculateFreeSpace();
-        ChooseWorkingDirectoryCommand = new RelayCommand(async () => await OnChooseWorkingDirectory());
     }
 
     public string? WorkingDirectory
@@ -31,14 +30,15 @@ public partial class FileNameControlViewModel : ObservableObject
     [ObservableProperty]
     private string _availableFreeSpace;
 
-    public RelayCommand ChooseWorkingDirectoryCommand { get; }
-
-    private async Task OnChooseWorkingDirectory()
+    [RelayCommand]
+    private Task ChooseWorkingDirectory()
     {
         var folderDialog = new OpenFolderDialog();
 
         if (folderDialog.ShowDialog() == true)
             WorkingDirectory = folderDialog.FolderName;
+
+        return Task.CompletedTask;
     }
 
     public string GetFullPath()
@@ -63,11 +63,9 @@ public partial class FileNameControlViewModel : ObservableObject
     };
 
     private void CalculateFreeSpace()
-    {
-        if (WorkingDirectory is null)
-            return;
-
-        var drive = Path.GetPathRoot(WorkingDirectory)!;
+    {        
+        var path = Path.GetFullPath(WorkingDirectory ?? ".");
+        var drive = Path.GetPathRoot(path)!;
         var driveInfo = new DriveInfo(drive);
 
         var (size, suffix) = SizeConverter.FormatSize(driveInfo.AvailableFreeSpace, decimalPlaces: 0);

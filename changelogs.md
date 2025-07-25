@@ -1,6 +1,7 @@
 ## Version 1.4.*
 * Improved logging
 * Add cancel button to task processing
+* Fixed issue with working directory size
 
 ## Version 1.3.*
 **Features**

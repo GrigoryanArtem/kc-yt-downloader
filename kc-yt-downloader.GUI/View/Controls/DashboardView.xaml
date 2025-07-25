@@ -213,7 +213,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Grid>
+            <Grid MaxWidth="1400">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100" />
                     <ColumnDefinition Width="*" />
@@ -228,7 +228,6 @@
 
                 <Button
                     Grid.Column="2"
-                    Margin="4 0 0 0"
                     HorizontalAlignment="Right"
                     Background="{DynamicResource MaterialDesignTextFieldBoxBackground}"
                     Command="{Binding OpenSettingsCommand}"

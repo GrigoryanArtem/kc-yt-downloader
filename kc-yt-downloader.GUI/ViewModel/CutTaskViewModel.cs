@@ -85,8 +85,7 @@ public partial class CutTaskViewModel : ObservableObject
 
     #region Observable
 
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(RunCommand))]
+    [ObservableProperty]    
     private bool _isRunning = false;
 
     [ObservableProperty]
@@ -120,15 +119,13 @@ public partial class CutTaskViewModel : ObservableObject
     #endregion
 
     #region Commands
-
-    public RelayCommand RunCommand { get; }
+    
     public ICommand EditTaskCommand { get; }
-    public ICommand OpenDirectoryCommand { get; }
     public RelayCommand OpenLogCommand { get; }
 
     #endregion
 
-    [RelayCommand(CanExecute = nameof(IsRunning))]
+    [RelayCommand]
     public async Task Execute()
     {
         _cancellationTokenSource = new CancellationTokenSource();
