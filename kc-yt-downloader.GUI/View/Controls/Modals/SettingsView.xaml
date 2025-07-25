@@ -2,6 +2,7 @@
     x:Class="kc_yt_downloader.GUI.View.Controls.Modals.SettingsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:kc_yt_downloader.GUI.View.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:kc_yt_downloader.GUI.View.Controls.Modals"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
@@ -22,31 +23,7 @@
             Style="{StaticResource MaterialDesignHeadline5TextBlock}"
             Text="Settings" />
 
-        <Grid Margin="0 8">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <Border
-                Width="16"
-                Height="1"
-                BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
-                BorderThickness="1" />
-
-            <TextBlock
-                Grid.Column="1"
-                Margin="12 0"
-                Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-                Text="Expiration time" />
-
-            <Border
-                Grid.Column="2"
-                Height="1"
-                BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
-                BorderThickness="1" />
-        </Grid>
+        <controls:SimpleTitle DataContext="Expiration time" />
 
         <ItemsControl
             Grid.IsSharedSizeScope="True"
@@ -96,31 +73,7 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <Grid Margin="0 12">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <Border
-                Width="16"
-                Height="1"
-                BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
-                BorderThickness="1" />
-
-            <TextBlock
-                Grid.Column="1"
-                Margin="12 0"
-                Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-                Text="Auto processing" />
-
-            <Border
-                Grid.Column="2"
-                Height="1"
-                BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
-                BorderThickness="1" />
-        </Grid>
+        <controls:SimpleTitle DataContext="Auto processing" />
 
         <ComboBox
             Width="150"
@@ -131,31 +84,14 @@
             Style="{StaticResource MaterialDesignOutlinedComboBox}" />
 
 
-        <Grid Margin="0 12">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
+        <controls:SimpleTitle DataContext="Browser extension" />
+        <TextBox
+            materialDesign:HintAssist.Hint="URL"
+            Style="{StaticResource MaterialDesignOutlinedTextBox}"
+            Text="{Binding ListenerUrl}" />
 
-            <Border
-                Width="16"
-                Height="1"
-                BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
-                BorderThickness="1" />
 
-            <TextBlock
-                Grid.Column="1"
-                Margin="12 0"
-                Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-                Text="Version" />
-
-            <Border
-                Grid.Column="2"
-                Height="1"
-                BorderBrush="{StaticResource MaterialDesignDarkSeparatorBackground}"
-                BorderThickness="1" />
-        </Grid>
+        <controls:SimpleTitle DataContext="Version" />
 
         <Grid>
             <Grid.ColumnDefinitions>
@@ -212,7 +148,6 @@
                 Style="{StaticResource MaterialDesignBodyLargeTextBlock}"
                 Text="{Binding AppVersion}" />
         </Grid>
-
 
         <StackPanel
             Margin="0 24 0 0"

@@ -69,14 +69,14 @@ public partial class YtDlpStatusViewModel : ObservableObject
 
     public float GetSpeedMedian()
     {
-        if(_speedValues.Count == 0)
+        if (_speedValues.Count == 0)
             return 0f;
 
         _speedValues.Sort();
         int mid = _speedValues.Count / 2;
 
-        return _speedValues.Count % 2 == 0 
-            ? (_speedValues[mid - 1] + _speedValues[mid]) / 2 
+        return _speedValues.Count % 2 == 0
+            ? (_speedValues[mid - 1] + _speedValues[mid]) / 2
             : _speedValues[mid];
     }
 

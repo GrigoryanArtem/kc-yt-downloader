@@ -25,7 +25,7 @@ namespace kc_yt_downloader.Model
         [property: JsonProperty("vcodec")] string VCodec,
         [property: JsonProperty("acodec")] string ACodec,
         [property: JsonProperty("dynamic_range")] string DynamicRange,
-        [property: JsonProperty("container")] string Container,        
+        [property: JsonProperty("container")] string Container,
         [property: JsonProperty("protocol")] string Protocol,
         [property: JsonProperty("resolution")] string Resolution,
         [property: JsonProperty("aspect_ratio")] double? AspectRatio,

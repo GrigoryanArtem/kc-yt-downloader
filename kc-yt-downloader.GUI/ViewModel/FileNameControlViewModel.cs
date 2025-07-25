@@ -14,7 +14,7 @@ public partial class FileNameControlViewModel : ObservableObject
     {
         CalculateFreeSpace();
         ChooseWorkingDirectoryCommand = new RelayCommand(async () => await OnChooseWorkingDirectory());
-    }        
+    }
 
     public string? WorkingDirectory
     {
@@ -29,7 +29,7 @@ public partial class FileNameControlViewModel : ObservableObject
     [ObservableProperty]
     private string _fileName;
     [ObservableProperty]
-    private string _availableFreeSpace;    
+    private string _availableFreeSpace;
 
     public RelayCommand ChooseWorkingDirectoryCommand { get; }
 
@@ -70,7 +70,7 @@ public partial class FileNameControlViewModel : ObservableObject
         var drive = Path.GetPathRoot(WorkingDirectory)!;
         var driveInfo = new DriveInfo(drive);
 
-        var (size, suffix) = SizeConverter.FormatSize(driveInfo.AvailableFreeSpace, decimalPlaces: 0);         
+        var (size, suffix) = SizeConverter.FormatSize(driveInfo.AvailableFreeSpace, decimalPlaces: 0);
         AvailableFreeSpace = SizeConverter.ToFriendlyString(size, suffix, decimalPlaces: 0);
     }
 }

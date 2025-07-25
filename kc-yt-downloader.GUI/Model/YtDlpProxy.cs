@@ -35,7 +35,7 @@ public partial class YtDlpProxy(YtDlp ytDlp) : ObservableObject
     private ObservableCollection<TaskGroupViewModel> _tasks = [];
 
     public Dictionary<string, float> _avgFormatSpeed = [];
-    
+
     #endregion
 
     public bool TryGetAvgFormatSpeed(string formatString, out float avgSpeed)

@@ -4,7 +4,7 @@ using System.Text.Json;
 namespace kc_yt_downloader.Model;
 
 public static class CutTaskListener
-{   
+{
     public static Task Listen(string prefix, Action<CutTaskRequest> callback, CancellationToken cancellationToken)
     {
         var jsonSerializerOptions = new JsonSerializerOptions()
@@ -13,13 +13,13 @@ public static class CutTaskListener
         };
 
         var listener = new HttpListener
-        { 
+        {
             Prefixes = { prefix }
         };
 
         listener.Start();
 
-        while (!cancellationToken.IsCancellationRequested) 
+        while (!cancellationToken.IsCancellationRequested)
         {
             try
             {
@@ -31,10 +31,10 @@ public static class CutTaskListener
                 response.AddHeader("Access-Control-Allow-Origin", "*");
 
                 if (request.HttpMethod == "OPTIONS")
-                {                    
+                {
                     response.AddHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
                     response.AddHeader("Access-Control-Allow-Headers", "Content-Type");
-                    response.StatusCode = 204; 
+                    response.StatusCode = 204;
                     response.Close();
                     continue;
                 }
@@ -42,19 +42,19 @@ public static class CutTaskListener
                 if (context.Request.HttpMethod != "POST")
                     continue;
 
-                var body = new StreamReader(context.Request.InputStream).ReadToEnd();                
+                var body = new StreamReader(context.Request.InputStream).ReadToEnd();
                 var requestModel = JsonSerializer.Deserialize<CutTaskRequest>(body, jsonSerializerOptions);
 
-                
+
                 response.StatusCode = 200;
                 response.Close();
 
-                if (requestModel is not null)                                    
-                    callback?.Invoke(requestModel);                
+                if (requestModel is not null)
+                    callback?.Invoke(requestModel);
             }
-            catch (HttpListenerException ex)
-            {                
-                
+            catch
+            {
+
             }
         }
 

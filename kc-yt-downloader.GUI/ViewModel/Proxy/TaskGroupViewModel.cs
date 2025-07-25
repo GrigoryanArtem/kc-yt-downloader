@@ -6,6 +6,6 @@ namespace kc_yt_downloader.GUI.ViewModel.Proxy;
 
 public class TaskGroupViewModel(VideoTaskStatus status) : ObservableObject
 {
-    public VideoTaskStatus Status{ get; } = status;
+    public VideoTaskStatus Status { get; } = status;
     public ObservableCollection<CutTaskViewModel> Items { get; } = [];
 }

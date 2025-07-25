@@ -2,7 +2,7 @@
 {
     public record Recode
     {
-        public static string[] FORMATS { get; } = 
+        public static string[] FORMATS { get; } =
         [
             "avi", "flv", "gif", "mkv", "mov",
             "mp4", "webm", "aac", "aiff", "alac",

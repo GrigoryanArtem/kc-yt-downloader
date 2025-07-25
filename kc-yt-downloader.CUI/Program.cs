@@ -1,6 +1,4 @@
-﻿using kc_yt_downloader.Model;
-using System.Diagnostics;
-using System.Threading.Channels;
+﻿using System.Diagnostics;
 
 namespace kc_yt_downloader.CUI
 {
@@ -47,7 +45,7 @@ namespace kc_yt_downloader.CUI
 
             while (proc.Responding && !proc.HasExited)
             {
-                
+
             }
 
             Console.WriteLine("Process dead");

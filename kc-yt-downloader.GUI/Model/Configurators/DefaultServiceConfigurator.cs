@@ -5,7 +5,7 @@ using Microsoft.Extensions.Hosting;
 using NavigationMVVM.Services;
 using NavigationMVVM.Stores;
 
-namespace kc_yt_downloader.GUI.Model;
+namespace kc_yt_downloader.GUI.Model.Configurators;
 
 public class DefaultServiceConfigurator : IServicesConfigurator
 {

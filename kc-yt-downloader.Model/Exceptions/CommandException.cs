@@ -4,7 +4,7 @@ using System.Text;
 namespace kc_yt_downloader.Model.Exceptions;
 
 public class CommandException : Exception
-{    
+{
     public CommandException(string message, CommandBase command)
         : base(CreateRichMessage(message, command))
     {

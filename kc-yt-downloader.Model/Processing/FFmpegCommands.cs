@@ -3,5 +3,5 @@
 public static class FFmpegCommands
 {
     public static FFmpegCommand Version()
-        => new ("-version");
+        => new("-version");
 }

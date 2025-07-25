@@ -14,9 +14,9 @@ public partial class VideoInfoControlViewModel : ObservableObject
 
     public VideoInfoControlViewModel(VideoPreview video)
     {
-        var services = App.Current.Services;        
+        var services = App.Current.Services;
         var ytDlpProxy = services.GetRequiredService<YtDlpProxy>();
-        
+
         _video = video;
 
         Tasks = [.. ytDlpProxy.GetCachedTasks()
@@ -29,7 +29,7 @@ public partial class VideoInfoControlViewModel : ObservableObject
 
         _video = video;
     }
-    
+
     public string Title => _video.Info.Title ?? "Unknown Title";
 
     public ObservableCollection<CutTaskViewModel> Tasks { get; private set; }
@@ -65,7 +65,7 @@ public partial class VideoInfoControlViewModel : ObservableObject
 
     [RelayCommand]
     public void DeleteTask(CutTaskViewModel cutTask)
-    { 
+    {
         var proxy = App.Current.Services.GetRequiredService<YtDlpProxy>();
         proxy.DeleteTask(cutTask.Source);
 

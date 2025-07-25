@@ -14,10 +14,10 @@ public partial class DashboardViewModel : ObservableObject
         DlpProxy = services.GetRequiredService<YtDlpProxy>();
         DlpProxy.Sync(YtDlpProxy.SyncType.All);
 
-        TaskRunner = new (DlpProxy);
+        TaskRunner = new(DlpProxy);
     }
-        
-    public YtDlpProxy DlpProxy { get; set; }    
+
+    public YtDlpProxy DlpProxy { get; set; }
     public AutoTaskRunner TaskRunner { get; }
     public UrlAddingViewModel UrlAddingViewModel { get; } = new();
 
@@ -32,7 +32,7 @@ public partial class DashboardViewModel : ObservableObject
     public void RunSingle()
     {
         TaskRunner.Activate(AutoTaskRunner.RunType.Single);
-        
+
     }
 
     [RelayCommand]

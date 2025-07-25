@@ -1,4 +1,5 @@
 ﻿using kc_yt_downloader.GUI.Model;
+using kc_yt_downloader.GUI.Model.Configurators;
 using kc_yt_downloader.GUI.ViewModel;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

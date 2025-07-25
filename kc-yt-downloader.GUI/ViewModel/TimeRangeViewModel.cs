@@ -20,16 +20,16 @@ public partial class TimeRangeViewModel(TimeRange[]? segments, string durationSt
         }
     }
 
-    public ObservableCollection<SegmentViewModel> Segments { get; } 
+    public ObservableCollection<SegmentViewModel> Segments { get; }
         = segments is not null && segments.Length > 0
-            ? [..segments.Select(s => new SegmentViewModel(s))]
+            ? [.. segments.Select(s => new SegmentViewModel(s))]
             : [new(durationString)];
 
     public bool CanEdit => !FullVideo;
     public bool MultipleSegments => Segments.Count > 1;
 
     public TimeRange?[] GetTimeRanges()
-        => FullVideo ? [ null! ] : Segments.Select(s => new TimeRange() { From = s.From, To = s.To }).ToArray();
+        => FullVideo ? [null!] : Segments.Select(s => new TimeRange() { From = s.From, To = s.To }).ToArray();
 
     [RelayCommand]
     public void AddSegment()
@@ -44,7 +44,7 @@ public partial class TimeRangeViewModel(TimeRange[]? segments, string durationSt
         if (segment is null)
             return;
 
-        Segments.Remove(segment);    
+        Segments.Remove(segment);
         OnPropertyChanged(nameof(MultipleSegments));
     }
 }

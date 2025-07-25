@@ -13,7 +13,7 @@ public static class ExplorerHelper
     private static extern void SHParseDisplayName([MarshalAs(UnmanagedType.LPWStr)] string name, IntPtr bindingContext, [Out] out IntPtr pidl, uint sfgaoIn, [Out] out uint psfgaoOut);
 
     public static void OpenFolder(string folderPath)
-        => Process.Start("explorer.exe", folderPath);        
+        => Process.Start("explorer.exe", folderPath);
 
     public static void OpenFolderAndSelectItem(string folderPath, string file)
     {

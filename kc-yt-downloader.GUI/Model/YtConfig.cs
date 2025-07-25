@@ -19,6 +19,7 @@ public class YtConfig
 
     #region Properties
 
+    public string ExtensionListenerUrl { get; set; } = "http://localhost:5000/api/cut/";
     public string DataDirectory { get; set; } = "data";
     public Dictionary<VideoTaskStatus, int> ExpirationTimes { get; set; } = [];
     public int BatchSize { get; set; } = 2;
@@ -43,6 +44,6 @@ public class YtConfig
         }
 
         var json = File.ReadAllText(CONFIG_PATH);
-        return JsonConvert.DeserializeObject<YtConfig>(json);
+        return JsonConvert.DeserializeObject<YtConfig>(json)!;
     }
 }

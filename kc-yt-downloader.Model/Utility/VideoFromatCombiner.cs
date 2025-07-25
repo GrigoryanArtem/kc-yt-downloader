@@ -2,5 +2,5 @@
 public static class VideoFormatCombiner
 {
     public static string Combine(string? videoFormatId, string? audioFormatId)
-        => $"{videoFormatId ?? "bv"}+{audioFormatId ?? "ba"}";    
+        => $"{videoFormatId ?? "bv"}+{audioFormatId ?? "ba"}";
 }

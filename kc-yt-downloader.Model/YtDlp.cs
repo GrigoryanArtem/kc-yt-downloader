@@ -16,11 +16,11 @@ public class YtDlp(string cacheDirectory)
     private List<VideoPreview> _videoCache = [];
     private List<CutVideoTask> _tasksCache = [];
 
-    private readonly string _videoIndexPath = String.IsNullOrEmpty(cacheDirectory) 
+    private readonly string _videoIndexPath = String.IsNullOrEmpty(cacheDirectory)
         ? VIDEOS_INDEX_FILEPATH
         : Path.Combine(cacheDirectory, VIDEOS_INDEX_FILEPATH);
 
-    private readonly string _tasksCachePath = String.IsNullOrEmpty(cacheDirectory) 
+    private readonly string _tasksCachePath = String.IsNullOrEmpty(cacheDirectory)
         ? TASKS_CACHE_FILEPATH
         : Path.Combine(cacheDirectory, TASKS_CACHE_FILEPATH);
 
@@ -190,7 +190,7 @@ public class YtDlp(string cacheDirectory)
         };
 
         return new Process { StartInfo = startInfo };
-    }    
+    }
 
     public async Task<bool> UpdateYtDlpAsync(YtDlpUpdateChannel updateChannel = YtDlpUpdateChannel.Stable, IProgress<string>? progress = null)
     {

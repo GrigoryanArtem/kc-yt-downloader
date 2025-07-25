@@ -21,7 +21,7 @@ public record CutVideoTask
 
     public string FilePath { get; init; }
     public string? PredictedExtension { get; init; }
-    public string? PredictedFilePath => 
+    public string? PredictedFilePath =>
         PredictedExtension is not null ? String.Join('.', FilePath, PredictedExtension) : null;
 
     public string? VideoFormatId { get; init; }

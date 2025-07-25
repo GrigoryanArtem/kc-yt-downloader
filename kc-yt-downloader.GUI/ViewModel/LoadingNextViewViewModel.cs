@@ -6,12 +6,12 @@ using NavigationMVVM.Services;
 namespace kc_yt_downloader.GUI.ViewModel;
 
 public abstract partial class LoadingNextViewViewModel<TParameter> : ObservableObject
-{    
+{
     [ObservableProperty]
     private bool _isProgress = true;
 
     public LoadingNextViewViewModel() { }
-   
+
     public LoadingNextViewViewModel(
         string title,
         Func<Task<LoadingResult<TParameter>>> loadingTask,

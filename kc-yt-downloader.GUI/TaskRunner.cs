@@ -11,7 +11,7 @@ public partial class AutoTaskRunner(YtDlpProxy ytDlpProxy) : ObservableObject, I
         Single,
         Batch
     }
-    
+
     #region Members
 
     private readonly HashSet<Task> _ranTasks = [];
@@ -72,7 +72,7 @@ public partial class AutoTaskRunner(YtDlpProxy ytDlpProxy) : ObservableObject, I
             var group = ytDlpProxy.Tasks
                 .FirstOrDefault(t => t.Status == VideoTaskStatus.Prepared);
 
-            if(group is null || group.Items.Count == 0)
+            if (group is null || group.Items.Count == 0)
             {
                 Stop();
                 return;
@@ -89,11 +89,11 @@ public partial class AutoTaskRunner(YtDlpProxy ytDlpProxy) : ObservableObject, I
                 _ranTasks.Add(runTask);
             }
 
-            await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);            
+            await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
         }
     }
 
     public void Dispose()
         => Stop();
-    
+
 }

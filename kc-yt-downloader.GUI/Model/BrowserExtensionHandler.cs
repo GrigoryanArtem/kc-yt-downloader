@@ -5,14 +5,12 @@ namespace kc_yt_downloader.GUI.Model;
 
 public class BrowserExtensionHandler
 {
-    private const string PREFIX = "http://localhost:5000/api/cut/";
-
     private Task _apiTask;
     private readonly CancellationTokenSource _cancellationTokenSource = new();
 
     public void Run()
-    {        
-        _apiTask = Task.Run(() => CutTaskListener.Listen(PREFIX, Handle, _cancellationTokenSource.Token));
+    {
+        _apiTask = Task.Run(() => CutTaskListener.Listen(YtConfig.Global.ExtensionListenerUrl, Handle, _cancellationTokenSource.Token));
     }
 
     public async Task Stop()
@@ -24,7 +22,7 @@ public class BrowserExtensionHandler
     private void Handle(CutTaskRequest request)
     {
         var services = App.Current.Services;
-        var window = services.GetRequiredService<MainWindow>();                
+        var window = services.GetRequiredService<MainWindow>();
 
         var tasks = services.GetRequiredService<TasksFactory>();
         var cutViewLoadingViewModel = tasks.CreateCutViewLoadingViewModel(request.Id, new()

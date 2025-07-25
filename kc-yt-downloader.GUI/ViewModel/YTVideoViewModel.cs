@@ -5,7 +5,6 @@ using kc_yt_downloader.Model;
 using Microsoft.Extensions.DependencyInjection;
 using NavigationMVVM.Services;
 using NavigationMVVM.Stores;
-using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Input;
 
@@ -13,7 +12,7 @@ namespace kc_yt_downloader.GUI.ViewModel;
 
 public partial class YTVideoViewModel : ObservableObject
 {
-    private readonly YtDlp _ytDlp;    
+    private readonly YtDlp _ytDlp;
 
     public YTVideoViewModel(
         YtDlp ytDlp,
@@ -39,7 +38,7 @@ public partial class YTVideoViewModel : ObservableObject
         var cutViewLoadingViewModel = tasks.CreateCutViewLoadingViewModel(Video!.Info.OriginalUrl);
 
         var store = services.GetRequiredService<NavigationStore>();
-        var navigation = new NavigationService<CutViewLoadingViewModel>(store, () => cutViewLoadingViewModel);        
+        var navigation = new NavigationService<CutViewLoadingViewModel>(store, () => cutViewLoadingViewModel);
 
         CutCommand = new RelayCommand(navigation.Navigate);
         OpenCommand = new RelayCommand(OnOpen);
@@ -64,9 +63,9 @@ public partial class YTVideoViewModel : ObservableObject
 
     public void OnOpen()
     {
-        var services = App.Current.Services;    
-        var navigation = services.GetRequiredService<ParameterNavigationService<VideoPreview, VideoInfoControlViewModel>>();        
+        var services = App.Current.Services;
+        var navigation = services.GetRequiredService<ParameterNavigationService<VideoPreview, VideoInfoControlViewModel>>();
 
         navigation.Navigate(Video);
-    }         
+    }
 }

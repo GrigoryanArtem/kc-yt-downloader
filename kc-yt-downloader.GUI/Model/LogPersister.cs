@@ -37,7 +37,7 @@ namespace kc_yt_downloader.GUI.Model
         private readonly CancellationTokenSource _source = new();
         private readonly CancellationToken _token;
 
-        private readonly string _path;        
+        private readonly string _path;
 
         public LogPersister(string path)
         {
@@ -106,13 +106,13 @@ namespace kc_yt_downloader.GUI.Model
                 .OrderByDescending(f => f)
                 .FirstOrDefault();
 
-            if(lastLog is null)
+            if (lastLog is null)
                 return null;
 
             var persister = new LogPersister(lastLog);
             persister.Stop();
 
-            foreach(var line in File.ReadAllLines(lastLog).Reverse())
+            foreach (var line in File.ReadAllLines(lastLog).Reverse())
             {
                 var tokens = line.Split('|', 5);
 

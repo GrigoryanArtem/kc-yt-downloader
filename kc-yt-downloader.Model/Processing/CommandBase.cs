@@ -4,7 +4,7 @@ using System.Text;
 
 namespace kc_yt_downloader.Model.Processing;
 public abstract class CommandBase(string commandBase, string arguments)
-{    
+{
     #region Members
 
     private bool _isStarted = false;

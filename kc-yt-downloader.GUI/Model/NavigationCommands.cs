@@ -13,7 +13,7 @@ public static class NavigationCommands
     private static IServiceProvider Services => App.Current.Services;
 
     static NavigationCommands()
-    {        
+    {
         _closeModal = Services.GetRequiredService<CloseModalNavigationService>();
 
         CloseModalCommand = new NavigateCommand(_closeModal);

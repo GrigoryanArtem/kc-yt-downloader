@@ -11,5 +11,5 @@ public class YtDlpCommand(string arguments) : CommandBase("yt-dlp", arguments)
         101 => ProcessExitCode.Cancelled,
 
         _ => ProcessExitCode.Unknown
-    };    
+    };
 }

@@ -3,5 +3,5 @@
     public class YtCacheException : Exception
     {
         public YtCacheException(string message) : base(message) { }
-    }    
+    }
 }

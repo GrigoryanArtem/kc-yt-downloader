@@ -30,6 +30,8 @@ public partial class SettingsViewModel : ObservableValidator
     ];
 
     [ObservableProperty]
+    private string _listenerUrl;
+    [ObservableProperty]
     private int _batchSize;
     [ObservableProperty]
     private string _ytDlpVersion;
@@ -42,6 +44,7 @@ public partial class SettingsViewModel : ObservableValidator
     {
         var config = YtConfig.Global;
 
+        ListenerUrl = config.ExtensionListenerUrl;
         BatchSize = config.BatchSize;
         ExpirationTimes = [.. Enum.GetValues<VideoTaskStatus>()
             .Where(s => !EXCLUDED_STATUSES.Contains(s))
@@ -51,9 +54,9 @@ public partial class SettingsViewModel : ObservableValidator
                 expirationTimeDays: config.ExpirationTimes.TryGetValue(status, out var days) ? days : null)
             )];
 
-        
+
         Task.Run(LoadVersions);
-        
+
     }
 
     public async Task LoadVersions()
@@ -65,12 +68,12 @@ public partial class SettingsViewModel : ObservableValidator
 
         YtDlpVersion = await ytDlp.YtDlpVersion(CancellationToken.None);
         FfmpegVersion = await ffmpeg.FFmpegVersion(CancellationToken.None);
-        AppVersion = Assembly.GetExecutingAssembly()?.GetName()?.Version?.ToString()?? String.Empty;
+        AppVersion = Assembly.GetExecutingAssembly()?.GetName()?.Version?.ToString() ?? String.Empty;
     }
 
 
-    public int[] SupportedSize { get; } = [.. Enumerable.Range(2, 4)];    
-    public TaskExpirationTimeViewModel[] ExpirationTimes { get; }    
+    public int[] SupportedSize { get; } = [.. Enumerable.Range(2, 4)];
+    public TaskExpirationTimeViewModel[] ExpirationTimes { get; }
 
     [RelayCommand]
     public void Save()
@@ -94,11 +97,12 @@ public partial class SettingsViewModel : ObservableValidator
             }
 
             config.BatchSize = BatchSize;
+            config.ExtensionListenerUrl = ListenerUrl;
 
             config.Save();
             ytDlpProxy.Sync(YtDlpProxy.SyncType.All);
 
-            GlobalSnackbarMessageQueue.WriteInfo("Settings saved successfully.");            
+            GlobalSnackbarMessageQueue.WriteInfo("Settings saved successfully.");
         }
         catch (Exception ex)
         {

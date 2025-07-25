@@ -2,11 +2,11 @@
 
 namespace kc_yt_downloader.GUI.View.Controls;
 /// <summary>
-/// Interaction logic for VideoInfoControl.xaml
+/// Interaction logic for SimpleTitle.xaml
 /// </summary>
-public partial class VideoInfoControl : UserControl
+public partial class SimpleTitle : UserControl
 {
-    public VideoInfoControl()
+    public SimpleTitle()
     {
         InitializeComponent();
     }

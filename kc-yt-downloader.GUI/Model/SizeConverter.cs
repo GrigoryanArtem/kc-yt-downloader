@@ -15,8 +15,8 @@ public static class SizeConverter
             .FirstOrDefault(trimmedSizeString.EndsWith);
 
         int? index = suffix is not null ? Array.IndexOf(FFMPEG_SIZE_SUFFIXES, suffix) : null;
-        return index.HasValue 
-            ? Convert.ToInt64(sizeString[..^suffix!.Length]) * (long)Math.Pow(1024, index.Value) 
+        return index.HasValue
+            ? Convert.ToInt64(sizeString[..^suffix!.Length]) * (long)Math.Pow(1024, index.Value)
             : Convert.ToInt64(sizeString);
     }
 
