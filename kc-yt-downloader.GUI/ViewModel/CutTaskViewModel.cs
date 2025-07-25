@@ -10,9 +10,10 @@ using NavigationMVVM.Stores;
 using System.IO;
 using System.Windows.Input;
 using static kc_yt_downloader.GUI.ViewModel.LogViewModel;
-using NavigationCommands = kc_yt_downloader.GUI.Model.NavigationCommands;
 
 namespace kc_yt_downloader.GUI.ViewModel;
+
+using NavigationCommands = Model.NavigationCommands;
 
 public partial class CutTaskViewModel : ObservableObject
 {
@@ -21,7 +22,6 @@ public partial class CutTaskViewModel : ObservableObject
     private const string LOGS_DIRECTORY = "logs";
 
     #endregion
-
 
     private readonly ILogger<CutTaskViewModel> _logger;
     private readonly YtDlpProxy _ytDlpProxy;
@@ -38,26 +38,20 @@ public partial class CutTaskViewModel : ObservableObject
     public CutTaskViewModel(CutVideoTask task, YtDlpProxy proxy)
     {
         var services = App.Current.Services;
+
         _ytDlpProxy = proxy;
         _ytDlp = services.GetRequiredService<YtDlp>();
         _logger = services.GetRequiredService<ILogger<CutTaskViewModel>>();
 
         Source = task;
 
+        _video = _ytDlp.GetPreviewVideoByUrl(task.URL);
         _totalDuration = TimeSpan.FromSeconds(task.TimeRange?.GetDuration() ?? _video.Info.Duration);
         _ytDlpStatus = new(_totalDuration);
-
-        _video = _ytDlp.GetPreviewVideoByUrl(task.URL);
-
         _logsDirectory = Path.Combine(YtConfig.Global.DataDirectory, LOGS_DIRECTORY);
 
         DonePercent = task.Status == VideoTaskStatus.Completed ? 100 : 0;
-
         Status = new SimpleStatusViewModel(task.Status);
-
-
-        RunCommand = new RelayCommand(async () => await Execute(), () => !IsRunning);
-        OpenDirectoryCommand = new RelayCommand(OnOpenDirectory);
 
         if (_video is not null)
         {
@@ -87,71 +81,54 @@ public partial class CutTaskViewModel : ObservableObject
             EstimatedTime = FormatTimeSpan(_totalDuration / speed);
     }
 
-    public string? EstimatedTime { get; init; }
+    #region Properties
 
+    #region Observable
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(RunCommand))]
     private bool _isRunning = false;
-    public bool IsRunning
-    {
-        get => _isRunning;
-        set
-        {
-            SetProperty(ref _isRunning, value);
-            RunCommand.NotifyCanExecuteChanged();
-        }
-    }
 
+    [ObservableProperty]
     private double _donePercent;
-    public double DonePercent
-    {
-        get => _donePercent;
-        set => SetProperty(ref _donePercent, value);
-    }
 
+    [ObservableProperty]
     private string _taskStatus;
-    public string TaskStatus
-    {
-        get => _taskStatus;
-        set => SetProperty(ref _taskStatus, value);
-    }
 
     public string FileName => Path.GetFileName(Source.PredictedFilePath ?? Source.FilePath);
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(TimeRangeString))]
     private CutVideoTask _source;
-    public CutVideoTask Source
-    {
-        get => _source;
-        private set => SetProperty(ref _source, value);
-    }
 
-
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(OpenLogCommand))]
     private LogPersister _persister;
-    private LogPersister Persister
-    {
-        get => _persister;
-        set
-        {
-            _persister = value;
-            OpenLogCommand.NotifyCanExecuteChanged();
-        }
-    }
+
+    [ObservableProperty]
+    private ObservableObject _status;
+
+    #endregion
+
+    public string? EstimatedTime { get; init; }
 
     public string? TimeRangeString
-        => $"{Source.TimeRange.From:hh\\:mm\\:ss} - {Source.TimeRange.To:hh\\:mm\\:ss}";
-
-    private ObservableObject _status;
-    public ObservableObject Status
-    {
-        get => _status;
-        private set => SetProperty(ref _status, value);
-    }
+        => $"{Source?.TimeRange?.From:hh\\:mm\\:ss} - {Source?.TimeRange?.To:hh\\:mm\\:ss}";
 
     public bool HasEditMode => EditTaskCommand is not null;
+
+    #endregion
+
+    #region Commands
 
     public RelayCommand RunCommand { get; }
     public ICommand EditTaskCommand { get; }
     public ICommand OpenDirectoryCommand { get; }
     public RelayCommand OpenLogCommand { get; }
 
+    #endregion
+
+    [RelayCommand(CanExecute = nameof(IsRunning))]
     public async Task Execute()
     {
         _cancellationTokenSource = new CancellationTokenSource();
@@ -187,7 +164,8 @@ public partial class CutTaskViewModel : ObservableObject
     }
 
 
-    private void OnOpenDirectory()
+    [RelayCommand]
+    private void OpenDirectory()
     {
         var filePath = Source.PredictedFilePath ?? Source.FilePath;
         var dir = Path.GetDirectoryName(Path.GetFullPath(filePath));
@@ -219,7 +197,7 @@ public partial class CutTaskViewModel : ObservableObject
 
         try
         {
-            _canShowStatus = false;            
+            _canShowStatus = false;
 
             Status = new LoadingViewModel();
 
@@ -272,8 +250,8 @@ public partial class CutTaskViewModel : ObservableObject
         _logger.LogInformation("Stopping task {taskId}", Source.Id);
         _cancellationTokenSource?.Cancel();
     }
-    
-    public static string FormatTimeSpan(TimeSpan timeSpan) => string.Join(" ", new[]
+
+    private static string FormatTimeSpan(TimeSpan timeSpan) => string.Join(" ", new[]
     {
         FormatPart((int)timeSpan.TotalHours, "h."),
         FormatPart(timeSpan.Minutes, "min."),
@@ -281,6 +259,6 @@ public partial class CutTaskViewModel : ObservableObject
     }.Where(p => p is not null));
 
 
-    public static string? FormatPart(int quantity, string name)
+    private static string? FormatPart(int quantity, string name)
         => quantity > 0 ? $"{quantity} {name}" : null;
 }

@@ -1,5 +1,6 @@
 ## Version 1.4.*
 * Improved logging
+* Add cancel button to task processing
 
 ## Version 1.3.*
 **Features**

@@ -49,8 +49,7 @@ public partial class AutoTaskRunner(YtDlpProxy ytDlpProxy) : ObservableObject, I
         if (!Active)
             return;
 
-        _activeCancelationTokenSource.Cancel();
-
+        _activeCancelationTokenSource?.Cancel();
         Active = false;
 
         GlobalSnackbarMessageQueue.WriteInfo("Stopped auto processing");
@@ -95,5 +94,4 @@ public partial class AutoTaskRunner(YtDlpProxy ytDlpProxy) : ObservableObject, I
 
     public void Dispose()
         => Stop();
-
 }
