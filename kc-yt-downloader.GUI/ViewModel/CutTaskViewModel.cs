@@ -2,7 +2,9 @@
 using CommunityToolkit.Mvvm.Input;
 using kc_yt_downloader.GUI.Model;
 using kc_yt_downloader.Model;
+using kc_yt_downloader.Model.Enums;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NavigationMVVM.Services;
 using NavigationMVVM.Stores;
 using System.IO;
@@ -14,8 +16,14 @@ namespace kc_yt_downloader.GUI.ViewModel;
 
 public partial class CutTaskViewModel : ObservableObject
 {
+    #region Constants
+
     private const string LOGS_DIRECTORY = "logs";
 
+    #endregion
+
+
+    private readonly ILogger<CutTaskViewModel> _logger;
     private readonly YtDlpProxy _ytDlpProxy;
     private readonly YtDlp _ytDlp;
     private readonly VideoPreview _video;
@@ -25,12 +33,14 @@ public partial class CutTaskViewModel : ObservableObject
     private readonly string _logsDirectory;
 
     private bool _canShowStatus = false;
+    private CancellationTokenSource? _cancellationTokenSource;
 
     public CutTaskViewModel(CutVideoTask task, YtDlpProxy proxy)
     {
         var services = App.Current.Services;
         _ytDlpProxy = proxy;
         _ytDlp = services.GetRequiredService<YtDlp>();
+        _logger = services.GetRequiredService<ILogger<CutTaskViewModel>>();
 
         Source = task;
 
@@ -46,7 +56,7 @@ public partial class CutTaskViewModel : ObservableObject
         Status = new SimpleStatusViewModel(task.Status);
 
 
-        RunCommand = new RelayCommand(async () => await RunTask(), () => !IsRunning);
+        RunCommand = new RelayCommand(async () => await Execute(), () => !IsRunning);
         OpenDirectoryCommand = new RelayCommand(OnOpenDirectory);
 
         if (_video is not null)
@@ -80,7 +90,7 @@ public partial class CutTaskViewModel : ObservableObject
     public string? EstimatedTime { get; init; }
 
     private bool _isRunning = false;
-    private bool IsRunning
+    public bool IsRunning
     {
         get => _isRunning;
         set
@@ -142,8 +152,9 @@ public partial class CutTaskViewModel : ObservableObject
     public ICommand OpenDirectoryCommand { get; }
     public RelayCommand OpenLogCommand { get; }
 
-    public async Task RunTask()
+    public async Task Execute()
     {
+        _cancellationTokenSource = new CancellationTokenSource();
         App.Current.Dispatcher.Invoke(() =>
         {
             IsRunning = true;
@@ -154,7 +165,7 @@ public partial class CutTaskViewModel : ObservableObject
             Persister = new LogPersister(Path.Combine(_logsDirectory, $"{Source.Id}.{DateTime.Now:yyyyMMdd_HHmmss}.log"));
         });
 
-        await OnUpdate();
+        await TaskCycle();
 
         Persister.Stop();
         App.Current.Dispatcher.Invoke(() => IsRunning = false);
@@ -200,15 +211,17 @@ public partial class CutTaskViewModel : ObservableObject
         ytDlp.DeleteTask(Source);
     }
 
-    private async Task OnUpdate()
+    private async Task TaskCycle()
     {
-        var proc = _ytDlp.RunTask(Source.Id);
+        var command = _ytDlp.CreateRunCommand(Source.Id);
+
+        _logger.LogInformation("Running task {taskId} with command: {command}", Source.Id, command.ProcessCommand);
 
         try
         {
-            _canShowStatus = false;
+            _canShowStatus = false;            
+
             Status = new LoadingViewModel();
-            proc.Start();
 
             Source = Source with
             {
@@ -218,32 +231,27 @@ public partial class CutTaskViewModel : ObservableObject
             _ytDlp.UpdateTask(Source);
             _ytDlpProxy.Sync(YtDlpProxy.SyncType.Tasks);
 
-            proc.ErrorDataReceived += (sender, args) => UpdateStatus(args.Data);
-            proc.BeginErrorReadLine();
+            command.OnErrorUpdate = e => UpdateStatus(e.Data!);
+            command.OnOutputUpdate = e => Persister.Write(LogPersister.LogLevel.Standard, e.Data!);
 
-            proc.OutputDataReceived += (sender, args) => Persister.Write(LogPersister.LogLevel.Standard, args.Data);
-            proc.BeginOutputReadLine();
-
-            await proc.WaitForExitAsync();
+            await command.Run(_cancellationTokenSource!.Token);
         }
         catch (Exception exp)
         {
             GlobalSnackbarMessageQueue.WriteError("Error while running task", exp);
-            Console.WriteLine(exp.Message);
-        }
-        finally
-        {
-            proc.Kill();
+            _logger.LogError(exp, "Error while running task {taskId}", Source.Id);
         }
 
-        var status = proc.ExitCode switch
+        var status = command.ExitCode switch
         {
-            0 or 100 => VideoTaskStatus.Completed,
-            1 or 2 => VideoTaskStatus.Error,
-            101 => VideoTaskStatus.Cancelled,
+            ProcessExitCode.Success => VideoTaskStatus.Completed,
+            ProcessExitCode.Error => VideoTaskStatus.Error,
+            ProcessExitCode.Cancelled => VideoTaskStatus.Cancelled,
 
             _ => VideoTaskStatus.Unknown
         };
+
+        _logger.LogInformation("Task {taskId} finished with exitCode: {exitCode} and status: {status}", Source.Id, command.ExitCode, status);
 
         Source = Source with
         {
@@ -258,12 +266,19 @@ public partial class CutTaskViewModel : ObservableObject
         Status = new SimpleStatusViewModel(status);
     }
 
+    [RelayCommand]
+    public void Stop()
+    {
+        _logger.LogInformation("Stopping task {taskId}", Source.Id);
+        _cancellationTokenSource?.Cancel();
+    }
+    
     public static string FormatTimeSpan(TimeSpan timeSpan) => string.Join(" ", new[]
     {
-            FormatPart((int)timeSpan.TotalHours, "h."),
-            FormatPart(timeSpan.Minutes, "min."),
-            FormatPart(timeSpan.Seconds, "sec.")
-        }.Where(p => p is not null));
+        FormatPart((int)timeSpan.TotalHours, "h."),
+        FormatPart(timeSpan.Minutes, "min."),
+        FormatPart(timeSpan.Seconds, "sec.")
+    }.Where(p => p is not null));
 
 
     public static string? FormatPart(int quantity, string name)

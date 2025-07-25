@@ -213,7 +213,8 @@
                     <Button
                         Margin="4"
                         Command="{Binding RunCommand}"
-                        ToolTip="Run">
+                        ToolTip="Run"
+                        Visibility="{Binding IsRunning, Converter={StaticResource InvertBooleanToVisibilityConverter}}">
 
                         <Button.Style>
                             <Style
@@ -233,6 +234,13 @@
                             </Style>
                         </Button.Style>
                     </Button>
+
+                    <Button
+                        Margin="4"
+                        Command="{Binding StopCommand}"
+                        Content="{materialDesign:PackIcon Stop}"
+                        ToolTip="Stop"
+                        Visibility="{Binding IsRunning, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </StackPanel>
             </Grid>
 

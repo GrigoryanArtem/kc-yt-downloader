@@ -169,27 +169,10 @@ public class YtDlp(string cacheDirectory)
         Save();
     }
 
-    public Process RunTask(int id)
+    public CommandBase CreateRunCommand(int id)
     {
-        var task = _tasksCache.SingleOrDefault(t => t.Id == id);
-
-        var startInfo = new ProcessStartInfo
-        {
-            FileName = YT_DLP,
-            Arguments = task.ToArgs(),
-            UseShellExecute = false,
-
-            RedirectStandardError = true,
-            RedirectStandardOutput = true,
-
-            StandardErrorEncoding = Encoding.UTF8,
-            StandardOutputEncoding = Encoding.UTF8,
-
-            CreateNoWindow = false,
-            WindowStyle = ProcessWindowStyle.Hidden,
-        };
-
-        return new Process { StartInfo = startInfo };
+        var task = _tasksCache.Single(t => t.Id == id);
+        return new YtDlpCommand(task.ToArgs());        
     }
 
     public async Task<bool> UpdateYtDlpAsync(YtDlpUpdateChannel updateChannel = YtDlpUpdateChannel.Stable, IProgress<string>? progress = null)

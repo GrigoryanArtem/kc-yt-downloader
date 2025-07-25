@@ -85,7 +85,7 @@ public partial class AutoTaskRunner(YtDlpProxy ytDlpProxy) : ObservableObject, I
 
             foreach (var task in tasks)
             {
-                var runTask = task.RunTask();
+                var runTask = task.Execute();
                 _ranTasks.Add(runTask);
             }
 

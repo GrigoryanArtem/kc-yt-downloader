@@ -8,7 +8,7 @@ public class YtDlpCommand(string arguments) : CommandBase("yt-dlp", arguments)
     {
         0 => ProcessExitCode.Success,
         1 or 2 => ProcessExitCode.Error,
-        101 => ProcessExitCode.Cancelled,
+        -1 or 101 => ProcessExitCode.Cancelled,
 
         _ => ProcessExitCode.Unknown
     };

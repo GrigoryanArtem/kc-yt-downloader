@@ -23,6 +23,9 @@ public abstract class CommandBase(string commandBase, string arguments)
     public string Output => _outputBuilder.ToString();
     public string Error => _errorBuilder.ToString();
 
+    public Action<DataReceivedEventArgs>? OnOutputUpdate { get; set; }
+    public Action<DataReceivedEventArgs>? OnErrorUpdate { get; set; }
+
     public async Task Run(CancellationToken cancellationToken)
     {
         lock (_lock)
@@ -76,7 +79,7 @@ public abstract class CommandBase(string commandBase, string arguments)
         }
         finally
         {
-            proc.Kill();
+            proc.Kill(true);
         }
 
         ExitCode = MapExitCode(proc.ExitCode);
@@ -87,10 +90,16 @@ public abstract class CommandBase(string commandBase, string arguments)
     #region Private methods
 
     private void OnOutputDataReceived(object sender, DataReceivedEventArgs e)
-        => WriteData(e, _outputBuilder);
+    {
+        WriteData(e, _outputBuilder);
+        OnOutputUpdate?.Invoke(e);
+    }
 
-    private void OnErrorDataReceived(object sender, DataReceivedEventArgs e)
-        => WriteData(e, _errorBuilder);
+    private void OnErrorDataReceived(object sender, DataReceivedEventArgs e) 
+    {
+        WriteData(e, _errorBuilder); 
+        OnErrorUpdate?.Invoke(e);
+    }
 
     private static void WriteData(DataReceivedEventArgs args, StringBuilder stringBuilder)
     {

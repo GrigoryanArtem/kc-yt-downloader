@@ -1,3 +1,6 @@
+## Version 1.4.*
+* Improved logging
+
 ## Version 1.3.*
 **Features**
 * Library Versions in Settings – added display of library versions in the settings modal.
