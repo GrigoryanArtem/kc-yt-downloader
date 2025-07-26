@@ -1,8 +1,8 @@
 ## Version 1.4.*
 **Features**
 * Cancel Button – added the ability to cancel an active task during processing.
-* Recording Presets – introduced configurable presets for recording tasks.
-* Recording Task Status – recording tasks now show real-time processing status.
+* Recoding Presets – introduced configurable presets for recoding tasks.
+* Recoding Task Status – recoding tasks now show real-time processing status.
 
 **Improvements**
 * Logging – improved the structure and detail level of logs for better traceability.
