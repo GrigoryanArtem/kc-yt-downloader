@@ -1,7 +1,16 @@
 ## Version 1.4.*
-* Improved logging
-* Add cancel button to task processing
-* Fixed issue with working directory size
+**Features**
+* Cancel Button – added the ability to cancel an active task during processing.
+* Recording Presets – introduced configurable presets for recording tasks.
+* Recording Task Status – recording tasks now show real-time processing status.
+
+**Improvements**
+* Logging – improved the structure and detail level of logs for better traceability.
+
+**Bug Fixes**
+* Working Directory Size – fixed an issue with incorrect calculation of the working directory size.
+
+
 
 ## Version 1.3.*
 **Features**
