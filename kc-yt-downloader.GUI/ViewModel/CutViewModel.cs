@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using kc_yt_downloader.GUI.Model;
 using kc_yt_downloader.Model;
+using kc_yt_downloader.Model.Tasks;
 using kc_yt_downloader.Model.Utility;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows.Input;
@@ -88,18 +89,14 @@ public partial class CutViewModel : ObservableObject
         var ytDlp = services.GetRequiredService<YtDlp>();
 
         var recode = Recode.GetRecode();
-        var extension = recode?.Format;
+        var formatString = VideoFormatCombiner.Combine(
+            VideoFormatsSelector.SelectedFormat?.Id,
+            AudioFormatsSelector.SelectedFormat?.Id);
 
-        if (extension is null)
-        {
-            var formatString = VideoFormatCombiner.Combine(
-                VideoFormatsSelector.SelectedFormat?.Id,
-                AudioFormatsSelector.SelectedFormat?.Id);
+        var extension = await ytDlp.PredictFileExtension(_info.WebPageUrl, formatString, CancellationToken.None);
+        
 
-            extension = await ytDlp.PredictFileExtension(_info.WebPageUrl, formatString, CancellationToken.None);
-        }
-
-        var tasks = segments.Select((s, i) => new CutVideoTask()
+        var tasks = segments.Select((s, i) => new DownloadVideoTask()
         {
             Name = _info.Title,
             Created = DateTime.Now,

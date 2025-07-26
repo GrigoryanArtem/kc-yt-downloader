@@ -3,6 +3,7 @@ using kc_yt_downloader.GUI.Model.Extensions;
 using kc_yt_downloader.GUI.ViewModel;
 using kc_yt_downloader.GUI.ViewModel.Proxy;
 using kc_yt_downloader.Model;
+using kc_yt_downloader.Model.Tasks;
 using System.Collections.ObjectModel;
 
 namespace kc_yt_downloader.GUI.Model;
@@ -46,7 +47,7 @@ public partial class YtDlpProxy(YtDlp ytDlp) : ObservableObject
         return hasValue;
     }
 
-    public void AddTasks(params CutVideoTask[] tasks)
+    public void AddTasks(params DownloadVideoTask[] tasks)
     {
         if (tasks is null)
             return;
@@ -66,7 +67,7 @@ public partial class YtDlpProxy(YtDlp ytDlp) : ObservableObject
         }
     }
 
-    public void DeleteTask(CutVideoTask? task)
+    public void DeleteTask(DownloadVideoTask? task)
     {
         if (task is null)
             return;
@@ -221,7 +222,7 @@ public partial class YtDlpProxy(YtDlp ytDlp) : ObservableObject
         IsAutoProcessingPossible = Tasks.Any(g => g.Status == VideoTaskStatus.Prepared);
     }
 
-    public CutTaskViewModel GetViewModel(CutVideoTask task)
+    public CutTaskViewModel GetViewModel(DownloadVideoTask task)
         => _taskCache.GetOrAdd(task.Id, () => new CutTaskViewModel(task, this));
 
     private static int GetOrder(VideoTaskStatus status) => status switch

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using kc_yt_downloader.GUI.Model;
 using kc_yt_downloader.Model;
 using kc_yt_downloader.Model.Enums;
+using kc_yt_downloader.Model.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NavigationMVVM.Services;
@@ -35,7 +36,7 @@ public partial class CutTaskViewModel : ObservableObject
     private bool _canShowStatus = false;
     private CancellationTokenSource? _cancellationTokenSource;
 
-    public CutTaskViewModel(CutVideoTask task, YtDlpProxy proxy)
+    public CutTaskViewModel(DownloadVideoTask task, YtDlpProxy proxy)
     {
         var services = App.Current.Services;
 
@@ -98,7 +99,7 @@ public partial class CutTaskViewModel : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(TimeRangeString))]
-    private CutVideoTask _source;
+    private DownloadVideoTask _source;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(OpenLogCommand))]
@@ -188,51 +189,59 @@ public partial class CutTaskViewModel : ObservableObject
 
     private async Task TaskCycle()
     {
-        var command = _ytDlp.CreateRunCommand(Source.Id);
+        var commands = _ytDlp.CreateRunCommands(Source.Id);
+        var status = VideoTaskStatus.Unknown;
 
-        _logger.LogInformation("Running task {taskId} with command: {command}", Source.Id, command.ProcessCommand);
+        foreach (var (command, stage) in commands) 
+        { 
+            _logger.LogInformation("Running task {taskId} with command: {command}", Source.Id, command.ProcessCommand);
+            _ytDlpStatus.UpdateStage(stage);
 
-        try
-        {
-            _canShowStatus = false;
-
-            Status = new LoadingViewModel();
-
-            Source = Source with
+            try
             {
-                Status = VideoTaskStatus.Processing,
+                _canShowStatus = false;
+
+                Status = new LoadingViewModel();
+
+                Source = Source with
+                {
+                    Status = VideoTaskStatus.Processing,
+                };
+
+                _ytDlp.UpdateTask(Source);
+                _ytDlpProxy.Sync(YtDlpProxy.SyncType.Tasks);
+
+                command.OnErrorUpdate = e => UpdateStatus(e.Data!);
+                command.OnOutputUpdate = e => Persister.Write(LogPersister.LogLevel.Standard, e.Data!);
+
+                await command.Run(_cancellationTokenSource!.Token);
+            }
+            catch (Exception exp)
+            {
+                GlobalSnackbarMessageQueue.WriteError("Error while running task", exp);
+                _logger.LogError(exp, "Error while running task {taskId}", Source.Id);
+            }
+
+            status = command.ExitCode switch
+            {
+                ProcessExitCode.Success => VideoTaskStatus.Completed,
+                ProcessExitCode.Error => VideoTaskStatus.Error,
+                ProcessExitCode.Cancelled => VideoTaskStatus.Cancelled,
+
+                _ => VideoTaskStatus.Unknown
             };
 
-            _ytDlp.UpdateTask(Source);
-            _ytDlpProxy.Sync(YtDlpProxy.SyncType.Tasks);
+            _logger.LogInformation("Task {taskId} finished with exitCode: {exitCode} and status: {status}", Source.Id, command.ExitCode, status);
 
-            command.OnErrorUpdate = e => UpdateStatus(e.Data!);
-            command.OnOutputUpdate = e => Persister.Write(LogPersister.LogLevel.Standard, e.Data!);
-
-            await command.Run(_cancellationTokenSource!.Token);
+            if (status != VideoTaskStatus.Completed)
+                break;
         }
-        catch (Exception exp)
-        {
-            GlobalSnackbarMessageQueue.WriteError("Error while running task", exp);
-            _logger.LogError(exp, "Error while running task {taskId}", Source.Id);
-        }
-
-        var status = command.ExitCode switch
-        {
-            ProcessExitCode.Success => VideoTaskStatus.Completed,
-            ProcessExitCode.Error => VideoTaskStatus.Error,
-            ProcessExitCode.Cancelled => VideoTaskStatus.Cancelled,
-
-            _ => VideoTaskStatus.Unknown
-        };
-
-        _logger.LogInformation("Task {taskId} finished with exitCode: {exitCode} and status: {status}", Source.Id, command.ExitCode, status);
 
         Source = Source with
         {
             Status = status,
             Completed = DateTime.Now,
-            SpeedMedian = _ytDlpStatus.GetSpeedMedian(),
+            SpeedMedian = status == VideoTaskStatus.Completed ? _ytDlpStatus.GetSpeedMedian() : null, 
         };
 
         _ytDlp.UpdateTask(Source);

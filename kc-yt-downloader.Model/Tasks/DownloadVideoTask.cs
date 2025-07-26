@@ -1,10 +1,9 @@
 ﻿using kc_yt_downloader.Model.Utility;
 
-namespace kc_yt_downloader.Model;
+namespace kc_yt_downloader.Model.Tasks;
 
-public record CutVideoTask
+public record DownloadVideoTask : TaskBase
 {
-    public int Id { get; init; }
     public string Name { get; init; }
 
     public DateTime Created { get; init; }
@@ -13,7 +12,6 @@ public record CutVideoTask
     public DateTime? Completed { get; init; }
 
     public VideoTaskStatus Status { get; init; }
-    public string VideoId { get; init; }
 
     public string URL { get; init; }
     public TimeRange? TimeRange { get; init; }
@@ -22,18 +20,17 @@ public record CutVideoTask
     public string FilePath { get; init; }
     public string? PredictedExtension { get; init; }
     public string? PredictedFilePath =>
-        PredictedExtension is not null ? String.Join('.', FilePath, PredictedExtension) : null;
+        PredictedExtension is not null ? string.Join('.', FilePath, PredictedExtension) : null;
 
     public string? VideoFormatId { get; init; }
     public string? AudioFormatId { get; init; }
 
     public string FormatString => VideoFormatCombiner.Combine(VideoFormatId, AudioFormatId);
 
-    public string ToArgs()
+    public string ToYtDlpArgs()
     {
-        var timeRange = TimeRange?.ToArgs() ?? String.Empty;
-        var recode = Recode?.ToArgs() ?? String.Empty;
+        var timeRange = TimeRange?.ToArgs() ?? string.Empty;        
 
-        return $"""-vU --verbose -f "{FormatString}"{timeRange}{recode} "{URL}" -o "{FilePath}.%(ext)s" """;
+        return $"""-vU --verbose -f "{FormatString}"{timeRange} "{URL}" -o "{FilePath}.%(ext)s" """;
     }
 }

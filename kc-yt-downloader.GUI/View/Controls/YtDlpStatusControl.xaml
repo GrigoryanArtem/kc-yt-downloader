@@ -11,85 +11,94 @@
     d:DesignHeight="450"
     d:DesignWidth="350"
     mc:Ignorable="d">
-    <WrapPanel
+    <StackPanel
         HorizontalAlignment="Center"
         VerticalAlignment="Center">
 
-        <WrapPanel.Resources>
-            <ResourceDictionary>
-                <Style
-                    BasedOn="{StaticResource MaterialDesignOutlinedTextBox}"
-                    TargetType="TextBox">
+        <TextBlock
+            Margin="0 8 0 4"
+            d:Text="Download"
+            Text="{Binding StageName}"
+            TextAlignment="Center" />
 
-                    <Setter Property="materialDesign:HintAssist.FloatingHintHorizontalAlignment" Value="Left" />
-                    <Setter Property="materialDesign:HintAssist.Background" Value="Transparent" />
+        <WrapPanel>
 
-                    <Setter Property="Padding" Value="8 10" />
-                    <Setter Property="Margin" Value="2 4" />
+            <WrapPanel.Resources>
+                <ResourceDictionary>
+                    <Style
+                        BasedOn="{StaticResource MaterialDesignOutlinedTextBox}"
+                        TargetType="TextBox">
 
-                    <Setter Property="TextAlignment" Value="Center" />
-                    <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="materialDesign:HintAssist.FloatingHintHorizontalAlignment" Value="Left" />
+                        <Setter Property="materialDesign:HintAssist.Background" Value="Transparent" />
 
-                    <Setter Property="Width" Value="80" />
-                    <Setter Property="IsReadOnly" Value="True" />
-                    <Setter Property="Visibility" Value="Visible" />
+                        <Setter Property="Padding" Value="8 10" />
+                        <Setter Property="Margin" Value="2 4" />
 
-                    <Style.Triggers>
-                        <Trigger Property="Text" Value="">
+                        <Setter Property="TextAlignment" Value="Center" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
 
-                            <Setter Property="Visibility" Value="Collapsed" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </ResourceDictionary>
-        </WrapPanel.Resources>
+                        <Setter Property="Width" Value="80" />
+                        <Setter Property="IsReadOnly" Value="True" />
+                        <Setter Property="Visibility" Value="Visible" />
 
-        <TextBox
-            d:Text="123"
-            materialDesign:HintAssist.Hint="Frame"
-            Text="{Binding Frame}" />
+                        <Style.Triggers>
+                            <Trigger Property="Text" Value="">
 
-        <TextBox
-            d:Text="00:01:46"
-            materialDesign:HintAssist.Hint="Time"
-            Text="{Binding Time, StringFormat=hh\\:mm\\:ss}" />
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ResourceDictionary>
+            </WrapPanel.Resources>
 
-        <TextBox
-            d:Text="64"
-            materialDesign:HintAssist.Hint="FPS"
-            Text="{Binding Fps, StringFormat=f1}" />
+            <TextBox
+                d:Text="123"
+                materialDesign:HintAssist.Hint="Frame"
+                Text="{Binding Frame}" />
 
-        <TextBox
-            d:Text="16127"
-            materialDesign:HintAssist.Hint="Size"
-            materialDesign:TextFieldAssist.SuffixText="{Binding TotalSizeSuffix}"
-            Text="{Binding TotalSize, StringFormat=f1}" />
+            <TextBox
+                d:Text="00:01:46"
+                materialDesign:HintAssist.Hint="Time"
+                Text="{Binding Time, StringFormat=hh\\:mm\\:ss}" />
 
-        <TextBox
-            d:Text="16127"
-            materialDesign:HintAssist.Hint="Size"
-            materialDesign:TextFieldAssist.SuffixText="{Binding SizeSuffix}"
-            Text="{Binding Size, StringFormat=f1}" />
+            <TextBox
+                d:Text="64"
+                materialDesign:HintAssist.Hint="FPS"
+                Text="{Binding Fps, StringFormat=f1}" />
 
-        <TextBox
-            d:Text="2.34"
-            materialDesign:HintAssist.Hint="Speed"
-            Text="{Binding Speed}" />
+            <TextBox
+                d:Text="16127"
+                materialDesign:HintAssist.Hint="Size"
+                materialDesign:TextFieldAssist.SuffixText="{Binding TotalSizeSuffix}"
+                Text="{Binding TotalSize, StringFormat=f1}" />
 
-        <TextBox
-            d:Text="1246.4"
-            materialDesign:HintAssist.Hint="Bitrate"
-            Text="{Binding BitRate}" />
+            <TextBox
+                d:Text="16127"
+                materialDesign:HintAssist.Hint="Size"
+                materialDesign:TextFieldAssist.SuffixText="{Binding SizeSuffix}"
+                Text="{Binding Size, StringFormat=f1}" />
 
-        <TextBox
-            d:Text="00:00:12"
-            materialDesign:HintAssist.Hint="Remaining"
-            Text="{Binding Remaining, StringFormat=hh\\:mm\\:ss}" />
+            <TextBox
+                d:Text="2.34"
+                materialDesign:HintAssist.Hint="Speed"
+                Text="{Binding Speed}" />
 
-        <TextBox
-            d:Text="42%"
-            materialDesign:HintAssist.Hint="Done"
-            Text="{Binding DonePercent, StringFormat={}{0:f1}%}" />
+            <TextBox
+                d:Text="1246.4"
+                materialDesign:HintAssist.Hint="Bitrate"
+                Text="{Binding BitRate}" />
 
-    </WrapPanel>
+            <TextBox
+                d:Text="00:00:12"
+                materialDesign:HintAssist.Hint="Remaining"
+                Text="{Binding Remaining, StringFormat=hh\\:mm\\:ss}" />
+
+            <TextBox
+                d:Text="42%"
+                materialDesign:HintAssist.Hint="Done"
+                Text="{Binding DonePercent, StringFormat={}{0:f1}%}" />
+
+        </WrapPanel>
+    </StackPanel>
 </UserControl>

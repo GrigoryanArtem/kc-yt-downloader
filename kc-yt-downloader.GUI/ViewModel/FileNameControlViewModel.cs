@@ -64,7 +64,8 @@ public partial class FileNameControlViewModel : ObservableObject
 
     private void CalculateFreeSpace()
     {        
-        var path = Path.GetFullPath(WorkingDirectory ?? ".");
+        var workingDirectory = String.IsNullOrEmpty(WorkingDirectory) ? "." : WorkingDirectory;
+        var path = Path.GetFullPath(workingDirectory);
         var drive = Path.GetPathRoot(path)!;
         var driveInfo = new DriveInfo(drive);
 

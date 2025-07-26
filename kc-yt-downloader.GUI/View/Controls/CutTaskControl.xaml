@@ -20,7 +20,6 @@
         BorderThickness="0 1">
 
         <Grid>
-
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="*" />
@@ -32,14 +31,27 @@
                 Margin="8 8 8 0"
                 Orientation="Vertical">
 
-                <TextBlock
-                    d:Text="Long long text"
-                    Style="{StaticResource MaterialDesignBodyLargeTextBlock}"
-                    Text="{Binding FileName}"
-                    TextOptions.TextFormattingMode="Ideal"
-                    TextOptions.TextRenderingMode="Auto"
-                    TextTrimming="CharacterEllipsis"
-                    ToolTip="{Binding FileName}" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <materialDesign:PackIcon Kind="Download" />
+
+                    <TextBlock
+                        Grid.Column="1"
+                        Margin="8 0"
+                        VerticalAlignment="Center"
+                        d:Text="Long long text"
+                        Style="{StaticResource MaterialDesignBodyLargeTextBlock}"
+                        Text="{Binding FileName}"
+                        TextOptions.TextFormattingMode="Ideal"
+                        TextOptions.TextRenderingMode="Auto"
+                        TextTrimming="CharacterEllipsis"
+                        ToolTip="{Binding FileName}" />
+                </Grid>
 
                 <TextBlock
                     d:Text="Long long text"
@@ -94,6 +106,7 @@
 
             <local:StatusContainer
                 Grid.Row="1"
+                VerticalAlignment="Center"
                 DataContext="{Binding Status}" />
 
             <Grid

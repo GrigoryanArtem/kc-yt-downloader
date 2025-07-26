@@ -1,4 +1,5 @@
 ﻿using kc_yt_downloader.Model;
+using kc_yt_downloader.Model.Tasks;
 
 namespace kc_yt_downloader.GUI.Model;
 
@@ -6,7 +7,7 @@ public class CutVideoBatch
 {
     public CutVideoBatch() { }
 
-    public CutVideoBatch(CutVideoTask source)
+    public CutVideoBatch(DownloadVideoTask source)
     {
         Name = source.Name;
         VideoId = source.VideoId;

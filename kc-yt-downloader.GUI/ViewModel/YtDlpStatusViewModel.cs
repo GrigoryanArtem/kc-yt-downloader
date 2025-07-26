@@ -43,6 +43,9 @@ public partial class YtDlpStatusViewModel : ObservableObject
     [ObservableProperty]
     private double _donePercent;
 
+    [ObservableProperty]
+    private string? _stageName;
+
     private readonly TimeSpan _totalDuration;
     private readonly List<float> _speedValues = [];
 
@@ -53,8 +56,8 @@ public partial class YtDlpStatusViewModel : ObservableObject
         _totalDuration = totalDuration;
         _updateFunctions = new()
         {
-            { "time", s => Time = TimeSpan.Parse(s) }, // yt-dlp
-            { "out_time", s => Time = TimeSpan.Parse(s) }, // ffmpeg
+            { "time", s => Time = TimeSpan.TryParse(s, out var time) ? time : TimeSpan.Zero }, // yt-dlp
+            { "out_time", s => Time = TimeSpan.TryParse(s, out var time) ? time : TimeSpan.Zero }, // ffmpeg
 
             { "size", s =>  (Size, SizeSuffix) = SizeConverter.ReformatString(s.Trim()) }, // yt-dlp
             { "total_size", s => (TotalSize, TotalSizeSuffix) = SizeConverter.FormatSize(Convert.ToInt64(s)) }, // ffmpeg
@@ -65,7 +68,6 @@ public partial class YtDlpStatusViewModel : ObservableObject
             { "frame", s => Frame = ParseInt(s) },
         };
     }
-
 
     public float GetSpeedMedian()
     {
@@ -79,6 +81,9 @@ public partial class YtDlpStatusViewModel : ObservableObject
             ? (_speedValues[mid - 1] + _speedValues[mid]) / 2
             : _speedValues[mid];
     }
+
+    public void UpdateStage(string name)
+        => StageName = name;    
 
     public bool TryUpdate(string propertyString)
     {

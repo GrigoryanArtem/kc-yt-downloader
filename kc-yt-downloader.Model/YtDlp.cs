@@ -1,6 +1,7 @@
 ﻿using kc_yt_downloader.Model.Enums;
 using kc_yt_downloader.Model.Exceptions;
 using kc_yt_downloader.Model.Processing;
+using kc_yt_downloader.Model.Tasks;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Text;
@@ -14,7 +15,7 @@ public class YtDlp(string cacheDirectory)
     private const string TASKS_CACHE_FILEPATH = "tasks.json";
 
     private List<VideoPreview> _videoCache = [];
-    private List<CutVideoTask> _tasksCache = [];
+    private List<DownloadVideoTask> _tasksCache = [];
 
     private readonly string _videoIndexPath = String.IsNullOrEmpty(cacheDirectory)
         ? VIDEOS_INDEX_FILEPATH
@@ -35,7 +36,7 @@ public class YtDlp(string cacheDirectory)
             _videoCache = JsonConvert.DeserializeObject<List<VideoPreview>>(File.ReadAllText(_videoIndexPath));
 
         if (File.Exists(_tasksCachePath))
-            _tasksCache = JsonConvert.DeserializeObject<List<CutVideoTask>>(File.ReadAllText(_tasksCachePath));
+            _tasksCache = JsonConvert.DeserializeObject<List<DownloadVideoTask>>(File.ReadAllText(_tasksCachePath));
     }
 
     public void Save()
@@ -47,7 +48,7 @@ public class YtDlp(string cacheDirectory)
         File.WriteAllText(_tasksCachePath, json);
     }
 
-    public CutVideoTask[] GetCachedTasks()
+    public DownloadVideoTask[] GetCachedTasks()
         => [.. _tasksCache];
     public VideoPreview[] GetCachedData()
         => [.. _videoCache];
@@ -136,9 +137,7 @@ public class YtDlp(string cacheDirectory)
 
     #endregion
 
-
-
-    public void DeleteTask(CutVideoTask task)
+    public void DeleteTask(DownloadVideoTask task)
     {
         var idx = _tasksCache
             .Select((tsk, idx) => (tsk, idx))
@@ -151,7 +150,7 @@ public class YtDlp(string cacheDirectory)
         Save();
     }
 
-    public void UpdateTask(CutVideoTask task)
+    public void UpdateTask(DownloadVideoTask task)
     {
         var idx = _tasksCache
             .Select((tsk, idx) => (tsk, idx))
@@ -161,7 +160,7 @@ public class YtDlp(string cacheDirectory)
         Save();
     }
 
-    public void AddTask(CutVideoTask task)
+    public void AddTask(DownloadVideoTask task)
     {
         var id = (int)((DateTime.Now - new DateTime(year: 2024, month: 1, day: 1)).Ticks / 100);
         _tasksCache.Add(task with { Id = id });
@@ -169,11 +168,21 @@ public class YtDlp(string cacheDirectory)
         Save();
     }
 
-    public CommandBase CreateRunCommand(int id)
+    public IEnumerable<(CommandBase command, string stage)> CreateRunCommands(int id)
     {
-        var task = _tasksCache.Single(t => t.Id == id);
-        return new YtDlpCommand(task.ToArgs());        
-    }
+        var task = _tasksCache.SingleOrDefault(t => t.Id == id);
+        yield return (YtDlpCommands.Download(task), "Download");
+
+        if (task.Recode is not null)
+            yield return (FFmpegCommands.Recode(new()
+            {
+                Format = task.Recode.Format,
+                InputFile = task.PredictedFilePath,
+                OutputFile = task.FilePath,
+                Preset = task.Recode.Preset,
+                VideoId = task.VideoId,
+            }), $"Recode {task.PredictedExtension} -> {task.Recode.Format}");
+    }        
 
     public async Task<bool> UpdateYtDlpAsync(YtDlpUpdateChannel updateChannel = YtDlpUpdateChannel.Stable, IProgress<string>? progress = null)
     {
