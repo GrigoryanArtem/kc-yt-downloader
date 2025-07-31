@@ -62,4 +62,11 @@ public static class NavigationCommands
         var store = Services.GetService<ModalNavigationStore>();
         return new NavigationService<TViewModel>(store!, () => viewModel);
     }
+
+    public static INavigationService CreateModalNavigation<TViewModel>()
+        where TViewModel : ObservableObject
+    {
+        var store = Services.GetService<ModalNavigationStore>();        
+        return new NavigationService<TViewModel>(store!, Services.GetRequiredService<TViewModel>);
+    }
 }

@@ -77,6 +77,27 @@ public partial class CutViewModel : ObservableObject
     public ICommand BackCommand { get; }
     public ICommand AddToQueueCommand { get; }
 
+    [RelayCommand]
+    private void SaveAsDraft()
+    {
+        var services = App.Current.Services;
+        var ytDlp = services.GetRequiredService<YtDlp>();
+
+        var request = new CutTaskRequest
+        (
+            Id: _info.Id,
+            Parts: [.. TimeRange.Segments.Select(s => new TimeRangeRequest
+            (
+                Start: (int)TimeParser.ParseTime(s.From).TotalSeconds,
+                End: (int)TimeParser.ParseTime(s.To).TotalSeconds
+            ))]
+        );
+
+        YtConfig.Global.Save();
+        ytDlp.SaveDraft(request, Title);
+        NavigationHistory.Current.NavigateBack();
+    }
+
     private async Task OnAddToQueueCommand()
     {
         IsAddingToQueue = true;

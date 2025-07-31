@@ -1,4 +1,5 @@
-﻿using kc_yt_downloader.Model.Enums;
+﻿using kc_yt_downloader.Model.Entities;
+using kc_yt_downloader.Model.Enums;
 using kc_yt_downloader.Model.Exceptions;
 using kc_yt_downloader.Model.Processing;
 using kc_yt_downloader.Model.Tasks;
@@ -13,9 +14,11 @@ public class YtDlp(string cacheDirectory)
     private const string YT_DLP = "yt-dlp";
     private const string VIDEOS_INDEX_FILEPATH = "index.json";
     private const string TASKS_CACHE_FILEPATH = "tasks.json";
+    private const string DRAFTS_CACHE_FILEPATH = "drafts.json";
 
     private List<VideoPreview> _videoCache = [];
     private List<DownloadVideoTask> _tasksCache = [];
+    private List<DownloadDraft> _draftsCache = [];
 
     private readonly string _videoIndexPath = String.IsNullOrEmpty(cacheDirectory)
         ? VIDEOS_INDEX_FILEPATH
@@ -24,6 +27,10 @@ public class YtDlp(string cacheDirectory)
     private readonly string _tasksCachePath = String.IsNullOrEmpty(cacheDirectory)
         ? TASKS_CACHE_FILEPATH
         : Path.Combine(cacheDirectory, TASKS_CACHE_FILEPATH);
+
+    private readonly string _draftsPath = String.IsNullOrEmpty(cacheDirectory)
+        ? DRAFTS_CACHE_FILEPATH
+        : Path.Combine(cacheDirectory, DRAFTS_CACHE_FILEPATH);
 
     public void Open()
     {
@@ -37,6 +44,9 @@ public class YtDlp(string cacheDirectory)
 
         if (File.Exists(_tasksCachePath))
             _tasksCache = JsonConvert.DeserializeObject<List<DownloadVideoTask>>(File.ReadAllText(_tasksCachePath));
+
+        if (File.Exists(_draftsPath))
+            _draftsCache = JsonConvert.DeserializeObject<List<DownloadDraft>>(File.ReadAllText(_draftsPath));
     }
 
     public void Save()
@@ -46,12 +56,17 @@ public class YtDlp(string cacheDirectory)
 
         json = JsonConvert.SerializeObject(_tasksCache, Formatting.Indented);
         File.WriteAllText(_tasksCachePath, json);
+
+        json = JsonConvert.SerializeObject(_draftsCache, Formatting.Indented);
+        File.WriteAllText(_draftsPath, json);
     }
 
     public DownloadVideoTask[] GetCachedTasks()
         => [.. _tasksCache];
     public VideoPreview[] GetCachedData()
         => [.. _videoCache];
+    public DownloadDraft[] GetDrafts()
+        => [.. _draftsCache];
 
     public void DeleteVideo(VideoPreview video)
     {
@@ -160,9 +175,24 @@ public class YtDlp(string cacheDirectory)
         Save();
     }
 
+    public void SaveDraft(CutTaskRequest request, string title)
+    {
+        var draft = new DownloadDraft
+        {
+            Title = title,
+            Created = DateTime.Now,
+            Id = IdGenerator.Next(),
+            Request = request
+        };
+
+        _draftsCache.Add(draft);
+
+        Save();
+    }
+
     public void AddTask(DownloadVideoTask task)
     {
-        var id = (int)((DateTime.Now - new DateTime(year: 2024, month: 1, day: 1)).Ticks / 100);
+        var id = (int)((DateTime.Now - new DateTime(year: 2024, month: 1, day: 1)).Ticks / 100000000);
         _tasksCache.Add(task with { Id = id });
 
         Save();

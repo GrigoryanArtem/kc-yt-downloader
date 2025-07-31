@@ -226,13 +226,24 @@
                     Margin="24"
                     DataContext="{Binding UrlAddingViewModel}" />
 
-                <Button
+                <StackPanel
                     Grid.Column="2"
-                    HorizontalAlignment="Right"
-                    Background="{DynamicResource MaterialDesignTextFieldBoxBackground}"
-                    Command="{Binding OpenSettingsCommand}"
-                    Content="{materialDesign:PackIcon Kind=SettingsOutline}"
-                    Style="{StaticResource MaterialDesignIconForegroundButton}" />
+                    Orientation="Horizontal">
+                    <Button
+                        Margin="8 0"
+                        HorizontalAlignment="Right"
+                        Background="{DynamicResource MaterialDesignTextFieldBoxBackground}"
+                        Command="{Binding OpenDraftsCommand}"
+                        Content="{materialDesign:PackIcon Kind=ReceiptTextEdit}"
+                        Style="{StaticResource MaterialDesignIconForegroundButton}" />
+
+                    <Button
+                        HorizontalAlignment="Right"
+                        Background="{DynamicResource MaterialDesignTextFieldBoxBackground}"
+                        Command="{Binding OpenSettingsCommand}"
+                        Content="{materialDesign:PackIcon Kind=SettingsOutline}"
+                        Style="{StaticResource MaterialDesignIconForegroundButton}" />
+                </StackPanel>
             </Grid>
 
             <Rectangle

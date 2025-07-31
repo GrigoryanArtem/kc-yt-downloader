@@ -35,6 +35,7 @@ public class DefaultServiceConfigurator : IServicesConfigurator
         services.AddSingleton<ModalNavigationStore>();
         services.AddSingleton<CloseModalNavigationService>();
 
+        services.AddTransient<DraftsListViewModel>();
 
         services.AddSingleton<DashboardViewModel>();
         services.AddSingleton(s => new NavigationService<DashboardViewModel>

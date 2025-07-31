@@ -9,7 +9,7 @@
     xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:viewmodel="clr-namespace:kc_yt_downloader.GUI.ViewModel"
     d:DataContext="{d:DesignInstance Type=viewmodel:CutViewModel}"
-    d:DesignHeight="1080"
+    d:DesignHeight="1200"
     d:DesignWidth="1920"
     mc:Ignorable="d">
 
@@ -103,9 +103,18 @@
 
                 <StackPanel
                     Grid.Column="1"
-                    HorizontalAlignment="Right">
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal">
 
                     <Button
+                        Padding="24 4"
+                        Command="{Binding SaveAsDraftCommand}"
+                        Content="SAVE AS DRAFT"
+                        IsEnabled="{Binding IsAddingToQueue, Converter={StaticResource InvertBooleanConverter}}"
+                        Style="{StaticResource MaterialDesignOutlinedButton}" />
+
+                    <Button
+                        Margin="8 0 0 0"
                         Padding="24 4"
                         materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsAddingToQueue}"
                         materialDesign:ButtonProgressAssist.IsIndicatorVisible="{Binding IsAddingToQueue}"

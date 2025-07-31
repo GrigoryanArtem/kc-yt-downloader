@@ -22,6 +22,13 @@ public partial class DashboardViewModel : ObservableObject
     public UrlAddingViewModel UrlAddingViewModel { get; } = new();
 
     [RelayCommand]
+    public void OpenDrafts()
+    {
+        var navigation = NavigationCommands.CreateModalNavigation<DraftsListViewModel>();
+        navigation.Navigate();
+    }
+
+    [RelayCommand]
     public void OpenSettings()
     {
         var navigationCommand = NavigationCommands.CreateModalNavigation(new SettingsViewModel());
