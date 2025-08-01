@@ -19,18 +19,19 @@ public partial class DraftsListViewModel : ObservableObject
         var services = App.Current.Services;
         var ytDlp = services.GetRequiredService<YtDlp>();
 
-        Drafts = [.. ytDlp.GetDrafts()];
+        Drafts = [.. ytDlp.GetDrafts().Select(Selectable<DownloadDraft>.Convert)];
     }
 
-    public ObservableCollection<DownloadDraft> Drafts { get; set; }
+    public ObservableCollection<Selectable<DownloadDraft>> Drafts { get; set; }
 
-    public bool IsDraftSelected => SelectedDraft is not null;
+    
+    public bool IsDraftSelected => Drafts.Any(d => d.IsSelected);
     
     [RelayCommand(CanExecute = nameof(IsDraftSelected))]    
     public void Open()
     {
         var services = App.Current.Services;
-        var tasks = services.GetRequiredService<TasksFactory>();
+        var tasks = services.GetRequiredService<TasksFactory>();  
         var cutViewLoadingViewModel = tasks.CreateCutViewLoadingViewModel(SelectedDraft!.Request.Id, new()
         {
             Segments = [.. SelectedDraft.Request.Parts.Select(p => new TimeRange
@@ -51,5 +52,16 @@ public partial class DraftsListViewModel : ObservableObject
     public void Delete(DownloadDraft draft)
     {
 
+        OnPropertyChanged(nameof(IsDraftSelected));
+    }
+
+    [RelayCommand]
+    public void Select(Selectable<DownloadDraft> item)
+    {
+        foreach(var draft in Drafts)        
+            draft.IsSelected = false;
+        
+        item.IsSelected = true;
+        OnPropertyChanged(nameof(IsDraftSelected));        
     }
 }

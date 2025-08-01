@@ -4,4 +4,6 @@
     xmlns:converters="clr-namespace:kc_yt_downloader.GUI.Model.Converters">
 
     <converters:InvertBooleanToVisibilityConverter x:Key="InvertBooleanToVisibilityConverter" />
+    <converters:SecondsToTimeStringConverter x:Key="SecondsToTimeStringConverter" />
+    <converters:TimeRangeRequestToDurationString x:Key="TimeRangeRequestToDurationString" />
 </ResourceDictionary>
