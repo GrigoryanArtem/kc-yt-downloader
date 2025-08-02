@@ -175,7 +175,7 @@ public class YtDlp(string cacheDirectory)
         Save();
     }
 
-    public void SaveDraft(CutTaskRequest request, string title)
+    public void AddDraft(CutTaskRequest request, string title)
     {
         var draft = new DownloadDraft
         {
@@ -190,15 +190,22 @@ public class YtDlp(string cacheDirectory)
         Save();
     }
 
+    public void DeleteDraft(DownloadDraft draft)
+    {
+        _draftsCache.Remove(draft);
+
+        Save();
+    }
+
     public void AddTask(DownloadVideoTask task)
     {
-        var id = (int)((DateTime.Now - new DateTime(year: 2024, month: 1, day: 1)).Ticks / 100000000);
+        var id = IdGenerator.Next();
         _tasksCache.Add(task with { Id = id });
 
         Save();
     }
 
-    public IEnumerable<(CommandBase command, string stage)> CreateRunCommands(int id)
+    public IEnumerable<(CommandBase command, string stage)> CreateRunCommands(long id)
     {
         var task = _tasksCache.SingleOrDefault(t => t.Id == id);
         yield return (YtDlpCommands.Download(task), "Download");

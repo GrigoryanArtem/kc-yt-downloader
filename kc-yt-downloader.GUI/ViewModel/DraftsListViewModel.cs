@@ -12,7 +12,7 @@ public partial class DraftsListViewModel : ObservableObject
 {
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(DeleteCommand), nameof(OpenCommand))]
-    private DownloadDraft? _selectedDraft;
+    private Selectable<DownloadDraft>? _selectedDraft;
 
     public DraftsListViewModel()
     {
@@ -32,9 +32,9 @@ public partial class DraftsListViewModel : ObservableObject
     {
         var services = App.Current.Services;
         var tasks = services.GetRequiredService<TasksFactory>();  
-        var cutViewLoadingViewModel = tasks.CreateCutViewLoadingViewModel(SelectedDraft!.Request.Id, new()
+        var cutViewLoadingViewModel = tasks.CreateCutViewLoadingViewModel(SelectedDraft!.Item!.Request.Id, new()
         {
-            Segments = [.. SelectedDraft.Request.Parts.Select(p => new TimeRange
+            Segments = [.. SelectedDraft.Item.Request.Parts.Select(p => new TimeRange
             {
                 From = TimeSpan.FromSeconds(p.Start).ToString("hh\\:mm\\:ss"),
                 To = TimeSpan.FromSeconds(p.End).ToString("hh\\:mm\\:ss")
@@ -49,8 +49,24 @@ public partial class DraftsListViewModel : ObservableObject
     }
 
     [RelayCommand(CanExecute = nameof(IsDraftSelected))]
-    public void Delete(DownloadDraft draft)
+    public void Delete()
     {
+        try
+        {
+            var services = App.Current.Services;
+            var ytDlp = services.GetRequiredService<YtDlp>();
+
+            ytDlp.DeleteDraft(SelectedDraft!.Item);
+            Drafts.Remove(SelectedDraft);
+
+            GlobalSnackbarMessageQueue.WriteInfo($"Draft {SelectedDraft.Item.Title} was deleted.");
+
+            SelectedDraft = null;
+        }
+        catch (Exception ex)
+        {
+            GlobalSnackbarMessageQueue.WriteError($"The draft {SelectedDraft?.Item?.Title} could not be deleted due to an error.", ex);
+        }
 
         OnPropertyChanged(nameof(IsDraftSelected));
     }
@@ -62,6 +78,6 @@ public partial class DraftsListViewModel : ObservableObject
             draft.IsSelected = false;
         
         item.IsSelected = true;
-        OnPropertyChanged(nameof(IsDraftSelected));        
+        SelectedDraft = item;
     }
 }

@@ -20,7 +20,8 @@ public partial class YtDlpProxy(YtDlp ytDlp) : ObservableObject
     }
 
     #region Members
-    private readonly Dictionary<int, CutTaskViewModel> _taskCache = [];
+
+    private readonly Dictionary<long, CutTaskViewModel> _taskCache = [];
 
     #endregion
 

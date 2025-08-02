@@ -100,7 +100,7 @@ namespace kc_yt_downloader.GUI.Model
             }
         }
 
-        public static LogPersister? FromDirectory(string dir, int id)
+        public static LogPersister? FromDirectory(string dir, long id)
         {
             var lastLog = Directory.GetFiles(dir, $"{id}.*.log", SearchOption.TopDirectoryOnly)
                 .OrderByDescending(f => f)

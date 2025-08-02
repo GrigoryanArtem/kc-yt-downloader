@@ -94,7 +94,7 @@ public partial class CutViewModel : ObservableObject
         );
 
         YtConfig.Global.Save();
-        ytDlp.SaveDraft(request, Title);
+        ytDlp.AddDraft(request, Title);
         NavigationHistory.Current.NavigateBack();
     }
 
